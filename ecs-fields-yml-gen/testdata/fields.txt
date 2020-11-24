@@ -1,0 +1,4 @@
+url.original
+network.iana_number
+"network.packets"
+not.in.ecs.foobar
