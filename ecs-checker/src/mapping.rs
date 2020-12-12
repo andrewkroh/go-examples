@@ -1,7 +1,7 @@
-use std::collections::HashMap;
 use serde::Deserialize;
-use std::cmp::Ordering;
 use std::cmp::Ord;
+use std::cmp::Ordering;
+use std::collections::HashMap;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct GetIndexResponse {
@@ -11,7 +11,7 @@ pub struct GetIndexResponse {
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct IndexMapping {
-    pub mappings: Mappings
+    pub mappings: Mappings,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -28,10 +28,19 @@ pub struct Mappings {
     pub properties: HashMap<String, Mappings>,
 }
 
+impl Mappings {
+    pub fn flat_fields(&self) -> Vec<Field> {
+        let mut fields: Vec<Field> = Vec::new();
+        flatten_fields("", &self.properties, &mut fields);
+        fields.sort();
+        return fields;
+    }
+}
+
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Field {
-    name: String,
-    data_type: String,
+    pub name: String,
+    pub data_type: String,
 }
 
 impl Ord for Field {
@@ -46,17 +55,17 @@ impl PartialOrd for Field {
     }
 }
 
-pub fn get_indices(cat_output: &str) -> Vec<&str> {
-    let mut indices: Vec<&str> = Vec::new();
+pub fn get_indices(cat_output: &str) -> Vec<String> {
+    let mut indices: Vec<String> = Vec::new();
     for line in cat_output.lines() {
         let parts = line.split_whitespace().collect::<Vec<&str>>();
         let index_name = parts.get(2);
         if index_name.is_some() {
-            indices.push(index_name.unwrap());
+            indices.push(index_name.unwrap().to_string());
         }
     }
     indices.sort();
-    indices
+    return indices;
 }
 
 pub fn parse_mapping(body: &str) -> serde_json::Result<GetIndexResponse> {
@@ -88,8 +97,8 @@ pub fn flatten_fields(parent_key: &str, m: &HashMap<String, Mappings>, fields: &
 
 #[cfg(test)]
 mod tests {
-    use crate::mapping::{get_indices, flatten_fields, Field};
     use crate::mapping::GetIndexResponse;
+    use crate::mapping::{flatten_fields, get_indices, Field};
 
     #[test]
     fn parse_cat_output() {
@@ -100,7 +109,13 @@ mod tests {
         let vec = get_indices(cat_indices);
 
         assert_eq!(vec.len(), 2);
-        assert_eq!(vec, ["auditbeat-7.8.0-2020.08.13-000003", "winlogbeat-8.0.0-2020.10.02-000002"]);
+        assert_eq!(
+            vec,
+            [
+                "auditbeat-7.8.0-2020.08.13-000003",
+                "winlogbeat-8.0.0-2020.10.02-000002"
+            ]
+        );
     }
 
     #[test]
@@ -142,10 +157,22 @@ mod tests {
         fields.sort();
         println!("{:?}", fields);
         assert_eq!(fields.len(), 3);
-        assert_eq!(fields, [
-            Field { name: "@timestamp".to_owned(), data_type: "date".to_owned() },
-            Field { name: "process.name".to_owned(), data_type: "keyword".to_owned() },
-            Field { name: "process.name.text".to_owned(), data_type: "text".to_owned() },
-        ]);
+        assert_eq!(
+            fields,
+            [
+                Field {
+                    name: "@timestamp".to_owned(),
+                    data_type: "date".to_owned()
+                },
+                Field {
+                    name: "process.name".to_owned(),
+                    data_type: "keyword".to_owned()
+                },
+                Field {
+                    name: "process.name.text".to_owned(),
+                    data_type: "text".to_owned()
+                },
+            ]
+        );
     }
 }
