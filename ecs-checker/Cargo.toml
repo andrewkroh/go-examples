@@ -13,4 +13,5 @@ prettytable-rs = { version = "^0.8" }
 tokio = { version = "0.2", features = ["full"] }
 serde = { version = "1.0.117", features = ["derive"] }
 serde_json = { version  = "1.0.59" }
+serde_yaml = "0.8"
 url = { version = "2.2.0" }
