@@ -3,6 +3,7 @@ extern crate reqwest;
 #[macro_use]
 extern crate prettytable;
 
+pub mod ecs;
 pub mod mapping;
 
 use argparse::ArgumentParser;
@@ -113,20 +114,49 @@ async fn get_mapping(client: &reqwest::Client, conf: &Config, index: &str) -> St
     return body.to_string();
 }
 
+async fn get_ecs(client: &reqwest::Client, version: &str) -> String {
+    let resp = client
+        .get("https://raw.githubusercontent.com/elastic/ecs/v1.7.0/generated/ecs/ecs_flat.yml")
+        .send()
+        .await
+        .expect("ecs_flag request failed");
+
+    if !resp.status().is_success() {
+        println!("Status: {}", resp.status());
+        println!("Headers:\n{:#?}", resp.headers());
+        panic!("get ecs_flat failed with {}", resp.status());
+    }
+
+    // Read the response.
+    let body = resp.text().await.expect("failed to read response body");
+    return body.to_string();
+}
+
 #[tokio::main]
 async fn main() {
     let conf = parse_args();
 
     let client = reqwest::Client::new();
+
+    let ecs_yaml = get_ecs(&client, "v1.7.0").await;
+    let ecs_fields = ecs::parse_ecs_flat_yaml(&ecs_yaml);
+
     let indices = cat_indices(&client, &conf);
     for idx in indices.await {
         let body = get_mapping(&client, &conf, &idx).await;
         let get_index_response = parse_mapping(&body).expect("failed to parse mapping body");
         for idx_mapping in get_index_response.indices.iter() {
             let mut table = Table::new();
-            table.set_titles(row!["Field", "Type"]);
+            table.set_titles(row!["Status", "Field", "Type", "ECS Type"]);
             for field in idx_mapping.1.mappings.flat_fields() {
-                table.add_row(row![field.name, field.data_type]);
+                let ecs_field = ecs_fields.fields.get(&field.name);
+                if ecs_field.is_none() {
+                    continue;
+                }
+                let ecs_field = ecs_field.unwrap();
+                if field.data_type != ecs_field.data_type {
+                    table.add_row(row!["🔴", field.name, field.data_type, ecs_field.data_type]);
+                }
             }
             table.printstd();
         }

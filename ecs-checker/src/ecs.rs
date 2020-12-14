@@ -54,7 +54,7 @@ pub struct Field {
     pub data_type: String,
 }
 
-fn parse_ecs_flat_yaml(data: &str) -> ECSFields {
+pub fn parse_ecs_flat_yaml(data: &str) -> ECSFields {
     let fields: ECSFields = serde_yaml::from_str(&data).unwrap();
     return fields;
 }
