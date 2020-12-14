@@ -158,7 +158,9 @@ async fn main() {
                     table.add_row(row!["🔴", field.name, field.data_type, ecs_field.data_type]);
                 }
             }
-            table.printstd();
+            if table.len() > 0 {
+                table.printstd();
+            }
         }
     }
 }
