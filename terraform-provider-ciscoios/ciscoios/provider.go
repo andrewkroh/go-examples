@@ -1,7 +1,7 @@
 package ciscoios
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func Provider() *schema.Provider {

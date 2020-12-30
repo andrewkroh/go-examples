@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    ciscoios = {
+      version = "~> 0.0.1"
+      source  = "crowbird.com/andrewkroh/ciscoios"
+    }
+  }
+}
+
 provider "ciscoios" {
   ssh_host = "127.0.0.1"
 }

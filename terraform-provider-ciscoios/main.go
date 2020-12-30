@@ -1,9 +1,10 @@
 package main
 
 import (
+	"github.com/hashicorp/terraform/plugin"
+	"github.com/hashicorp/terraform/terraform"
+
 	"github.com/andrewkroh/go-examples/terraform-provider-ciscoios/ciscoios"
-	"github.com/hashicorp/terraform-plugin-sdk/plugin"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func main() {
