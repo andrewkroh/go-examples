@@ -8,7 +8,9 @@ terraform {
 }
 
 provider "ciscoios" {
-  ssh_host = "127.0.0.1"
+  ssh_address = "mock://127.0.0.1:22"
+  username = "foo"
+  password = "bar"
 }
 
 resource "ciscoios_acl" "guest_acl_in" {
@@ -18,5 +20,10 @@ resource "ciscoios_acl" "guest_acl_in" {
     protocol = "tcp"
     destination_port = "gt 1023"
     established = true
+  }
+
+  rule {
+    remarks = ["Allow pings."]
+    protocol = "icmp"
   }
 }

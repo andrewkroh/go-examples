@@ -1,0 +1,48 @@
+access-list 100 remark Responses to TCP connections initiated outside.
+access-list 100 remark All responses for established TCP connections.
+access-list 100 permit tcp any any gt 1023 established
+access-list 100 remark Allow DNS, and DHCP requests.
+access-list 100 remark Allow all ping responses only.
+access-list 100 permit icmp any any echo-reply
+access-list 100 remark Allow udp DNS queries to rpi DNS.
+access-list 100 permit udp any gt 1023 host 10.100.5.130 eq domain
+access-list 100 remark Allow tcp DNS queries to rpi DNS.
+access-list 100 permit tcp any gt 1023 host 10.100.5.130 eq domain
+access-list 100 remark Allow DHCP requests.
+access-list 100 permit udp any eq bootpc any eq bootps
+access-list 100 remark Allow captive portal access.
+access-list 100 permit tcp any gt 1023 host 10.100.5.140 eq 8880 log
+access-list 100 permit tcp any gt 1023 host 10.100.5.140 eq 8843 log
+access-list 100 remark Disallow internal access to untrusted IOT devices.
+access-list 100 remark Deny RFC1918 access.
+access-list 100 deny   ip any 10.0.0.0 0.255.255.255 log
+access-list 100 remark Deny RFC1918 access.
+access-list 100 deny   ip any 172.16.0.0 0.15.255.255 log
+access-list 100 remark Deny RFC1918 access.
+access-list 100 deny   ip any 192.168.0.0  log
+access-list 100 remark Initiated from inside.
+access-list 100 remark Allow all ping requests to the Internet (non-local).
+access-list 100 permit icmp any any echo
+access-list 100 remark Allow all outgoing UDP packets.
+access-list 100 permit udp any any
+access-list 100 remark Allow all outgoing TCP connections.
+access-list 100 permit tcp any any
+access-list 100 remark Log everything else.
+access-list 100 deny   ip any any log
+access-list 101 remark Responses to TCP connections initiated inside.
+access-list 101 remark All responses for established TCP connections.
+access-list 101 permit tcp any any gt 1023 established
+access-list 101 remark Allow ping, DNS, and DHCP responses.
+access-list 101 remark Allow all ping requests.
+access-list 101 permit icmp any any echo
+access-list 101 remark Allow all ping responses.
+access-list 101 permit icmp any any echo-reply
+access-list 101 remark Allow udp DNS responses from rpi DNS.
+access-list 101 permit udp host 10.100.5.130 eq domain any gt 1023
+access-list 101 remark Allow DHCP responses.
+access-list 101 permit udp any eq bootps any eq bootpc
+access-list 101 remark Initiated from outside.
+access-list 101 remark Allow all incoming UDP response packets.
+access-list 101 permit udp any any
+access-list 101 remark Log everything else.
+access-list 101 deny   ip any any log

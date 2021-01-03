@@ -18,6 +18,7 @@ install: build test
 	mkdir -p ${PLUGIN_DIR}
 	cp -p ./terraform-provider-ciscoios ${PLUGIN_DIR}/terraform-provider-ciscoios_v${VERSION}
 	chmod a+x ./terraform-provider-ciscoios ${PLUGIN_DIR}/terraform-provider-ciscoios_v${VERSION}
+	rm testdata/.terraform.lock.hcl || true
 
 test:
 	go test ./...
