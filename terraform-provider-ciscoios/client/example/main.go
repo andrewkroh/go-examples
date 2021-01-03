@@ -23,7 +23,44 @@ func init() {
 	flag.StringVar(&sshAddress, "addr", "", "ssh address")
 }
 
+var testAccessList = client.AccessList{
+	ID: "140",
+	Rules: []client.AccessListEntry{
+		{
+			Remark: "Allow established TCP connections.",
+		},
+		{
+			Permit:      true,
+			Protocol:    "tcp",
+			Source:      "any",
+			Destination: "any",
+			Established: true,
+		},
+		{
+			Remark: "Allow outgoing TCP/443 (HTTPS) connections.",
+		},
+		{
+			Permit:          true,
+			Protocol:        "tcp",
+			Source:          "any",
+			Destination:     "any",
+			DestinationPort: "eq 443",
+		},
+		{
+			Remark: "Deny all other traffic.",
+		},
+		{
+			Permit:      false,
+			Protocol:    "ip",
+			Source:      "any",
+			Destination: "any",
+			Log:         true,
+		},
+	},
+}
+
 func main() {
+	log.SetOutput(os.Stderr)
 	flag.Parse()
 
 	cmdr, err := ssh.NewClient(sshAddress, username, password)
@@ -31,14 +68,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer cmdr.Close()
-
-	conf, err := cmdr.Command("show running-config")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Running config:")
-	fmt.Println(conf)
 
 	cl, err := client.New(cmdr)
 	if err != nil {
@@ -51,5 +80,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	json.NewEncoder(os.Stdout).Encode(accessLists)
+	data, err := json.Marshal(accessLists)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("access-lists: %v\n", string(data))
+
+	if err = cl.CreateACL(testAccessList); err != nil {
+		log.Fatal("Failed to create access-list.", err)
+	}
 }

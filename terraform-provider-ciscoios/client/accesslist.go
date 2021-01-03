@@ -22,23 +22,23 @@ func (al AccessList) String() string {
 }
 
 type AccessListEntry struct {
-	ID string
+	ID string `json:"id"`
 
-	Remark string
+	Remark string `json:"remark,omitempty"`
 
-	Permit              bool   // permit / deny
-	Protocol            string // 0 - 255 or name
-	Source              string
-	SourceWildcard      string
-	SourcePort          string
-	Destination         string
-	DestinationWildcard string
-	DestinationPort     string
-	Established         bool
-	ICMPType            string
-	ICMPCode            string
-	IGMPType            string
-	Log                 bool
+	Permit              bool   `json:"permit,omitempty"`   // permit / deny
+	Protocol            string `json:"protocol,omitempty"` // 0 - 255 or name
+	Source              string `json:"source,omitempty"`
+	SourceWildcard      string `json:"source_wildcard,omitempty"`
+	SourcePort          string `json:"source_port,omitempty"`
+	Destination         string `json:"destination,omitempty"`
+	DestinationWildcard string `json:"destination_wildcard,omitempty"`
+	DestinationPort     string `json:"destination_port,omitempty"`
+	Established         bool   `json:"established"`
+	ICMPType            string `json:"icmp_type,omitempty"`
+	ICMPCode            string `json:"icmp_code,omitempty"`
+	IGMPType            string `json:"igmp_type,omitempty"`
+	Log                 bool   `json:"log"`
 }
 
 func (ale AccessListEntry) String() string {

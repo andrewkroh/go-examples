@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"strings"
@@ -94,10 +95,9 @@ func (c *Client) connect() error {
 
 func (c *Client) Close() error {
 	if c.shell != nil {
-		if _, err := c.shell.Command("logout"); err != nil {
-			log.Fatal("failed while logging out")
+		if _, err := c.shell.Command("logout"); err != nil && !errors.Is(err, io.EOF) {
+			log.Fatal("failed while logging out", err)
 		}
-		c.shell.sess.Wait()
 	}
 
 	// TODO: Collect all errors.

@@ -1,6 +1,9 @@
 package client
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 type Commander interface {
 	Command(string) ([]byte, error)
@@ -9,24 +12,11 @@ type Commander interface {
 }
 
 type Client struct {
-	commander     Commander
-	runningConfig string
+	commander Commander
 }
 
 func New(commander Commander) (*Client, error) {
 	return &Client{commander: commander}, nil
-}
-
-func (c *Client) getRunningConfig() (string, error) {
-	if c.runningConfig == "" {
-		data, err := c.commander.Command("show running-config")
-		if err != nil {
-			return "", err
-		}
-		c.runningConfig = string(data)
-	}
-
-	return c.runningConfig, nil
 }
 
 func (c *Client) Close() error {
@@ -34,12 +24,12 @@ func (c *Client) Close() error {
 }
 
 func (c *Client) ACLs() ([]AccessList, error) {
-	cfg, err := c.getRunningConfig()
+	conf, err := c.commander.Command("show running-config | include access-list")
 	if err != nil {
 		return nil, err
 	}
 
-	entries, err := ParseAccessListEntries(cfg)
+	entries, err := ParseAccessListEntries(string(conf))
 	if err != nil {
 		return nil, err
 	}
@@ -59,12 +49,28 @@ func (c *Client) ACLs() ([]AccessList, error) {
 	for id, accessList := range groups {
 		out = append(out, AccessList{ID: id, Rules: accessList})
 	}
+
+	// Sort all rules by ID.
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].ID < out[j].ID
+	})
+
 	return out, nil
 }
 
 func (c *Client) DeleteACL(id string) error {
-	_, err := c.commander.Command("no access-list " + id)
-	return err
+	if _, err := c.commander.Command("configure terminal"); err != nil {
+		return err
+	}
+
+	if _, err := c.commander.Command("no access-list " + id); err != nil {
+		return err
+	}
+
+	if _, err := c.commander.Command("end"); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Client) ACL(id string) (*AccessList, error) {
@@ -88,10 +94,12 @@ func (c *Client) CreateACL(acl AccessList) error {
 		return fmt.Errorf("failed to enter configure mode: %w", err)
 	}
 
-	_, err = c.commander.Command(acl.String())
-	if err != nil {
+	if _, err = c.commander.Command(acl.String()); err != nil {
 		return fmt.Errorf("failed to write config: %w", err)
 	}
 
+	if _, err = c.commander.Command("end"); err != nil {
+		return err
+	}
 	return nil
 }
