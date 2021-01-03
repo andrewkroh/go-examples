@@ -96,8 +96,19 @@ func resourceCiscoIOSACL() *schema.Resource {
 }
 
 func resourceCiscoIOSACLCreate(d *schema.ResourceData, meta interface{}) error {
+	cl := meta.(*client.Client)
+	acls, err := cl.ACLs()
+	if err != nil {
+		return err
+	}
+
+	id, err := client.FreeExtendedAccessListID(acls)
+	if err != nil {
+		return err
+	}
+
 	acl := client.AccessList{
-		ID: "100", // TODO: Assign and unused ID.
+		ID: id,
 	}
 	d.SetId(acl.ID)
 
@@ -110,12 +121,21 @@ func resourceCiscoIOSACLCreate(d *schema.ResourceData, meta interface{}) error {
 					Remark: remark.(string),
 				})
 			}
-			continue
 		}
+
+		ale := client.AccessListEntry{}
+		ale.Permit = ruleMap["permit"].(bool)
+		ale.Protocol = ruleMap["protocol"].(string)
+		ale.Source = ruleMap["source"].(string)
+		ale.SourcePort = ruleMap["source_port"].(string)
+		ale.Destination = ruleMap["destination"].(string)
+		ale.DestinationPort = ruleMap["destination_port"].(string)
+		ale.Established = ruleMap["established"].(bool)
+		acl.Rules = append(acl.Rules, ale)
 	}
 
 	log.Printf("Create ACL: %v", spew.Sdump(acl))
-	return nil
+	return cl.CreateACL(acl)
 }
 
 func resourceCiscoIOSACLRead(d *schema.ResourceData, meta interface{}) error {

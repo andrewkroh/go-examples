@@ -1,8 +1,10 @@
 package client
 
 import (
+	"errors"
 	"fmt"
 	"sort"
+	"strconv"
 )
 
 type Commander interface {
@@ -102,4 +104,32 @@ func (c *Client) CreateACL(acl AccessList) error {
 		return err
 	}
 	return nil
+}
+
+func FreeExtendedAccessListID(accessLists []AccessList) (string, error) {
+	used := map[int]struct{}{}
+	for _, acl := range accessLists {
+		id, err := strconv.Atoi(acl.ID)
+		if err == nil {
+			used[id] = struct{}{}
+		}
+	}
+
+	const min, max = 100, 199
+	for i := min; i <= max; i++ {
+		_, found := used[i]
+		if !found {
+			return strconv.Itoa(i), nil
+		}
+	}
+
+	const expandedMin, expandedMax = 2000, 2699
+	for i := expandedMin; i <= expandedMax; i++ {
+		_, found := used[i]
+		if !found {
+			return strconv.Itoa(i), nil
+		}
+	}
+
+	return "", errors.New("no free numeric access-list ID found")
 }
