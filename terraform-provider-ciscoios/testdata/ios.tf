@@ -15,6 +15,7 @@ provider "ciscoios" {
 
 resource "ciscoios_acl" "guest_acl_in" {
   name = "guest_acl_in"
+
   rule {
     remarks          = ["Allow responses for established TCP connections."]
     permit           = true

@@ -135,7 +135,11 @@ func resourceCiscoIOSACLCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("Create ACL: %v", spew.Sdump(acl))
-	return cl.CreateACL(acl)
+	if err = cl.CreateACL(acl); err != nil {
+		return err
+	}
+
+	return resourceCiscoIOSACLRead(d, meta)
 }
 
 func resourceCiscoIOSACLRead(d *schema.ResourceData, meta interface{}) error {
