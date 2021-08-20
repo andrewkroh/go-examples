@@ -21,18 +21,31 @@ func main() {
 
 	fmt.Println("Compiling module...")
 	module, err := wasmer.NewModule(store, wasmBytes)
-
 	if err != nil {
 		fmt.Println("Failed to compile module:", err)
 	}
 
+	hostFunction := wasmer.NewFunction(
+		store,
+		wasmer.NewFunctionType(wasmer.NewValueTypes(), wasmer.NewValueTypes(wasmer.I32)),
+		func(args []wasmer.Value) ([]wasmer.Value, error) {
+			fmt.Println("callback")
+			return []wasmer.Value{wasmer.NewI32(0)}, nil
+		},
+	)
+
 	// Create an empty import object.
 	importObject := wasmer.NewImportObject()
+	importObject.Register(
+		"env",
+		map[string]wasmer.IntoExtern{
+			"host_function": hostFunction,
+		},
+	)
 
 	fmt.Println("Instantiating module...")
 	// Let's instantiate the Wasm module.
 	instance, err := wasmer.NewInstance(module, importObject)
-
 	if err != nil {
 		panic(fmt.Sprintln("Failed to instantiate the module:", err))
 	}
@@ -46,7 +59,6 @@ func main() {
 	// as the main focus of this example is to show how to create an instance out
 	// of a Wasm module and have basic interactions with it.
 	startFunc, err := instance.Exports.GetFunction("_start")
-
 	if err != nil {
 		panic(fmt.Sprintln("Failed to get the `_start` function:", err))
 	}
@@ -57,5 +69,5 @@ func main() {
 		panic(fmt.Sprintln("Failed to call the `_start` function:", err))
 	}
 
-	fmt.Println("Results of `_start_start`:", result)
+	fmt.Println("Results of `_start`:", result)
 }
