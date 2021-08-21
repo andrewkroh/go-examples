@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 
 	"github.com/wasmerio/wasmer-go/wasmer"
 )
@@ -13,61 +14,103 @@ func main() {
 		panic(err)
 	}
 
+	wm, err := newWasmModule(wasmBytes)
+	if err != nil {
+		log.Fatal("Failed to create module:", err)
+	}
+
+	rtn, err := wm.process()
+	if err != nil {
+		log.Fatal("Failed to execute process().", err)
+	}
+	log.Println("Done. Return code: ", rtn)
+}
+
+type wasmModule struct {
+	instance *wasmer.Instance
+
+	mallocFunc  wasmer.NativeFunction
+	processFunc wasmer.NativeFunction
+}
+
+func newWasmModule(wasmData []byte) (*wasmModule, error) {
 	// Create an Engine
 	engine := wasmer.NewEngine()
 
 	// Create a Store
 	store := wasmer.NewStore(engine)
 
-	fmt.Println("Compiling module...")
-	module, err := wasmer.NewModule(store, wasmBytes)
+	log.Println("Compiling module...")
+	module, err := wasmer.NewModule(store, wasmData)
 	if err != nil {
-		fmt.Println("Failed to compile module:", err)
+		return nil, fmt.Errorf("failed to compile module: %w", err)
 	}
 
-	hostFunction := wasmer.NewFunction(
-		store,
-		wasmer.NewFunctionType(wasmer.NewValueTypes(), wasmer.NewValueTypes(wasmer.I32)),
-		func(args []wasmer.Value) ([]wasmer.Value, error) {
-			fmt.Println("callback")
-			return []wasmer.Value{wasmer.NewI32(0)}, nil
-		},
-	)
+	wm := &wasmModule{}
 
-	// Create an empty import object.
 	importObject := wasmer.NewImportObject()
 	importObject.Register(
 		"env",
 		map[string]wasmer.IntoExtern{
-			"host_function": hostFunction,
+			"get_field": wasmer.NewFunction(
+				store,
+				wasmer.NewFunctionType(
+					wasmer.NewValueTypes(wasmer.I32, wasmer.I32),
+					wasmer.NewValueTypes(wasmer.I32)),
+				wm.getField,
+			),
 		},
 	)
 
-	fmt.Println("Instantiating module...")
-	// Let's instantiate the Wasm module.
-	instance, err := wasmer.NewInstance(module, importObject)
+	wm.instance, err = wasmer.NewInstance(module, importObject)
 	if err != nil {
-		panic(fmt.Sprintln("Failed to instantiate the module:", err))
+		return nil, fmt.Errorf("failed to instantiate the module: %w", err)
 	}
 
-	// We now have an instance ready to be used.
-	//
-	// From an `Instance` we can fetch any exported entities from the Wasm module.
-	// Each of these entities is covered in others examples.
-	//
-	// Here we are fetching an exported function. We won't go into details here
-	// as the main focus of this example is to show how to create an instance out
-	// of a Wasm module and have basic interactions with it.
-	startFunc, err := instance.Exports.GetFunction("_start")
+	wm.mallocFunc, err = wm.instance.Exports.GetFunction("malloc")
 	if err != nil {
-		panic(fmt.Sprintln("Failed to get the `_start` function:", err))
+		return nil, fmt.Errorf("failed to find malloc export: %w", err)
 	}
 
-	fmt.Println("Calling `_start` function...")
-	result, err := startFunc()
+	wm.processFunc, err = wm.instance.Exports.GetFunction("process")
 	if err != nil {
-		panic(fmt.Sprintln("Failed to call the `_start` function:", err))
+		return nil, fmt.Errorf("failed to find process export: %w", err)
 	}
 
-	fmt.Println("Results of `_start`:", result)
+	return wm, nil
+}
+
+func (m *wasmModule) getField(args []wasmer.Value) ([]wasmer.Value, error) {
+	if len(args) != 2 {
+		return nil, fmt.Errorf("get_field requires 2 arguments, but got %d", len(args))
+	}
+
+	dataPtr := args[0].I32()
+	dataLen := args[1].I32()
+
+	memory, err := m.instance.Exports.GetMemory("memory")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get the `memory` memory: %w", err)
+	}
+
+	data := memory.Data()[dataPtr : dataPtr+dataLen]
+	log.Println("get_field: ", string(data))
+
+	return []wasmer.Value{wasmer.NewI32(0)}, nil
+}
+
+func (m *wasmModule) malloc(size int32) (wasmPointer int32, err error) {
+	ptr, err := m.mallocFunc(size)
+	if err != nil {
+		return 0, err
+	}
+	return ptr.(int32), nil
+}
+
+func (m *wasmModule) process() (int32, error) {
+	rtn, err := m.processFunc()
+	if err != nil {
+		return 0, err
+	}
+	return rtn.(int32), nil
 }

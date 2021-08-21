@@ -4,7 +4,11 @@ version = "0.1.0"
 authors = ["Andrew Kroh <andrew.kroh@elastic.co>"]
 edition = "2018"
 
-[lib]
-crate-type = ["cdylib"]
+[features]
+wee-alloc = ["wee_alloc"]
 
 [dependencies]
+wee_alloc = { version = "0.4", optional = true }
+
+[lib]
+crate-type = ["cdylib"]
