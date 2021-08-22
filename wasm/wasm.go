@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -55,9 +56,17 @@ func newWasmModule(wasmData []byte) (*wasmModule, error) {
 			"get_field": wasmer.NewFunction(
 				store,
 				wasmer.NewFunctionType(
-					wasmer.NewValueTypes(wasmer.I32, wasmer.I32),
+					wasmer.NewValueTypes(wasmer.I32, wasmer.I32, wasmer.I32, wasmer.I32),
 					wasmer.NewValueTypes(wasmer.I32)),
 				wm.getField,
+			),
+			"log_it": wasmer.NewFunction(
+				store,
+				wasmer.NewFunctionType(
+					wasmer.NewValueTypes(wasmer.I32, wasmer.I32, wasmer.I32),
+					wasmer.NewValueTypes(wasmer.I32),
+				),
+				wm.log,
 			),
 		},
 	)
@@ -81,12 +90,14 @@ func newWasmModule(wasmData []byte) (*wasmModule, error) {
 }
 
 func (m *wasmModule) getField(args []wasmer.Value) ([]wasmer.Value, error) {
-	if len(args) != 2 {
-		return nil, fmt.Errorf("get_field requires 2 arguments, but got %d", len(args))
+	if len(args) != 4 {
+		return nil, fmt.Errorf("get_field requires 4 arguments, but got %d", len(args))
 	}
 
 	dataPtr := args[0].I32()
 	dataLen := args[1].I32()
+	rtnPtr := args[2].I32()
+	rtnLen := args[3].I32()
 
 	memory, err := m.instance.Exports.GetMemory("memory")
 	if err != nil {
@@ -96,6 +107,43 @@ func (m *wasmModule) getField(args []wasmer.Value) ([]wasmer.Value, error) {
 	data := memory.Data()[dataPtr : dataPtr+dataLen]
 	log.Println("get_field: ", string(data))
 
+	if string(data) == "foo/bar" {
+		value := "hello"
+		valueSize := int32(len(value))
+
+		valuePtr, err := m.malloc(valueSize)
+		if err != nil {
+			return nil, err
+		}
+
+		// Copy into allocated memory.
+		copy(memory.Data()[valuePtr:valuePtr+valueSize], value)
+
+		binary.LittleEndian.PutUint32(memory.Data()[rtnPtr:rtnPtr+4], uint32(valuePtr))
+		binary.LittleEndian.PutUint32(memory.Data()[rtnLen:rtnLen+4], uint32(valueSize))
+
+		return []wasmer.Value{wasmer.NewI32(0)}, nil
+	}
+
+	return []wasmer.Value{wasmer.NewI32(0)}, nil
+}
+
+func (m *wasmModule) log(args []wasmer.Value) ([]wasmer.Value, error) {
+	if len(args) != 3 {
+		return nil, fmt.Errorf("log requires 3 arguments, but got %d", len(args))
+	}
+
+	level := args[0].I32()
+	dataPtr := args[1].I32()
+	dataLen := args[2].I32()
+
+	memory, err := m.instance.Exports.GetMemory("memory")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get the `memory` memory: %w", err)
+	}
+
+	data := memory.Data()[dataPtr : dataPtr+dataLen]
+	log.Printf("log[%d]: %s", level, string(data))
 	return []wasmer.Value{wasmer.NewI32(0)}, nil
 }
 
