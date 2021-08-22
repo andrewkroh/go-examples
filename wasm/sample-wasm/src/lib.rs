@@ -1,3 +1,4 @@
+use serde_json::Value;
 use std::ptr::null_mut;
 
 #[cfg(feature = "wee-alloc")]
@@ -25,8 +26,15 @@ pub extern "C" fn sum(x: i32, y: i32) -> i32 {
 
 #[no_mangle]
 pub extern "C" fn process() -> i32 {
-    let res = hostcall_get_field("foo/bar").unwrap();
-    hostcall_log(1, format!("get_field returned '{}'", res.unwrap()).as_str()).unwrap();
+    let res = hostcall_get_field("foo/bar").unwrap().unwrap();
+
+    hostcall_log(1, format!("get_field returned '{}'", res.as_str()).as_str()).unwrap();
+    let v: Value = serde_json::from_str(res.as_str()).unwrap();
+
+    let hello_value = v.as_object().unwrap().get("hello").unwrap();
+
+    hostcall_log(1, format!("json '{}'", hello_value).as_str()).unwrap();
+
     return 0;
 }
 

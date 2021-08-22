@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -108,7 +109,12 @@ func (m *wasmModule) getField(args []wasmer.Value) ([]wasmer.Value, error) {
 	log.Println("get_field: ", string(data))
 
 	if string(data) == "foo/bar" {
-		value := "hello"
+		//value := "hello"
+		value, err := json.Marshal(map[string]interface{}{"hello": "world"})
+		if err != nil {
+			return nil, err
+		}
+
 		valueSize := int32(len(value))
 
 		valuePtr, err := m.malloc(valueSize)
