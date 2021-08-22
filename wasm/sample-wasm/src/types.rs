@@ -1,4 +1,4 @@
-#[repr(u32)]
+#[repr(i32)]
 #[derive(Debug)]
 pub enum LogLevel {
     Debug = 0,
@@ -8,7 +8,7 @@ pub enum LogLevel {
     Critical = 4,
 }
 
-#[repr(u32)]
+#[repr(i32)]
 #[derive(Debug)]
 pub enum Status {
     Ok = 0,

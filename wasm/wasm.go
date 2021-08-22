@@ -8,7 +8,27 @@ import (
 	"log"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/wasmerio/wasmer-go/wasmer"
+)
+
+type LogLevel int32
+
+const (
+	LogLevelDebug LogLevel = iota
+	LogLevelInfo
+	LogLevelWarn
+	LogLevelError
+	LogLevelCritical
+)
+
+type Status int32
+
+const (
+	StatusOK Status = iota
+	StatusInternalFailure
+	StatusInvalidArgument
+	StatusNotFound
 )
 
 func main() {
@@ -16,6 +36,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	log.Printf("WASM size: %v", humanize.Bytes(uint64(len(wasmBytes))))
 
 	wm, err := newWasmModule(wasmBytes)
 	if err != nil {
@@ -61,6 +82,13 @@ func newWasmModule(wasmData []byte) (*wasmModule, error) {
 					wasmer.NewValueTypes(wasmer.I32, wasmer.I32, wasmer.I32, wasmer.I32),
 					wasmer.NewValueTypes(wasmer.I32)),
 				wm.getField,
+			),
+			"elastic_put_field": wasmer.NewFunction(
+				store,
+				wasmer.NewFunctionType(
+					wasmer.NewValueTypes(wasmer.I32, wasmer.I32, wasmer.I32, wasmer.I32),
+					wasmer.NewValueTypes(wasmer.I32)),
+				wm.putField,
 			),
 			"elastic_log": wasmer.NewFunction(
 				store,
@@ -141,6 +169,35 @@ func (m *wasmModule) getField(args []wasmer.Value) ([]wasmer.Value, error) {
 	}
 
 	return []wasmer.Value{wasmer.NewI32(0)}, nil
+}
+
+func (m *wasmModule) putField(args []wasmer.Value) ([]wasmer.Value, error) {
+	if len(args) != 4 {
+		return nil, fmt.Errorf("put_field requires 4 arguments, but got %d", len(args))
+	}
+
+	keyPtr := args[0].I32()
+	keyLen := args[1].I32()
+	valuePtr := args[2].I32()
+	valueLen := args[3].I32()
+
+	memory, err := m.instance.Exports.GetMemory("memory")
+	if err != nil {
+		return []wasmer.Value{wasmer.NewI32(int32(StatusInternalFailure))}, fmt.Errorf("failed to get the `memory` memory: %w", err)
+	}
+
+	key := memory.Data()[keyPtr : keyPtr+keyLen]
+	value := memory.Data()[valuePtr : valuePtr+valueLen]
+	log.Println("put_field: ", string(key), string(value))
+
+	var v interface{}
+	if err := json.Unmarshal(value, &v); err != nil {
+		return []wasmer.Value{wasmer.NewI32(int32(StatusInvalidArgument))}, fmt.Errorf("failed to decode value: %w", err)
+	}
+
+	log.Printf("put_field: %s=%+v", key, v)
+
+	return []wasmer.Value{wasmer.NewI32(int32(StatusOK))}, nil
 }
 
 func (m *wasmModule) log(args []wasmer.Value) ([]wasmer.Value, error) {

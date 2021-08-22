@@ -36,6 +36,8 @@ pub extern "C" fn process() -> i32 {
         .as_str(),
     )
     .unwrap();
+
+    put_field("message", d.to_string().as_str()).unwrap();
     return 0;
 }
 

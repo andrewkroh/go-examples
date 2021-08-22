@@ -45,6 +45,25 @@ pub fn get_field(field: &str) -> Result<Option<String>, i32> {
 
 #[link(wasm_import_module = "elastic")]
 extern "C" {
+    fn elastic_put_field(
+        key_addr: *const u8,
+        key_size: usize,
+        value_addr: *const u8,
+        value_size: usize,
+    ) -> Status;
+}
+
+pub fn put_field(key: &str, value: &str) -> Result<(), Status> {
+    unsafe {
+        match elastic_put_field(key.as_ptr(), key.len(), value.as_ptr(), value.len()) {
+            Status::Ok => Ok(()),
+            status => panic!("unexpected status: {}", status as i32),
+        }
+    }
+}
+
+#[link(wasm_import_module = "elastic")]
+extern "C" {
     fn elastic_log(level: i32, message_data: *const u8, message_size: usize) -> i32;
 }
 
