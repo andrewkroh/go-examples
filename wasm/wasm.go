@@ -145,9 +145,9 @@ func (m *wasmModule) getField(args []wasmer.Value) ([]wasmer.Value, error) {
 	data := memory.Data()[dataPtr : dataPtr+dataLen]
 	log.Println("get_field: ", string(data))
 
-	if string(data) == "foo/bar" {
-		//value := "hello"
-		value, err := json.Marshal(map[string]interface{}{"message": "df00000001a568656c6c6fa5776f726c64"})
+	if string(data) == "message" {
+		raw := "df00000001a464617461ab68656c6c6f20776f726c64"
+		value, err := json.Marshal(raw)
 		if err != nil {
 			return nil, err
 		}
