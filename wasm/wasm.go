@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/wasmerio/wasmer-go/wasmer"
 )
 
 func main() {
-	wasmBytes, err := ioutil.ReadFile("sample.wasm")
+	wasmBytes, err := ioutil.ReadFile("sample-wasm/target/wasm32-unknown-unknown/debug/examples/decode_msgpack.wasm")
 	if err != nil {
 		panic(err)
 	}
@@ -52,22 +53,30 @@ func newWasmModule(wasmData []byte) (*wasmModule, error) {
 
 	importObject := wasmer.NewImportObject()
 	importObject.Register(
-		"env",
+		"elastic",
 		map[string]wasmer.IntoExtern{
-			"get_field": wasmer.NewFunction(
+			"elastic_get_field": wasmer.NewFunction(
 				store,
 				wasmer.NewFunctionType(
 					wasmer.NewValueTypes(wasmer.I32, wasmer.I32, wasmer.I32, wasmer.I32),
 					wasmer.NewValueTypes(wasmer.I32)),
 				wm.getField,
 			),
-			"log_it": wasmer.NewFunction(
+			"elastic_log": wasmer.NewFunction(
 				store,
 				wasmer.NewFunctionType(
 					wasmer.NewValueTypes(wasmer.I32, wasmer.I32, wasmer.I32),
 					wasmer.NewValueTypes(wasmer.I32),
 				),
 				wm.log,
+			),
+			"elastic_get_current_time_nanoseconds": wasmer.NewFunction(
+				store,
+				wasmer.NewFunctionType(
+					wasmer.NewValueTypes(wasmer.I32),
+					wasmer.NewValueTypes(wasmer.I32),
+				),
+				wm.getCurrentTime,
 			),
 		},
 	)
@@ -110,7 +119,7 @@ func (m *wasmModule) getField(args []wasmer.Value) ([]wasmer.Value, error) {
 
 	if string(data) == "foo/bar" {
 		//value := "hello"
-		value, err := json.Marshal(map[string]interface{}{"hello": "world"})
+		value, err := json.Marshal(map[string]interface{}{"message": "df00000001a568656c6c6fa5776f726c64"})
 		if err != nil {
 			return nil, err
 		}
@@ -150,6 +159,22 @@ func (m *wasmModule) log(args []wasmer.Value) ([]wasmer.Value, error) {
 
 	data := memory.Data()[dataPtr : dataPtr+dataLen]
 	log.Printf("log[%d]: %s", level, string(data))
+	return []wasmer.Value{wasmer.NewI32(0)}, nil
+}
+
+func (m *wasmModule) getCurrentTime(args []wasmer.Value) ([]wasmer.Value, error) {
+	if len(args) != 1 {
+		return nil, fmt.Errorf("elastic_get_current_time_nanoseconds requires 1 arguments, but got %d", len(args))
+	}
+
+	ptr := args[0].I32()
+
+	memory, err := m.instance.Exports.GetMemory("memory")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get the `memory` memory: %w", err)
+	}
+
+	binary.LittleEndian.PutUint64(memory.Data()[ptr:ptr+8], uint64(time.Now().UnixNano()))
 	return []wasmer.Value{wasmer.NewI32(0)}, nil
 }
 

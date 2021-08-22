@@ -1,5 +1,5 @@
 [package]
-name = "sample-wasm"
+name = "elastic-ingest"
 version = "0.1.0"
 authors = ["Andrew Kroh <andrew.kroh@elastic.co>"]
 edition = "2018"
@@ -9,7 +9,18 @@ wee-alloc = ["wee_alloc"]
 
 [dependencies]
 wee_alloc = { version = "0.4", optional = true }
+
+[dev-dependencies]
+chrono = "0.4"
+serde = { version = "^1.0", features = ["derive"] }
+rmp-serde = "^0.15"
 serde_json = "1.0"
+hex = "0.3"
 
 [lib]
+crate-type = ["cdylib", "lib"]
+
+[[example]]
+name = "decode_msgpack"
+path = "examples/decode_msgpack.rs"
 crate-type = ["cdylib"]
