@@ -23,8 +23,7 @@ pub extern "C" fn process() -> Status {
             message_value_json.as_str()
         )
         .as_str(),
-    )
-    .unwrap();
+    );
 
     // Decode the JSON.
     let message_value: Value = serde_json::from_str(message_value_json.as_str()).unwrap();
@@ -34,8 +33,7 @@ pub extern "C" fn process() -> Status {
     log(
         LogLevel::Info,
         format!("message is a string of value '{}'.", msgpack_hex).as_str(),
-    )
-    .unwrap();
+    );
 
     // Decode the hex into a slice of bytes.
     let msgpack_bytes = hex::decode(msgpack_hex).unwrap();
@@ -51,8 +49,7 @@ pub extern "C" fn process() -> Status {
             msgpack_data,
         )
         .as_str(),
-    )
-    .unwrap();
+    );
 
     // Write the decoded object back into the message field.
     put_field("message", msgpack_data.to_string().as_str()).unwrap();

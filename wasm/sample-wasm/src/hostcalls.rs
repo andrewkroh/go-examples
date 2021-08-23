@@ -67,10 +67,10 @@ extern "C" {
     fn elastic_log(level: i32, message_data: *const u8, message_size: usize) -> Status;
 }
 
-pub fn log(level: LogLevel, message: &str) -> Result<(), i32> {
+pub fn log(level: LogLevel, message: &str) {
     unsafe {
         match elastic_log(level as i32, message.as_ptr(), message.len()) {
-            Status::Ok => Ok(()),
+            Status::Ok => (),
             status => panic!("unexpected status: {}", status as i32),
         }
     }
