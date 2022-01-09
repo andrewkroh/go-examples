@@ -25,7 +25,7 @@ func NewClient(address string) (*Client, error) {
 
 	contents, err := ioutil.ReadFile(fileURL.Path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read %s: %w", fileURL.Path, err)
 	}
 
 	return &Client{

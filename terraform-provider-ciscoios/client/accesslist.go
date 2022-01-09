@@ -114,7 +114,7 @@ func ParseAccessListEntries(data string) ([]AccessListEntry, error) {
 
 	s := bufio.NewScanner(bytes.NewBufferString(data))
 	for s.Scan() {
-		line := s.Text()
+		line := strings.TrimSpace(s.Text())
 
 		if !strings.HasPrefix(line, "access-list ") {
 			continue

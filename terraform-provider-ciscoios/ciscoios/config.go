@@ -20,9 +20,10 @@ type Config struct {
 func (c *Config) NewClient() (*client.Client, error) {
 	var cmdr client.Commander
 	var err error
-	if strings.HasPrefix(c.Address, "file://") {
+	switch {
+	case strings.HasPrefix(c.Address, "file://"):
 		cmdr, err = file.NewClient(c.Address)
-	} else {
+	default:
 		cmdr, err = ssh.NewClient(c.Address, c.Username, c.Password)
 	}
 	if err != nil {

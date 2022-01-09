@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "ciscoios" {
-  ssh_address = "mock://127.0.0.1:22"
+  ssh_address = "file://dump.txt"
   username = "foo"
   password = "bar"
 }
