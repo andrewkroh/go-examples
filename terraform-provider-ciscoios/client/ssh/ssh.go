@@ -9,8 +9,10 @@ import (
 	"net"
 	"strings"
 
-	"github.com/andrewkroh/go-examples/terraform-provider-ciscoios/client"
+	"go.uber.org/multierr"
 	"golang.org/x/crypto/ssh"
+
+	"github.com/andrewkroh/go-examples/terraform-provider-ciscoios/client"
 )
 
 var _ client.Commander = (*Client)(nil)
@@ -63,6 +65,9 @@ func newConfig(username, password string) *ssh.ClientConfig {
 	// Add older ciphers used by Cisco.
 	conf.Ciphers = append(conf.Ciphers, "aes128-cbc", "3des-cbc", "aes192-cbc", "aes256-cbc")
 
+	// Add older key exchange algorithm for old cisco devices.
+	conf.KeyExchanges = append(conf.KeyExchanges, "diffie-hellman-group1-sha1")
+
 	return conf
 }
 
@@ -100,15 +105,25 @@ func (c *Client) Close() error {
 		}
 	}
 
-	// TODO: Collect all errors.
+	var errs []error
 	if c.client != nil {
-		c.client.Close()
+		if err := c.client.Close(); err != nil {
+			errs = append(errs, err)
+		}
 	}
 	if c.session != nil {
-		c.session.Close()
+		if err := c.session.Close(); err != nil {
+			errs = append(errs, err)
+		}
 	}
 	if c.shell != nil {
-		c.shell.Close()
+		if err := c.shell.Close(); err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	if len(errs) > 0 {
+		return multierr.Combine(errs...)
 	}
 	return nil
 }

@@ -106,6 +106,8 @@ func (c *Client) CreateACL(acl AccessList) error {
 	return nil
 }
 
+// FreeExtendedAccessListID returns an available extended access-list ID when
+// given the current access-lists.
 func FreeExtendedAccessListID(accessLists []AccessList) (string, error) {
 	used := map[int]struct{}{}
 	for _, acl := range accessLists {

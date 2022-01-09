@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -15,12 +16,14 @@ var (
 	username   string
 	password   string
 	sshAddress string
+	readOnly   bool
 )
 
 func init() {
 	flag.StringVar(&username, "u", os.Getenv("USER"), "username")
 	flag.StringVar(&password, "p", "", "password")
 	flag.StringVar(&sshAddress, "addr", "", "ssh address")
+	flag.BoolVar(&readOnly, "ro", true, "treat device as read-only")
 }
 
 var testAccessList = client.AccessList{
@@ -80,13 +83,37 @@ func main() {
 		log.Fatal(err)
 	}
 
-	data, err := json.Marshal(accessLists)
+	data, err := toPrettyJSON(accessLists)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("access-lists: %v\n", string(data))
+	log.Println("access-lists:")
+	fmt.Println(string(data))
+
+	id, err := client.FreeExtendedAccessListID(accessLists)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if readOnly {
+		return
+	}
+
+	log.Println("Creating demo access-list", id)
+	testAccessList.ID = id
 
 	if err = cl.CreateACL(testAccessList); err != nil {
 		log.Fatal("Failed to create access-list.", err)
 	}
+}
+
+func toPrettyJSON(v interface{}) ([]byte, error) {
+	buf := new(bytes.Buffer)
+	enc := json.NewEncoder(buf)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(v); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }
