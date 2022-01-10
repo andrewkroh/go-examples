@@ -1,5 +1,0 @@
-*.dot
-*.svg
-terraform-provider-*
-*.tfstate
-.terraform
