@@ -32,6 +32,7 @@ type Field struct {
 	Name        string `yaml:"name"`
 	Type        string `yaml:"type,omitempty"`
 	Description string `yaml:"description,omitempty"`
+	External    string `yaml:"external,omitempty"`
 }
 
 func main() {
@@ -58,10 +59,10 @@ func main() {
 	for _, f := range list {
 		flat, found := fields[f]
 		if !found {
-			nonECS = append(nonECS, Field{Name: f})
+			nonECS = append(nonECS, Field{Name: f, Type: "keyword"})
 			continue
 		}
-		out = append(out, Field{Name: flat.Name, Type: flat.Type, Description: flat.Description})
+		out = append(out, Field{Name: flat.Name, External: "ecs"})
 	}
 
 	sort.Slice(out, func(i, j int) bool {
