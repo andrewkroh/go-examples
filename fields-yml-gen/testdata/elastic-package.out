@@ -1,0 +1,26 @@
+Run system tests for the package
+2022/03/22 11:29:41  INFO Write container logs to file: /Users/akroh/code/elastic/integrations/build/container-logs/crowdstrike-logfile-1647962981636962000.log
+--- Test results for package: crowdstrike - START ---
+FAILURE DETAILS:
+crowdstrike/fdr logfile:
+[0] field "event.action" is undefined
+[1] field "event.agent_id_status" is undefined
+[2] field "event.category" is undefined
+[3] field "event.created" is undefined
+[4] field "event.id" is undefined
+[5] field "event.ingested" is undefined
+[6] field "event.kind" is undefined
+[7] field "event.original" is undefined
+[8] field "event.outcome" is undefined
+[9] field "event.timezone" is undefined
+[10] field "event.type" is undefined
+
+
+╭─────────────┬─────────────┬───────────┬───────────┬───────────────────────────────────────────────────────────────────────────────────────────┬────────────────╮
+│ PACKAGE     │ DATA STREAM │ TEST TYPE │ TEST NAME │ RESULT                                                                                    │   TIME ELAPSED │
+├─────────────┼─────────────┼───────────┼───────────┼───────────────────────────────────────────────────────────────────────────────────────────┼────────────────┤
+│ crowdstrike │ fdr         │ system    │ logfile   │ FAIL: one or more errors found in documents stored in logs-crowdstrike.fdr-ep data stream │ 1m4.518991083s │
+╰─────────────┴─────────────┴───────────┴───────────┴───────────────────────────────────────────────────────────────────────────────────────────┴────────────────╯
+--- Test results for package: crowdstrike - END   ---
+Done
+Error: one or more test cases failed
