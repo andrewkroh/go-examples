@@ -3,6 +3,7 @@ package ecs
 import (
 	"bytes"
 	_ "embed"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -68,4 +69,21 @@ func GetField(name string) *Field {
 
 	copy := f
 	return &copy
+}
+
+// GetFieldSet returns all fields whose name contains the given prefix.
+func GetFieldSet(prefix string) []Field {
+	// Only allow full key-name prefixes.
+	if !strings.HasSuffix(prefix, ".") {
+		prefix += "."
+	}
+
+	var out []Field
+	for _, f := range ecsFields {
+		if strings.HasPrefix(f.FlatName, prefix) {
+			out = append(out, f)
+		}
+	}
+
+	return out
 }
