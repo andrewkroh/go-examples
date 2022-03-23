@@ -37,6 +37,8 @@ func flattenField(key []string, f Field) ([]FlatField, error) {
 				Type:        f.Type,
 				External:    f.External,
 				Description: f.Description,
+				Source:      f.Source,
+				SourceLine:  f.SourceLine,
 			},
 		}, nil
 	}
@@ -48,6 +50,12 @@ func flattenField(key []string, f Field) ([]FlatField, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		// Inherit Source from parent.
+		for i := range tmpFlats {
+			tmpFlats[i].Source = f.Source
+		}
+
 		flat = append(flat, tmpFlats...)
 	}
 

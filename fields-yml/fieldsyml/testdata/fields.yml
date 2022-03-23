@@ -7,6 +7,9 @@
     - name: used_version
       type: integer
       description: The version of the item that was accessed
+    - name: used_version
+      type: long
+      description: The version of the item that was accessed
     - name: vault_uuid
       type: keyword
       description: The UUID of the vault the item is in

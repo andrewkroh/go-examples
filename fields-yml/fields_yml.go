@@ -7,16 +7,19 @@ import (
 	"log"
 	"os"
 
+	"github.com/andrewkroh/go-examples/fields-yml-gen/ecs"
 	"github.com/andrewkroh/go-examples/fields-yml/fieldsyml"
 )
 
 // Flags
 var (
 	format string // Output format (list, json).
+	warn   bool   // Warn on invalid ECS field references.
 )
 
 func init() {
 	flag.StringVar(&format, "f", "list", "Output format (list or json). Defaults to list.")
+	flag.BoolVar(&warn, "w", true, "Warn on invalid external ECS field references.")
 }
 
 func main() {
@@ -35,6 +38,15 @@ func main() {
 	flat, err := fieldsyml.FlattenFields(fields)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	flat, hasUnresolved := fieldsyml.ResolveECSReferences(flat)
+	if hasUnresolved && warn {
+		for _, f := range flat {
+			if f.External == "ecs" && f.Type == "" {
+				log.Printf("WARN: %q in %s:%d does not exist is ECS %v.", f.Name, f.Source, f.SourceLine, ecs.Version)
+			}
+		}
 	}
 
 	switch format {

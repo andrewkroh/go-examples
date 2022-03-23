@@ -1,6 +1,7 @@
 package fieldsyml
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -38,7 +39,12 @@ func readFieldsYAML(path string) ([]Field, error) {
 
 	var fields []Field
 	if err = yaml.NewDecoder(f).Decode(&fields); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed reading from %q: %w", path, err)
+	}
+
+	// Set file path.
+	for i := range fields {
+		fields[i].Source = path
 	}
 
 	return fields, err
