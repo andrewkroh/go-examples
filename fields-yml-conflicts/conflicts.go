@@ -12,11 +12,13 @@ import (
 
 // Flags
 var (
-	warn bool // Warn on invalid ECS field references.
+	warn                bool // Warn on invalid ECS field references.
+	ignoreTextConflicts bool
 )
 
 func init() {
 	flag.BoolVar(&warn, "w", true, "Warn on invalid external ECS field references.")
+	flag.BoolVar(&ignoreTextConflicts, "i", true, "Ignore conflicts between keyword, constant_keyword, wildcard, text, and match_only_text.")
 }
 
 func outputJSON(v interface{}) error {
@@ -83,6 +85,17 @@ func detectConflicts(fields []fieldsyml.FlatField) []Conflict {
 	return conflicts
 }
 
+func isTextTypeConflict(types []string) bool {
+	for _, typ := range types {
+		switch typ {
+		case "keyword", "constant_keyword", "wildcard", "match_only_text", "text":
+		default:
+			return false
+		}
+	}
+	return true
+}
+
 func main() {
 	log.SetFlags(0)
 	flag.Parse()
@@ -111,6 +124,17 @@ func main() {
 	}
 
 	conflicts := detectConflicts(flat)
+
+	if ignoreTextConflicts {
+		filtered := conflicts[:0]
+		for _, x := range conflicts {
+			if !isTextTypeConflict(x.Types) {
+				filtered = append(filtered, x)
+			}
+		}
+		conflicts = filtered
+	}
+
 	if len(conflicts) == 0 {
 		log.Println("No conflicts.")
 		return
