@@ -16,7 +16,7 @@ func TestAddNext(t *testing.T) {
 	outData := new(bytes.Buffer)
 
 	cmd := newRootCommand()
-	cmd.SetArgs([]string{"add-next", "-f", "-", "--pr=1111", "-d", "Hello", "--type=en"})
+	cmd.SetArgs([]string{"add-next", "--changelog", "-", "--pr=1111", "-d", "Hello", "--type=en", "--manifest="})
 	cmd.SetIn(bytes.NewReader(inData))
 	cmd.SetOut(outData)
 
