@@ -1,6 +1,7 @@
 package changelog
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,23 +10,23 @@ import (
 )
 
 const releaseYAML = `# newer versions go on top
-- version: 1.2.1
+- version: "1.2.1"
   changes:
     - description: Add documentation for multi-fields
       type: enhancement
       link: https://github.com/elastic/integrations/pull/2916
 `
 
-func TestRelease_UnmarshalYAML(t *testing.T) {
-	var releases []Release
+func TestFromYAML(t *testing.T) {
+	var cl Changelog
 
-	err := yaml.Unmarshal([]byte(releaseYAML), &releases)
+	err := yaml.Unmarshal([]byte(releaseYAML), &cl)
 	require.NoError(t, err)
-	require.Len(t, releases, 1)
+	require.Len(t, cl, 1)
 
-	rel := releases[0]
-	assert.Equal(t, "# newer versions go on top", rel.HeadComment)
-	assert.Equal(t, "1.2.1", rel.Version)
+	rel, err := NewReleaseFromNode(cl[0])
+	require.NoError(t, err)
+	assert.EqualValues(t, "1.2.1", rel.Version)
 	require.Len(t, rel.Changes, 1)
 
 	change := rel.Changes[0]
@@ -34,33 +35,31 @@ func TestRelease_UnmarshalYAML(t *testing.T) {
 	assert.Equal(t, "https://github.com/elastic/integrations/pull/2916", change.Link)
 }
 
-func TestRelease_MarshalYAML(t *testing.T) {
-	rel := []Release{
-		{
-			HeadComment: "# newer versions go on top",
-			Version:     "1.2.1",
-			Changes: []Change{
-				{
-					Description: "Add documentation for multi-fields",
-					Type:        "enhancement",
-					Link:        "https://github.com/elastic/integrations/pull/2916",
-				},
+func TestToYAML(t *testing.T) {
+	rel := Release{
+		Version: "1.2.1",
+		Changes: []Change{
+			{
+				Description: "Add documentation for multi-fields",
+				Type:        "enhancement",
+				Link:        "https://github.com/elastic/integrations/pull/2916",
 			},
 		},
 	}
 
-	data, err := yaml.Marshal(rel)
+	node, err := rel.ToYAMLNode()
+	require.NoError(t, err)
+	node.HeadComment = "# newer versions go on top"
+
+	cl := Changelog{*node}
+	data, err := yaml.Marshal(cl)
 	require.NoError(t, err)
 	assert.Equal(t, releaseYAML, string(data))
 }
 
-func TestMarshalReleaseWithHeadComment(t *testing.T) {
-	r := &Release{
-		HeadComment: "# Comment 1",
-		Version:     "1.2.3",
-	}
-
-	data, err := yaml.Marshal(r)
+func TestDoubleQuotedYAMLString(t *testing.T) {
+	var ver VersionString = "1.2.3"
+	yml, err := yaml.Marshal(ver)
 	require.NoError(t, err)
-	assert.Contains(t, string(data), "# Comment 1")
+	assert.Equal(t, `"1.2.3"`, strings.TrimSpace(string(yml)))
 }

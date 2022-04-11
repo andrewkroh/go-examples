@@ -104,23 +104,33 @@ func (c *addNextCmd) addNext(r io.Reader) ([]byte, error) {
 		return nil, errors.New("changelog is empty")
 	}
 
-	rel, err := c.newRelease(cl[0].Version)
+	latest, err := changelog.NewReleaseFromNode(cl[0])
+	if err != nil {
+		return nil, err
+	}
+
+	rel, err := c.newRelease(latest.Version)
+	if err != nil {
+		return nil, err
+	}
+
+	relNode, err := rel.ToYAMLNode()
 	if err != nil {
 		return nil, err
 	}
 
 	// Move comments to first node.
-	rel.HeadComment = cl[0].HeadComment
+	relNode.HeadComment = cl[0].HeadComment
 	cl[0].HeadComment = ""
 
 	// Insert new release at top.
-	cl = append([]changelog.Release{*rel}, cl...)
+	cl = append([]yaml.Node{*relNode}, cl...)
 
 	return yaml.Marshal(cl)
 }
 
-func (c *addNextCmd) newRelease(currentVersion string) (*changelog.Release, error) {
-	ver, err := semver.NewVersion(currentVersion)
+func (c *addNextCmd) newRelease(currentVersion changelog.VersionString) (*changelog.Release, error) {
+	ver, err := semver.NewVersion(string(currentVersion))
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +157,7 @@ func (c *addNextCmd) newRelease(currentVersion string) (*changelog.Release, erro
 	}
 
 	return &changelog.Release{
-		Version: ver.String(),
+		Version: changelog.VersionString(ver.String()),
 		Changes: []changelog.Change{
 			{
 				Description: c.description,

@@ -4,15 +4,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Changelog []Release
+type Changelog []yaml.Node
 
 type Release struct {
-	Version string   `json:"version"`
-	Changes []Change `json:"changes"`
-
-	// HeadComment holds any comments in the lines preceding the node and
-	// not separated by an empty line.
-	HeadComment string `yaml:"-"`
+	Version VersionString `json:"version"`
+	Changes []Change      `json:"changes"`
 }
 
 type Change struct {
@@ -21,27 +17,29 @@ type Change struct {
 	Link        string `json:"link"`
 }
 
-func (r *Release) UnmarshalYAML(node *yaml.Node) error {
-	type release Release
-	tmp := (*release)(r)
+type VersionString string
 
-	if err := node.Decode(&tmp); err != nil {
-		return err
-	}
-
-	r.HeadComment = node.HeadComment
-	return nil
-}
-
-func (r Release) MarshalYAML() (interface{}, error) {
-	type release Release
-	tmp := (release)(r)
-
-	var node yaml.Node
-	if err := node.Encode(tmp); err != nil {
+func (s VersionString) MarshalYAML() (interface{}, error) {
+	var n yaml.Node
+	if err := n.Encode(string(s)); err != nil {
 		return nil, err
 	}
+	n.Style = yaml.DoubleQuotedStyle
+	return n, nil
+}
 
-	node.HeadComment = r.HeadComment
-	return node, nil
+func NewReleaseFromNode(n yaml.Node) (*Release, error) {
+	var r Release
+	if err := n.Decode(&r); err != nil {
+		return nil, err
+	}
+	return &r, nil
+}
+
+func (r Release) ToYAMLNode() (*yaml.Node, error) {
+	var n yaml.Node
+	if err := n.Encode(r); err != nil {
+		return nil, err
+	}
+	return &n, nil
 }
