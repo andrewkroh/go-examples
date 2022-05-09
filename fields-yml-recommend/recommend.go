@@ -6,10 +6,21 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/andrewkroh/go-examples/fields-yml-gen/ecs"
 	"github.com/andrewkroh/go-examples/fields-yml/fieldsyml"
 )
+
+var usage = `
+fields-yml-recommend advises you on changes to fields YAML fields. It
+is recommended that you point it at all fields files within a single data stream
+so that it has the full list of fields. It detects multiple issues:
+
+- Fields that exist in ECS, but are not using an 'external: ecs' definition.
+- Fields that are duplicated.
+
+`[1:]
 
 // Flags
 var (
@@ -18,7 +29,12 @@ var (
 )
 
 func init() {
-	flag.StringVar(&format, "f", "json", "Output format (list or json). Defaults to json.")
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), usage+"Usage of %s:\n", filepath.Base(os.Args[0]))
+		flag.PrintDefaults()
+	}
+
+	flag.StringVar(&format, "f", "json", "Output format (list or json). Defaults to list.")
 	flag.BoolVar(&warn, "w", true, "Warn on invalid external ECS field references.")
 }
 
@@ -56,25 +72,48 @@ func main() {
 	}
 
 	var recommendations []Recommendation
+
+	// ECS fields that could be used.
 	for _, f := range flat {
 		if f.External != "" {
 			// Only analyze non-external fields.
 			continue
 		}
 
-		r := Recommendation{
-			Name:  f.Name,
-			Types: f.Type,
-			File:  f.Source,
-			Line:  f.SourceLine,
-		}
-
 		if ecsField := ecs.GetField(f.Name); ecsField != nil {
-			r.Notes = append(r.Notes, "Use 'external: ecs' to import the ECS definition.")
+			recommendations = append(recommendations, Recommendation{
+				Name:  f.Name,
+				Types: f.Type,
+				File:  f.Source,
+				Line:  f.SourceLine,
+				Notes: []string{"Use 'external: ecs' to import the ECS definition."},
+			})
+		}
+	}
+
+	// Duplicates definitions by name.
+	{
+		fieldSet := map[string][]fieldsyml.FlatField{}
+		for _, f := range flat {
+			list := fieldSet[f.Name]
+			list = append(list, f)
+			fieldSet[f.Name] = list
 		}
 
-		if len(r.Notes) > 0 {
-			recommendations = append(recommendations, r)
+		for _, fields := range fieldSet {
+			if len(fields) > 1 {
+				for _, f := range fields {
+					recommendations = append(recommendations, Recommendation{
+						Name:  f.Name,
+						Types: f.Type,
+						File:  f.Source,
+						Line:  f.SourceLine,
+						Notes: []string{
+							fmt.Sprintf("Duplicate field (%d times).", len(fields)),
+						},
+					})
+				}
+			}
 		}
 	}
 
