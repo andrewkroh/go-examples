@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -9,7 +10,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
+	"strings"
+	"text/template"
 
 	"github.com/coreos/go-semver/semver"
 	"go.uber.org/multierr"
@@ -36,11 +38,13 @@ following operations:
 var (
 	ecsVersion        string
 	pullRequestNumber string
+	owner             string
 )
 
 func init() {
 	flag.StringVar(&ecsVersion, "ecs-version", "", "ECS version (e.g. 8.3.0)")
 	flag.StringVar(&pullRequestNumber, "pr", "", "Pull request number")
+	flag.StringVar(&owner, "owner", "", "Only modify packages owned by this team.")
 }
 
 func main() {
@@ -57,59 +61,78 @@ func main() {
 	}
 }
 
-var versionReg = regexp.MustCompile(`(?m)(\d+\.\d+)\.\d+`)
-
 func updatePackage(path, ecsVersion string) error {
 	pkg, err := fleetpkg.ReadPackage(path)
 	if err != nil {
 		return err
 	}
 
+	if strings.Contains(strings.ToLower(pkg.Manifest.OriginalData.Description), "deprecated") {
+		// Skip
+		return nil
+	}
+
+	if owner != "" {
+		if pkg.Manifest.OriginalData.Owner.Github != owner {
+			// Skip
+			return nil
+		}
+	}
+
+	var oldECSReference string
 	if pkg.BuildManifest != nil {
 		ver, err := semver.NewVersion(ecsVersion)
 		if err != nil {
 			return err
 		}
 
-		branchName := fmt.Sprintf("%d.%d", ver.Major, ver.Minor)
-
-		_, err = pkg.BuildManifest.SetBuildManifestECSReference("git@" + branchName)
+		newECSReference := "git@" + fmt.Sprintf("%d.%d", ver.Major, ver.Minor)
+		oldECSReference, err = pkg.BuildManifest.SetBuildManifestECSReference(newECSReference)
 		if err != nil {
 			return err
 		}
-	}
 
-	for _, ds := range pkg.DataStreams {
-		if ds.DefaultPipeline != nil {
-			_, err := ds.DefaultPipeline.SetIngestNodePipelineECSVersion(ecsVersion)
-			if err != nil {
-				return err
-			}
-		}
-
-		if ds.SampleEvent != nil {
-			_, err := ds.SampleEvent.SetSampleEventECSVersion(ecsVersion)
-			if err != nil {
-				return err
-			}
+		// No changes.
+		if oldECSReference == newECSReference {
+			return nil
 		}
 	}
 
-	err = WriteDocument(pkg.BuildManifest.FilePath, pkg.BuildManifest.WriteYAML)
+	oldECSVersions := map[string]struct{}{}
+	for dataStreamName, ds := range pkg.DataStreams {
+		if ds.DefaultPipeline != nil {
+			old, err := ds.DefaultPipeline.SetIngestNodePipelineECSVersion(ecsVersion)
+			if err != nil {
+				return fmt.Errorf("in %s/%s default pipeline: %w", pkg.Manifest.OriginalData.Name, dataStreamName, err)
+			}
+			oldECSVersions[old] = struct{}{}
+
+			// Only update sample event if a pipeline exists.
+			if ds.SampleEvent != nil {
+				_, err := ds.SampleEvent.SetSampleEventECSVersion(ecsVersion)
+				if err != nil {
+					log.Println("WARN:", pkg.Manifest.OriginalData.Name, "/", dataStreamName, ":", err)
+				}
+			}
+		}
+	}
+
+	if pkg.BuildManifest == nil {
+		log.Println("WARN:", pkg.Manifest.OriginalData.Name, ": No build manifest found in package.")
+		return nil
+	}
+
+	err = WriteDocument(pkg.BuildManifest, pkg.BuildManifest.WriteYAML)
 	for _, ds := range pkg.DataStreams {
 		if ds.DefaultPipeline != nil {
-			err = multierr.Append(err, WriteDocument(ds.DefaultPipeline.FilePath, ds.DefaultPipeline.WriteYAML))
+			err = multierr.Append(err, WriteDocument(ds.DefaultPipeline, ds.DefaultPipeline.WriteYAML))
 		}
 		if ds.SampleEvent != nil {
-			err = multierr.Append(err, WriteDocument(ds.SampleEvent.FilePath, func(w io.Writer) error { return ds.SampleEvent.WriteJSON(w, 4) }))
+			err = multierr.Append(err, WriteDocument(ds.SampleEvent, func(w io.Writer) error { return ds.SampleEvent.WriteJSON(w, 4) }))
 		}
 	}
 
 	if err != nil {
-		return err
-	}
-
-	if err = PurgeWhitespaceChanges(path); err != nil {
 		return err
 	}
 
@@ -121,38 +144,38 @@ func updatePackage(path, ecsVersion string) error {
 		return err
 	}
 
-	commitMessage := fmt.Sprintf(`%s - update to ECS %s
+	var oldPipelineVersions []string
+	for v := range oldECSVersions {
+		oldPipelineVersions = append(oldPipelineVersions, v)
+	}
 
-[git-generate]
-ecs-update -ecs-version=8.3.0 -pr=%s packages/%s
-`, pkg.Manifest.OriginalData.Name, ecsVersion,
-		pullRequestNumber, pkg.Manifest.OriginalData.Name)
+	msg, err := CommitMessage{
+		Manifest:            pkg.Manifest.OriginalData,
+		ECSVersion:          ecsVersion,
+		OldECSReference:     oldECSReference,
+		PipelineECSVersions: oldPipelineVersions,
+		PullRequestNumber:   pullRequestNumber,
+	}.Build()
+	if err != nil {
+		return err
+	}
 
-	if err = Commit(path, commitMessage); err != nil {
+	if err = Commit(path, msg); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func WriteDocument(path string, encode func(io.Writer) error) error {
-	f, err := os.Create(path)
+func WriteDocument[T any](doc *fleetpkg.YAMLDocument[T], encode func(io.Writer) error) error {
+	f, err := os.Create(doc.FilePath)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	return encode(f)
-}
-
-func PurgeWhitespaceChanges(path string) error {
-	return ExecutePlan(path, []string{
-		// Stage non-whitespace changes.
-		`git diff -U0 -w --no-color --ignore-blank-lines | git apply --cached --ignore-whitespace --unidiff-zero -`,
-
-		// Purge whitespace
-		`git checkout -- .`,
-	})
+	_, err = f.Write(doc.RawYAML)
+	return err
 }
 
 func BuildAndUpdate(path string) error {
@@ -201,4 +224,36 @@ func ExecutePlan(pwd string, plan []string) error {
 	}
 
 	return nil
+}
+
+var commitTmpl = template.Must(template.New("commit").Funcs(template.FuncMap{
+	"join": strings.Join,
+}).Parse(strings.TrimSpace(`
+[{{ .Manifest.Name }}] - update ECS to {{ .ECSVersion }}
+
+This updates the {{ .Manifest.Name }} integration to ECS {{ .ECSVersion }}.
+{{ if .PipelineECSVersions -}}
+It was referencing elastic/ecs {{ .OldECSReference }} and using {{ join .PipelineECSVersions ", " }} in ingest pipelines.
+{{ else -}}
+It was referencing elastic/ecs {{ .OldECSReference }} and no pipelines set ecs.version.
+{{ end }}
+
+[git-generate]
+ecs-update -ecs-version=8.3.0 {{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}packages/{{ .Manifest.Name }}
+`)))
+
+type CommitMessage struct {
+	Manifest            fleetpkg.Manifest
+	ECSVersion          string
+	OldECSReference     string
+	PipelineECSVersions []string
+	PullRequestNumber   string
+}
+
+func (m CommitMessage) Build() (string, error) {
+	buf := new(bytes.Buffer)
+	if err := commitTmpl.Execute(buf, m); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }

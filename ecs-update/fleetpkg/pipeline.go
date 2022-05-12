@@ -1,6 +1,7 @@
 package fleetpkg
 
 import (
+	"bytes"
 	"errors"
 
 	"gopkg.in/yaml.v3"
@@ -42,7 +43,18 @@ func (doc *YAMLDocument[IngestNodePipeline]) SetIngestNodePipelineECSVersion(ver
 		return "", errors.New("expected only one match")
 	}
 
-	old = nodes[0].Value
-	nodes[0].Value = version
+	node := nodes[0]
+	old = node.Value
+	node.Value = version
+
+	doc.RawYAML = ModifyLine(doc.RawYAML, node.Line, old, version)
+
 	return old, nil
+}
+
+func ModifyLine(content []byte, lineNumber int, old, new string) []byte {
+	lineIndex := lineNumber - 1
+	parts := bytes.SplitN(content, []byte("\n"), lineIndex+1)
+	parts[lineIndex] = bytes.Replace(parts[lineIndex], []byte(old), []byte(new), 1)
+	return bytes.Join(parts, []byte("\n"))
 }

@@ -122,7 +122,7 @@ func ReadPackage(path string) (*Package, error) {
 		}
 
 		sampleEvent, err := ReadYAMLDocument[SampleEvent](filepath.Join(dsPath, "sample_event.json"))
-		if err != nil {
+		if err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return nil, err
 		}
 

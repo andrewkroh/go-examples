@@ -14,7 +14,10 @@ func (doc *YAMLDocument[BuildManifest]) SetSampleEventECSVersion(version string)
 		return "", errors.New("expected only one match")
 	}
 
-	old = nodes[0].Value
-	nodes[0].Value = version
+	node := nodes[0]
+	old = node.Value
+	node.Value = version
+	doc.RawYAML = ModifyLine(doc.RawYAML, node.Line, old, version)
+
 	return old, nil
 }
