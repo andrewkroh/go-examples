@@ -1,0 +1,4 @@
+dependencies:
+  ecs:
+    # A comment.
+    reference: git@8.2
