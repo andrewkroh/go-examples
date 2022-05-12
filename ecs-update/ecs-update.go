@@ -207,7 +207,7 @@ func Commit(path, message string) error {
 }
 
 func AddChangelog(path, pr, description string) error {
-	cmd := fmt.Sprintf(`elastic-package-changelog add-next --type=enhancement -d=%q`, description)
+	cmd := fmt.Sprintf(`elastic-package-changelog add-next --type=enhancement -d=%q `, description)
 	if pr != "" {
 		cmd += "--pr=" + pr
 	}
