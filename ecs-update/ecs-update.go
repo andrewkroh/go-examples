@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"text/template"
 
@@ -48,6 +49,10 @@ func init() {
 }
 
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), usage+"\nVersion: %s\n\nUsage of %s:\n", getVersion(), filepath.Base(os.Args[0]))
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	if ecsVersion == "" {
@@ -227,7 +232,8 @@ func ExecutePlan(pwd string, plan []string) error {
 }
 
 var commitTmpl = template.Must(template.New("commit").Funcs(template.FuncMap{
-	"join": strings.Join,
+	"join":        strings.Join,
+	"toolVersion": getVersion,
 }).Parse(strings.TrimSpace(`
 [{{ .Manifest.Name }}] - update ECS to {{ .ECSVersion }}
 
@@ -239,7 +245,7 @@ It was referencing elastic/ecs {{ .OldECSReference }} and no pipelines set ecs.v
 {{ end }}
 
 [git-generate]
-ecs-update -ecs-version=8.3.0 {{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}packages/{{ .Manifest.Name }}
+go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version=8.3.0 {{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}packages/{{ .Manifest.Name }}
 `)))
 
 type CommitMessage struct {
@@ -256,4 +262,12 @@ func (m CommitMessage) Build() (string, error) {
 		return "", err
 	}
 	return buf.String(), nil
+}
+
+func getVersion() string {
+	info, ok := debug.ReadBuildInfo()
+	if !ok || info.Main.Version == "(devel)" {
+		return "latest"
+	}
+	return info.Main.Version
 }
