@@ -235,7 +235,7 @@ var commitTmpl = template.Must(template.New("commit").Funcs(template.FuncMap{
 	"join":        strings.Join,
 	"toolVersion": getVersion,
 }).Parse(strings.TrimSpace(`
-[{{ .Manifest.Name }}] - update ECS to {{ .ECSVersion }}
+[{{ .Manifest.Name }}] - update ECS to {{ .ECSVersion }}{{ if .PipelineECSVersions }} from {{ index .PipelineECSVersions 0 }}{{ end }}
 
 This updates the {{ .Manifest.Name }} integration to ECS {{ .ECSVersion }}.
 {{ if .PipelineECSVersions -}}
