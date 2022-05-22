@@ -108,7 +108,8 @@ func updatePackage(path, ecsVersion string) error {
 		if ds.DefaultPipeline != nil {
 			old, err := ds.DefaultPipeline.SetIngestNodePipelineECSVersion(ecsVersion)
 			if err != nil {
-				return fmt.Errorf("in %s/%s default pipeline: %w", pkg.Manifest.OriginalData.Name, dataStreamName, err)
+				log.Printf("WARN: in %s/%s default pipeline: %v", pkg.Manifest.OriginalData.Name, dataStreamName, err)
+				continue
 			}
 			oldECSVersions[old] = struct{}{}
 
