@@ -245,7 +245,7 @@ It was referencing elastic/ecs {{ .OldECSReference }} and no pipelines set ecs.v
 {{ end }}
 
 [git-generate]
-go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version=8.3.0 {{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}packages/{{ .Manifest.Name }}
+go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version={{ .ECSVersion }} {{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}packages/{{ .Manifest.Name }}
 `)))
 
 type CommitMessage struct {
