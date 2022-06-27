@@ -38,12 +38,14 @@ following operations:
 
 var (
 	ecsVersion        string
+	ecsGitReference   string
 	pullRequestNumber string
 	owner             string
 )
 
 func init() {
 	flag.StringVar(&ecsVersion, "ecs-version", "", "ECS version (e.g. 8.3.0)")
+	flag.StringVar(&ecsGitReference, "ecs-git-ref", "", "Git reference of ECS repo. Git tags are recommended. Defaults to release branch of the ecs-version (e.g. uses 8.3 for 8.3.0).")
 	flag.StringVar(&pullRequestNumber, "pr", "", "Pull request number")
 	flag.StringVar(&owner, "owner", "", "Only modify packages owned by this team.")
 }
@@ -91,7 +93,11 @@ func updatePackage(path, ecsVersion string) error {
 			return err
 		}
 
+		// Default to ECS release branch.
 		newECSReference := "git@" + fmt.Sprintf("%d.%d", ver.Major, ver.Minor)
+		if ecsGitReference != "" {
+			newECSReference = "git@" + ecsGitReference
+		}
 		oldECSReference, err = pkg.BuildManifest.SetBuildManifestECSReference(newECSReference)
 		if err != nil {
 			return err
@@ -158,6 +164,7 @@ func updatePackage(path, ecsVersion string) error {
 	msg, err := CommitMessage{
 		Manifest:            pkg.Manifest.OriginalData,
 		ECSVersion:          ecsVersion,
+		ECSGitReference:     ecsGitReference,
 		OldECSReference:     oldECSReference,
 		PipelineECSVersions: oldPipelineVersions,
 		PullRequestNumber:   pullRequestNumber,
@@ -246,12 +253,13 @@ It was referencing elastic/ecs {{ .OldECSReference }} and no pipelines set ecs.v
 {{ end }}
 
 [git-generate]
-go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version={{ .ECSVersion }} {{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}packages/{{ .Manifest.Name }}
+go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version={{ .ECSVersion }} {{ if .ECSGitReference }}-ecs-git-ref={{ .ECSGitReference }} {{ end }}{{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}packages/{{ .Manifest.Name }}
 `)))
 
 type CommitMessage struct {
 	Manifest            fleetpkg.Manifest
 	ECSVersion          string
+	ECSGitReference     string
 	OldECSReference     string
 	PipelineECSVersions []string
 	PullRequestNumber   string
