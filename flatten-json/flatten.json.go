@@ -21,10 +21,7 @@ func init() {
 	flag.BoolVar(&pretty, "p", false, "Output flattened object as pretty formatted.")
 }
 
-func ReadObject(r io.Reader) (map[string]interface{}, error) {
-	dec := json.NewDecoder(r)
-	dec.UseNumber()
-
+func ReadObject(dec *json.Decoder) (map[string]interface{}, error) {
 	obj := map[string]interface{}{}
 	if err := dec.Decode(&obj); err != nil {
 		return nil, err
@@ -75,22 +72,28 @@ func KeyList(obj map[string]interface{}) []string {
 func main() {
 	flag.Parse()
 
-	// NOTE: This does not handle streaming JSON. It expects a single object.
-	obj, err := ReadObject(os.Stdin)
-	if err != nil {
-		log.Fatal("Error reading input JSON:", err)
-	}
+	dec := json.NewDecoder(os.Stdin)
+	dec.UseNumber()
 
-	flat := Flatten(obj)
-
-	if list {
-		for _, key := range KeyList(flat) {
-			fmt.Println(key)
+	for dec.More() {
+		obj, err := ReadObject(dec)
+		if err != nil {
+			log.Fatal("Error reading input JSON:", err)
 		}
-		return
-	}
 
-	if err = ToJSON(flat, pretty, os.Stdout); err != nil {
-		log.Fatal(err)
+		flat := Flatten(obj)
+
+		if list {
+			for _, key := range KeyList(flat) {
+				fmt.Println(key)
+			}
+			continue
+		}
+
+		if err = ToJSON(flat, pretty, os.Stdout); err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println("---")
 	}
 }
