@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"log"
 	"os"
 	"strings"
@@ -20,6 +21,9 @@ type parameter struct {
 // Scrapes the Elasticsearch Ingest Node docs to produce a JSON document
 // containing the parameters for each processor.
 func main() {
+	var elasticsearchVersion = flag.String("es-version", "current", "Documentation branch (e.g. current, 8.4, etc)")
+	flag.Parse()
+
 	// Instantiate collector
 	c := colly.NewCollector()
 	c.CacheDir = ".cache"
@@ -95,7 +99,7 @@ func main() {
 		})
 	})
 
-	err := c.Visit("https://www.elastic.co/guide/en/elasticsearch/reference/master/processors.html")
+	err := c.Visit("https://www.elastic.co/guide/en/elasticsearch/reference/" + *elasticsearchVersion + "/processors.html")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,0 +1,1997 @@
+{
+  "append": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to be appended to. Supports template snippets."
+    },
+    {
+      "name": "value",
+      "required": true,
+      "description": "The value to be appended. Supports template snippets."
+    },
+    {
+      "name": "allow_duplicates",
+      "required": false,
+      "default": "true",
+      "description": "If false, the processor does not append values already present in the field."
+    },
+    {
+      "name": "media_type",
+      "required": false,
+      "default": "application/json",
+      "description": "The media type for encoding value. Applies only when value is a template snippet. Must be one of application/json, text/plain, or application/x-www-form-urlencoded."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "bytes": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to convert"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the converted value to, by default field is updated in-place"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "circle": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The string-valued field to trim whitespace from"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the polygon shape to, by default field is updated in-place"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "error_distance",
+      "required": true,
+      "description": "The difference between the resulting inscribed distance from center to side and the circle’s radius (measured in meters for geo_shape, unit-less for shape)"
+    },
+    {
+      "name": "shape_type",
+      "required": true,
+      "description": "which field mapping type is to be used when processing the circle: geo_shape or shape"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "community_id": [
+    {
+      "name": "source_ip",
+      "required": false,
+      "default": "source.ip",
+      "description": "Field containing the source IP address."
+    },
+    {
+      "name": "source_port",
+      "required": false,
+      "default": "source.port",
+      "description": "Field containing the source port."
+    },
+    {
+      "name": "destination_ip",
+      "required": false,
+      "default": "destination.ip",
+      "description": "Field containing the destination IP address."
+    },
+    {
+      "name": "destination_port",
+      "required": false,
+      "default": "destination.port",
+      "description": "Field containing the destination port."
+    },
+    {
+      "name": "iana_number",
+      "required": false,
+      "default": "network.iana_number",
+      "description": "Field containing the IANA number."
+    },
+    {
+      "name": "icmp_type",
+      "required": false,
+      "default": "icmp.type",
+      "description": "Field containing the ICMP type."
+    },
+    {
+      "name": "icmp_code",
+      "required": false,
+      "default": "icmp.code",
+      "description": "Field containing the ICMP code."
+    },
+    {
+      "name": "transport",
+      "required": false,
+      "default": "network.transport",
+      "description": "Field containing the transport protocol. Used only when the iana_number field is not present."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "network.community_id",
+      "description": "Output field for the community ID."
+    },
+    {
+      "name": "seed",
+      "required": false,
+      "default": "0",
+      "description": "Seed for the community ID hash. Must be between 0 and 65535 (inclusive). The seed can prevent hash collisions between network domains, such as a staging and production network that use the same addressing scheme."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "true",
+      "description": "If true and any required fields are missing, the processor quietly exits without modifying the document."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "convert": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field whose value is to be converted"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the converted value to, by default field is updated in-place"
+    },
+    {
+      "name": "type",
+      "required": true,
+      "description": "The type to convert the existing value to"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "csv": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to extract data from"
+    },
+    {
+      "name": "target_fields",
+      "required": true,
+      "description": "The array of fields to assign extracted values to"
+    },
+    {
+      "name": "separator",
+      "required": false,
+      "default": ",",
+      "description": "Separator used in CSV, has to be single character string"
+    },
+    {
+      "name": "quote",
+      "required": false,
+      "default": "\"",
+      "description": "Quote used in CSV, has to be single character string"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "true",
+      "description": "If true and field does not exist, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "trim",
+      "required": false,
+      "default": "false",
+      "description": "Trim whitespaces in unquoted fields"
+    },
+    {
+      "name": "empty_value",
+      "required": false,
+      "description": "Value used to fill empty fields, empty fields will be skipped if this is not provided.                                              Empty field is one with no value (2 consecutive separators) or empty quotes (\"\")"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "date": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to get the date from."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "@timestamp",
+      "description": "The field that will hold the parsed date."
+    },
+    {
+      "name": "formats",
+      "required": true,
+      "description": "An array of the expected date formats. Can be a java time pattern or one of the following formats: ISO8601, UNIX, UNIX_MS, or TAI64N."
+    },
+    {
+      "name": "timezone",
+      "required": false,
+      "default": "UTC",
+      "description": "The timezone to use when parsing the date. Supports template snippets."
+    },
+    {
+      "name": "locale",
+      "required": false,
+      "default": "ENGLISH",
+      "description": "The locale to use when parsing the date, relevant when parsing month names or week days. Supports template snippets."
+    },
+    {
+      "name": "output_format",
+      "required": false,
+      "default": "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+      "description": "The format to use when writing the date to target_field. Must be a valid java time pattern."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "date_index_name": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to get the date or timestamp from."
+    },
+    {
+      "name": "index_name_prefix",
+      "required": false,
+      "description": "A prefix of the index name to be prepended before the printed date. Supports template snippets."
+    },
+    {
+      "name": "date_rounding",
+      "required": true,
+      "description": "How to round the date when formatting the date into the index name. Valid values are: y (year), M (month), w (week), d (day), h (hour), m (minute) and s (second). Supports template snippets."
+    },
+    {
+      "name": "date_formats",
+      "required": false,
+      "default": "yyyy-MM-dd'T'HH:mm:ss.SSSXX",
+      "description": "An array of the expected date formats for parsing dates / timestamps in the document being preprocessed. Can be a java time pattern or one of the following formats: ISO8601, UNIX, UNIX_MS, or TAI64N."
+    },
+    {
+      "name": "timezone",
+      "required": false,
+      "default": "UTC",
+      "description": "The timezone to use when parsing the date and when date math index supports resolves expressions into concrete index names."
+    },
+    {
+      "name": "locale",
+      "required": false,
+      "default": "ENGLISH",
+      "description": "The locale to use when parsing the date from the document being preprocessed, relevant when parsing month names or week days."
+    },
+    {
+      "name": "index_name_format",
+      "required": false,
+      "default": "yyyy-MM-dd",
+      "description": "The format to be used when printing the parsed date into the index name. A valid java time pattern is expected here. Supports template snippets."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "dissect": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to dissect"
+    },
+    {
+      "name": "pattern",
+      "required": true,
+      "description": "The pattern to apply to the field"
+    },
+    {
+      "name": "append_separator",
+      "required": false,
+      "default": "\"\" (empty string)",
+      "description": "The character(s) that separate the appended fields."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "dot_expander": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to expand into an object field. If set to *, all top-level fields will be expanded."
+    },
+    {
+      "name": "path",
+      "required": false,
+      "description": "The field that contains the field to expand. Only required if the field to expand is part another object field, because the field option can only understand leaf fields."
+    },
+    {
+      "name": "override",
+      "required": false,
+      "default": "false",
+      "description": "Controls the behavior when there is already an existing nested object that conflicts with the expanded field. When false, the processor will merge conflicts by combining the old and the new values into an array. When true, the value from the expanded field will overwrite the existing value."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "drop": [
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "enrich": [
+    {
+      "name": "policy_name",
+      "required": true,
+      "description": "The name of the enrich policy to use."
+    },
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field in the input document that matches the policies match_field used to retrieve the enrichment data. Supports template snippets."
+    },
+    {
+      "name": "target_field",
+      "required": true,
+      "description": "Field added to incoming documents to contain enrich data. This field contains both the match_field and enrich_fields specified in the enrich policy. Supports template snippets."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "override",
+      "required": false,
+      "default": "true",
+      "description": "If processor will update fields with pre-existing non-null-valued field. When set to false, such fields will not be touched."
+    },
+    {
+      "name": "max_matches",
+      "required": false,
+      "default": "1",
+      "description": "The maximum number of matched documents to include under the configured target field. The target_field will be turned into a json array if max_matches is higher than 1, otherwise target_field will become a json object. In order to avoid documents getting too large, the maximum allowed value is 128."
+    },
+    {
+      "name": "shape_relation",
+      "required": false,
+      "default": "INTERSECTS",
+      "description": "A spatial relation operator used to match the geoshape of incoming documents to documents in the enrich index. This option is only used for geo_match enrich policy types. See Spatial Relations for operators and more information."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "fail": [
+    {
+      "name": "message",
+      "required": true,
+      "description": "The error message thrown by the processor. Supports template snippets."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "fingerprint": [
+    {
+      "name": "fields",
+      "required": true,
+      "default": "n/a",
+      "description": "Array of fields to include in the fingerprint. For objects, the processor hashes both the field key and value. For other fields, the processor hashes only the field value."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "fingerprint",
+      "description": "Output field for the fingerprint."
+    },
+    {
+      "name": "salt",
+      "required": false,
+      "default": "\u003cnone\u003e",
+      "description": "Salt value for the hash function."
+    },
+    {
+      "name": "method",
+      "required": false,
+      "default": "SHA-1",
+      "description": "The hash method used to compute the fingerprint. Must be one of MD5, SHA-1, SHA-256, SHA-512, or MurmurHash3."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true, the processor ignores any missing fields. If all fields are missing, the processor silently exits without modifying the document."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "foreach": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "Field containing array or object values."
+    },
+    {
+      "name": "processor",
+      "required": true,
+      "description": "Ingest processor to run on each element."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true, the processor silently exits without changing the document if the field is null or missing."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "geoip": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to get the ip address from for the geographical lookup."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "geoip",
+      "description": "The field that will hold the geographical information looked up from the MaxMind database."
+    },
+    {
+      "name": "database_file",
+      "required": false,
+      "default": "GeoLite2-City.mmdb",
+      "description": "The database filename referring to a database the module ships with (GeoLite2-City.mmdb, GeoLite2-Country.mmdb, or GeoLite2-ASN.mmdb) or a custom database in the ingest-geoip config directory."
+    },
+    {
+      "name": "properties",
+      "required": false,
+      "default": "[continent_name, country_iso_code, country_name, region_iso_code, region_name, city_name, location] *",
+      "description": "Controls what properties are added to the target_field based on the geoip lookup."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "first_only",
+      "required": false,
+      "default": "true",
+      "description": "If true only first found geoip data will be returned, even if field contains array"
+    }
+  ],
+  "grok": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to use for grok expression parsing"
+    },
+    {
+      "name": "patterns",
+      "required": true,
+      "description": "An ordered list of grok expression to match and extract named captures with. Returns on the first expression in the list that matches."
+    },
+    {
+      "name": "pattern_definitions",
+      "required": false,
+      "description": "A map of pattern-name and pattern tuples defining custom patterns to be used by the current processor. Patterns matching existing names will override the pre-existing definition."
+    },
+    {
+      "name": "ecs_compatibility",
+      "required": false,
+      "default": "disabled",
+      "description": "Must be disabled or v1. If v1, the processor uses patterns with Elastic Common Schema (ECS) field names."
+    },
+    {
+      "name": "trace_match",
+      "required": false,
+      "default": "false",
+      "description": "when true, _ingest._grok_match_index will be inserted into your matched document’s metadata with the index into the pattern found in patterns that matched."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "gsub": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to apply the replacement to"
+    },
+    {
+      "name": "pattern",
+      "required": true,
+      "description": "The pattern to be replaced"
+    },
+    {
+      "name": "replacement",
+      "required": true,
+      "description": "The string to replace the matching patterns with"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the converted value to, by default field is updated in-place"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "html_strip": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The string-valued field to remove HTML tags from"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the value to, by default field is updated in-place"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "inference": [
+    {
+      "name": "model_id",
+      "required": true,
+      "description": "(String) The ID or alias for the trained model."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "ml.inference.\u003cprocessor_tag\u003e",
+      "description": "(String) Field added to incoming documents to contain results objects."
+    },
+    {
+      "name": "field_map",
+      "required": false,
+      "default": "If defined the model’s default field map",
+      "description": "(Object) Maps the document field names to the known field names of the model. This mapping takes precedence over any default mappings provided in the model configuration."
+    },
+    {
+      "name": "inference_config",
+      "required": false,
+      "default": "The default settings defined in the model",
+      "description": "(Object) Contains the inference type and its options."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "join": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "Field containing array values to join"
+    },
+    {
+      "name": "separator",
+      "required": true,
+      "description": "The separator character"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the joined value to, by default field is updated in-place"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "json": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to be parsed."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field that the converted structured object will be written into. Any existing content in this field will be overwritten."
+    },
+    {
+      "name": "add_to_root",
+      "required": false,
+      "default": "false",
+      "description": "Flag that forces the parsed JSON to be added at the top level of the document. target_field must not be set when this option is chosen."
+    },
+    {
+      "name": "add_to_root_conflict_strategy",
+      "required": false,
+      "default": "replace",
+      "description": "When set to replace, root fields that conflict with fields from the parsed JSON will be overridden. When set to merge, conflicting fields will be merged. Only applicable if add_to_root is set to true."
+    },
+    {
+      "name": "allow_duplicate_keys",
+      "required": false,
+      "default": "false",
+      "description": "When set to true, the JSON parser will not fail if the JSON contains duplicate keys. Instead, the last encountered value for any duplicate key wins."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "kv": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to be parsed. Supports template snippets."
+    },
+    {
+      "name": "field_split",
+      "required": true,
+      "description": "Regex pattern to use for splitting key-value pairs"
+    },
+    {
+      "name": "value_split",
+      "required": true,
+      "description": "Regex pattern to use for splitting the key from the value within a key-value pair"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "null",
+      "description": "The field to insert the extracted keys into. Defaults to the root of the document. Supports template snippets."
+    },
+    {
+      "name": "include_keys",
+      "required": false,
+      "default": "null",
+      "description": "List of keys to filter and insert into document. Defaults to including all keys"
+    },
+    {
+      "name": "exclude_keys",
+      "required": false,
+      "default": "null",
+      "description": "List of keys to exclude from document"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "prefix",
+      "required": false,
+      "default": "null",
+      "description": "Prefix to be added to extracted keys"
+    },
+    {
+      "name": "trim_key",
+      "required": false,
+      "default": "null",
+      "description": "String of characters to trim from extracted keys"
+    },
+    {
+      "name": "trim_value",
+      "required": false,
+      "default": "null",
+      "description": "String of characters to trim from extracted values"
+    },
+    {
+      "name": "strip_brackets",
+      "required": false,
+      "default": "false",
+      "description": "If true strip brackets (), \u003c\u003e, [] as well as quotes ' and \" from extracted values"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "lowercase": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to make lowercase"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the converted value to, by default field is updated in-place"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "network_direction": [
+    {
+      "name": "source_ip",
+      "required": false,
+      "default": "source.ip",
+      "description": "Field containing the source IP address."
+    },
+    {
+      "name": "destination_ip",
+      "required": false,
+      "default": "destination.ip",
+      "description": "Field containing the destination IP address."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "network.direction",
+      "description": "Output field for the network direction."
+    },
+    {
+      "name": "internal_networks",
+      "required": true,
+      "description": "List of internal networks. Supports IPv4 and IPv6 addresses and ranges in CIDR notation. Also supports the named ranges listed below. These may be constructed with template snippets. * Must specify only one of internal_networks or internal_networks_field."
+    },
+    {
+      "name": "internal_networks_field",
+      "required": false,
+      "description": "A field on the given document to read the internal_networks configuration from."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "true",
+      "description": "If true and any required fields are missing, the processor quietly exits without modifying the document."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "pipeline": [
+    {
+      "name": "name",
+      "required": true,
+      "description": "The name of the pipeline to execute. Supports template snippets."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "registered_domain": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "Field containing the source FQDN."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "\u003cempty string\u003e",
+      "description": "Object field containing extracted domain components. If an \u003cempty string\u003e, the processor adds components to the document’s root."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "true",
+      "description": "If true and any required fields are missing, the processor quietly exits without modifying the document."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "remove": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "Fields to be removed. Supports template snippets."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "rename": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to be renamed. Supports template snippets."
+    },
+    {
+      "name": "target_field",
+      "required": true,
+      "description": "The new name of the field. Supports template snippets."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "script": [
+    {
+      "name": "lang",
+      "required": false,
+      "default": "\"painless\"",
+      "description": "Script language."
+    },
+    {
+      "name": "id",
+      "required": false,
+      "description": "ID of a stored script.                                          If no source is specified, this parameter is required."
+    },
+    {
+      "name": "source",
+      "required": false,
+      "description": "Inline script.                                          If no id is specified, this parameter is required."
+    },
+    {
+      "name": "params",
+      "required": false,
+      "description": "Object containing parameters for the script."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "set": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to insert, upsert, or update. Supports template snippets."
+    },
+    {
+      "name": "value",
+      "required": true,
+      "description": "The value to be set for the field. Supports template snippets. May specify only one of value or copy_from."
+    },
+    {
+      "name": "copy_from",
+      "required": false,
+      "description": "The origin field which will be copied to field, cannot set value simultaneously. Supported data types are boolean, number, array, object, string, date, etc."
+    },
+    {
+      "name": "override",
+      "required": false,
+      "default": "true",
+      "description": "If processor will update fields with pre-existing non-null-valued field. When set to false, such fields will not be touched."
+    },
+    {
+      "name": "ignore_empty_value",
+      "required": false,
+      "default": "false",
+      "description": "If true and value is a template snippet that evaluates to null or the empty string, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "media_type",
+      "required": false,
+      "default": "application/json",
+      "description": "The media type for encoding value. Applies only when value is a template snippet. Must be one of application/json, text/plain, or application/x-www-form-urlencoded."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "set_security_user": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to store the user information into."
+    },
+    {
+      "name": "properties",
+      "required": false,
+      "default": "[username, roles, email, full_name, metadata, api_key, realm, authentication_type]",
+      "description": "Controls what user related properties are added to the field."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "sort": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to be sorted"
+    },
+    {
+      "name": "order",
+      "required": false,
+      "default": "\"asc\"",
+      "description": "The sort order to use. Accepts \"asc\" or \"desc\"."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the sorted value to, by default field is updated in-place"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "split": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to split"
+    },
+    {
+      "name": "separator",
+      "required": true,
+      "description": "A regex which matches the separator, eg , or \\s+"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the split value to, by default field is updated in-place"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "preserve_trailing",
+      "required": false,
+      "default": "false",
+      "description": "Preserves empty trailing fields, if any."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "trim": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The string-valued field to trim whitespace from"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the trimmed value to, by default field is updated in-place"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "uppercase": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to make uppercase"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the converted value to, by default field is updated in-place"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "uri_parts": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "Field containing the URI string."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "url",
+      "description": "Output field for the URI object."
+    },
+    {
+      "name": "keep_original",
+      "required": false,
+      "default": "true",
+      "description": "If true, the processor copies the unparsed URI to \u003ctarget_field\u003e.original."
+    },
+    {
+      "name": "remove_if_successful",
+      "required": false,
+      "default": "false",
+      "description": "If true, the processor removes the field after parsing the URI string. If parsing fails, the processor does not remove the field."
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "url_decode": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field to decode"
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "field",
+      "description": "The field to assign the converted value to, by default field is updated in-place"
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist or is null, the processor quietly exits without modifying the document"
+    },
+    {
+      "name": "description",
+      "required": false,
+      "description": "Description of the processor. Useful for describing the purpose of the processor or its configuration."
+    },
+    {
+      "name": "if",
+      "required": false,
+      "description": "Conditionally execute the processor. See Conditionally run a processor."
+    },
+    {
+      "name": "ignore_failure",
+      "required": false,
+      "default": "false",
+      "description": "Ignore failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "on_failure",
+      "required": false,
+      "description": "Handle failures for the processor. See Handling pipeline failures."
+    },
+    {
+      "name": "tag",
+      "required": false,
+      "description": "Identifier for the processor. Useful for debugging and metrics."
+    }
+  ],
+  "user_agent": [
+    {
+      "name": "field",
+      "required": true,
+      "description": "The field containing the user agent string."
+    },
+    {
+      "name": "target_field",
+      "required": false,
+      "default": "user_agent",
+      "description": "The field that will be filled with the user agent details."
+    },
+    {
+      "name": "regex_file",
+      "required": false,
+      "description": "The name of the file in the config/ingest-user-agent directory containing the regular expressions for parsing the user agent string. Both the directory and the file have to be created before starting Elasticsearch. If not specified, ingest-user-agent will use the regexes.yaml from uap-core it ships with (see below)."
+    },
+    {
+      "name": "properties",
+      "required": false,
+      "default": "[name, major, minor, patch, build, os, os_name, os_major, os_minor, device]",
+      "description": "Controls what properties are added to target_field."
+    },
+    {
+      "name": "extract_device_type",
+      "required": false,
+      "default": "false",
+      "description": " [beta]  This functionality is in beta and is subject to change. The design and code is less mature than official GA features and is being provided as-is with no warranties. Beta features are not subject to the support SLA of official GA features.   Extracts device type from the user agent string on a best-effort basis."
+    },
+    {
+      "name": "ignore_missing",
+      "required": false,
+      "default": "false",
+      "description": "If true and field does not exist, the processor quietly exits without modifying the document"
+    }
+  ]
+}
