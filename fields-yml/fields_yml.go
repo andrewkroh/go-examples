@@ -40,12 +40,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	flat, hasUnresolved := fieldsyml.ResolveECSReferences(flat)
-	if hasUnresolved && warn {
-		for _, f := range flat {
-			if f.External == "ecs" && f.Type == "" {
-				log.Printf("WARN: %q in %s:%d does not exist is ECS %v.", f.Name, f.Source, f.SourceLine, ecs.Version)
-			}
+	flat, unresolved := fieldsyml.ResolveECSReferences(flat)
+	if len(unresolved) > 0 && warn {
+		for _, f := range unresolved {
+			log.Printf("WARN: %q in %s:%d does not exist is ECS %v or is not a leaf field.", f.Name, f.Source, f.SourceLine, ecs.Version)
 		}
 	}
 

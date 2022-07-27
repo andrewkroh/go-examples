@@ -8,7 +8,7 @@ import (
 // and description. If there are any unresolved references then hasUnresolved
 // will be true (you can iterate the returned values to find 'external: ecs'
 // fields without a type).
-func ResolveECSReferences(flat []FlatField) (resolved []FlatField, hasUnresolved bool) {
+func ResolveECSReferences(flat []FlatField) (resolved []FlatField, unresolved []FlatField) {
 	out := make([]FlatField, 0, len(flat))
 	for _, f := range flat {
 		if f.External != "ecs" {
@@ -18,8 +18,7 @@ func ResolveECSReferences(flat []FlatField) (resolved []FlatField, hasUnresolved
 
 		fields := lookupECSField(f.Name)
 		if len(fields) == 0 {
-			hasUnresolved = true
-			out = append(out, f)
+			unresolved = append(unresolved, f)
 			continue
 		}
 
@@ -29,7 +28,7 @@ func ResolveECSReferences(flat []FlatField) (resolved []FlatField, hasUnresolved
 			out = append(out, ecsField)
 		}
 	}
-	return out, hasUnresolved
+	return out, unresolved
 }
 
 func lookupECSField(name string) []FlatField {
@@ -43,15 +42,7 @@ func lookupECSField(name string) []FlatField {
 		return []FlatField{flat}
 	}
 
-	var fields []FlatField
-	for _, f := range ecs.GetFieldSet(name) {
-		fields = append(fields, FlatField{
-			Name:        f.FlatName,
-			Type:        f.Type,
-			Description: f.Description,
-			External:    "ecs",
-		})
-	}
-
-	return fields
+	// NOTE: This does not resolve groups of fields anymore.
+	// https://github.com/elastic/elastic-package/pull/818
+	return nil
 }
