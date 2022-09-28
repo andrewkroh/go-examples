@@ -41,6 +41,7 @@ var (
 	ecsGitReference   string
 	pullRequestNumber string
 	owner             string
+	sampleEvents      bool
 )
 
 func init() {
@@ -48,6 +49,7 @@ func init() {
 	flag.StringVar(&ecsGitReference, "ecs-git-ref", "", "Git reference of ECS repo. Git tags are recommended. Defaults to release branch of the ecs-version (e.g. uses 8.3 for 8.3.0).")
 	flag.StringVar(&pullRequestNumber, "pr", "", "Pull request number")
 	flag.StringVar(&owner, "owner", "", "Only modify packages owned by this team.")
+	flag.BoolVar(&sampleEvents, "sample-events", false, "Generate new sample events (slow).")
 }
 
 func main() {
@@ -168,6 +170,7 @@ func updatePackage(path, ecsVersion string) error {
 		OldECSReference:     oldECSReference,
 		PipelineECSVersions: oldPipelineVersions,
 		PullRequestNumber:   pullRequestNumber,
+		SampleEvents:        sampleEvents,
 	}.Build()
 	if err != nil {
 		return err
@@ -192,6 +195,19 @@ func WriteDocument[T any](doc *fleetpkg.YAMLDocument[T], encode func(io.Writer) 
 }
 
 func BuildAndUpdate(path string) error {
+	if sampleEvents {
+		return ExecutePlan(path, []string{
+			"elastic-package clean",
+			"elastic-package format",
+			"elastic-package build",
+			"elastic-package stack up -d --services package-registry",
+			"elastic-package test system -g",
+			"elastic-package test pipeline -g",
+			"elastic-package clean",
+			"elastic-package format",
+			"elastic-package build",
+		})
+	}
 	return ExecutePlan(path, []string{
 		`elastic-package build`,
 		`elastic-package test pipeline -g`,
@@ -253,7 +269,7 @@ It was referencing elastic/ecs {{ .OldECSReference }} and no pipelines set ecs.v
 {{ end }}
 
 [git-generate]
-go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version={{ .ECSVersion }} {{ if .ECSGitReference }}-ecs-git-ref={{ .ECSGitReference }} {{ end }}{{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}packages/{{ .Manifest.Name }}
+go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version={{ .ECSVersion }} {{ if .ECSGitReference }}-ecs-git-ref={{ .ECSGitReference }} {{ end }}{{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}{{ if .SampleEvents }}-sample-events {{ end }}packages/{{ .Manifest.Name }}
 `)))
 
 type CommitMessage struct {
@@ -263,6 +279,7 @@ type CommitMessage struct {
 	OldECSReference     string
 	PipelineECSVersions []string
 	PullRequestNumber   string
+	SampleEvents        bool
 }
 
 func (m CommitMessage) Build() (string, error) {
