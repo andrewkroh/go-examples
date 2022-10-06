@@ -3,9 +3,9 @@ module github.com/andrewkroh/go-examples/fields-yml
 go 1.17
 
 require (
-	github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20220323012733-292af5d1cc57
+	github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20221006202209-97fbf9d48654
 	github.com/stretchr/testify v1.7.1
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

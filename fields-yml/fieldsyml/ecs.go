@@ -8,7 +8,7 @@ import (
 // and description. If there are any unresolved references then hasUnresolved
 // will be true (you can iterate the returned values to find 'external: ecs'
 // fields without a type).
-func ResolveECSReferences(flat []FlatField) (resolved []FlatField, unresolved []FlatField) {
+func ResolveECSReferences(flat []FlatField) (resolved, unresolved []FlatField) {
 	out := make([]FlatField, 0, len(flat))
 	for _, f := range flat {
 		if f.External != "ecs" {
