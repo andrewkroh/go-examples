@@ -1,6 +1,11 @@
 # fields-yml-recommend
 
-Recommendations for improving fields.yml files in Elastic Fleet packages.
+`fields-yml-recommend` advises you on changes to fields YAML fields. It
+is recommended that you point it at all fields files within a single data stream
+so that it has the full list of fields. It detects multiple issues:
+
+- Fields that exist in ECS, but are not using an 'external: ecs' definition.
+- Fields that are duplicated.
 
 ## Install
 
