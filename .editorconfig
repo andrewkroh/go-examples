@@ -32,3 +32,8 @@ indent_style = tab
 [Vagrantfile]
 indent_size = 2
 indent_style = space
+
+[*.m]
+indent_size = 2
+indent_style = space
+
