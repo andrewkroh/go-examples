@@ -54,11 +54,7 @@ func (doc *YAMLDocument[any]) WriteYAML(w io.Writer) error {
 		w.Write([]byte("---\n"))
 	}
 
-	if err := enc.Encode(&doc.Node); err != nil {
-		return err
-	}
-
-	return nil
+	return enc.Encode(doc.OriginalData)
 }
 
 func (doc *YAMLDocument[any]) WriteJSON(w io.Writer, indent int) error {

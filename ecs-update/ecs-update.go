@@ -38,6 +38,7 @@ following operations:
 
 var (
 	ecsVersion        string
+	formatVersion     string
 	ecsGitReference   string
 	pullRequestNumber string
 	owner             string
@@ -46,6 +47,7 @@ var (
 
 func init() {
 	flag.StringVar(&ecsVersion, "ecs-version", "", "ECS version (e.g. 8.3.0)")
+	flag.StringVar(&formatVersion, "format-version", "", "Fleet package format version (empty, 1.0.0 or 2.0.0)")
 	flag.StringVar(&ecsGitReference, "ecs-git-ref", "", "Git reference of ECS repo. Git tags are recommended. Defaults to release branch of the ecs-version (e.g. uses 8.3 for 8.3.0).")
 	flag.StringVar(&pullRequestNumber, "pr", "", "Pull request number")
 	flag.StringVar(&owner, "owner", "", "Only modify packages owned by this team.")
@@ -61,6 +63,11 @@ func main() {
 
 	if ecsVersion == "" {
 		log.Fatal("-ecs-version is required")
+	}
+	switch formatVersion {
+	case "", "1.0.0", "2.0.0":
+	default:
+		log.Fatalf("invalid -format-version %q", formatVersion)
 	}
 
 	for _, p := range flag.Args() {
@@ -106,7 +113,7 @@ func updatePackage(path, ecsVersion string) error {
 		}
 
 		// No changes.
-		if oldECSReference == newECSReference {
+		if oldECSReference == newECSReference && formatVersion == "" {
 			return nil
 		}
 	}
@@ -131,18 +138,29 @@ func updatePackage(path, ecsVersion string) error {
 		}
 	}
 
+	if formatVersion != "" {
+		pkg.Manifest.OriginalData.FormatVersion = formatVersion
+		if formatVersion == "2.0.0" {
+			pkg.Manifest.OriginalData.License = ""
+		}
+		err = WriteDocument(&pkg.Manifest, pkg.Manifest.WriteYAML)
+		if err != nil {
+			return err
+		}
+	}
+
 	if pkg.BuildManifest == nil {
 		log.Println("WARN:", pkg.Manifest.OriginalData.Name, ": No build manifest found in package.")
 		return nil
 	}
 
-	err = WriteDocument(pkg.BuildManifest, pkg.BuildManifest.WriteYAML)
+	err = WriteDocument(pkg.BuildManifest, nil)
 	for _, ds := range pkg.DataStreams {
 		if ds.DefaultPipeline != nil {
-			err = multierr.Append(err, WriteDocument(ds.DefaultPipeline, ds.DefaultPipeline.WriteYAML))
+			err = multierr.Append(err, WriteDocument(ds.DefaultPipeline, nil))
 		}
 		if ds.SampleEvent != nil {
-			err = multierr.Append(err, WriteDocument(ds.SampleEvent, func(w io.Writer) error { return ds.SampleEvent.WriteJSON(w, 4) }))
+			err = multierr.Append(err, WriteDocument(ds.SampleEvent, nil))
 		}
 	}
 
@@ -166,6 +184,7 @@ func updatePackage(path, ecsVersion string) error {
 	msg, err := CommitMessage{
 		Manifest:            pkg.Manifest.OriginalData,
 		ECSVersion:          ecsVersion,
+		FormatVersion:       formatVersion,
 		ECSGitReference:     ecsGitReference,
 		OldECSReference:     oldECSReference,
 		PipelineECSVersions: oldPipelineVersions,
@@ -190,7 +209,12 @@ func WriteDocument[T any](doc *fleetpkg.YAMLDocument[T], encode func(io.Writer) 
 	}
 	defer f.Close()
 
-	_, err = f.Write(doc.RawYAML)
+	if encode != nil {
+		err = encode(f)
+	} else {
+		_, err = f.Write(doc.RawYAML)
+	}
+
 	return err
 }
 
@@ -269,12 +293,13 @@ It was referencing elastic/ecs {{ .OldECSReference }} and no pipelines set ecs.v
 {{ end }}
 
 [git-generate]
-go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version={{ .ECSVersion }} {{ if .ECSGitReference }}-ecs-git-ref={{ .ECSGitReference }} {{ end }}{{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}{{ if .SampleEvents }}-sample-events {{ end }}packages/{{ .Manifest.Name }}
+go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version={{ .ECSVersion }}{{ with .ECSGitReference }} -ecs-git-ref={{.}}{{ end }}{{ with .FormatVersion }} -format-version={{.}}{{ end }}{{ with .PullRequestNumber }} -pr={{.}} {{ end }}{{ if .SampleEvents }}-sample-events {{ end }}packages/{{ .Manifest.Name }}
 `)))
 
 type CommitMessage struct {
 	Manifest            fleetpkg.Manifest
 	ECSVersion          string
+	FormatVersion       string
 	ECSGitReference     string
 	OldECSReference     string
 	PipelineECSVersions []string
