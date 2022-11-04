@@ -1,3 +1,5 @@
 *.iml
 sample-wasm/target
 sample-wasm/pkg
+/wasm
+/wasm.exe

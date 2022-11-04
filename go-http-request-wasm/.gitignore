@@ -1,2 +1,4 @@
 wasm_exec.js
 *.wasm
+/go-http-request-wasm
+/go-http-request-wasm.exe

@@ -2,10 +2,14 @@ github.com/andrewkroh/go-examples/fields-yml v0.0.0-20220323040711-45c4472c3248 
 github.com/andrewkroh/go-examples/fields-yml v0.0.0-20220323040711-45c4472c3248/go.mod h1:Zv45gn12k7a0ZeX4/D8PW+2E/NjrsWELLT3NuM53f0Q=
 github.com/andrewkroh/go-examples/fields-yml v0.0.0-20221006202209-97fbf9d48654 h1:sRjqyzAi8uPcxBWmBTh6Rk97qmUprvgYXqn43bNuhuQ=
 github.com/andrewkroh/go-examples/fields-yml v0.0.0-20221006202209-97fbf9d48654/go.mod h1:Zv45gn12k7a0ZeX4/D8PW+2E/NjrsWELLT3NuM53f0Q=
+github.com/andrewkroh/go-examples/fields-yml v0.0.0-20221103183257-dfc38e1f9316 h1:L7Ln3aD/aaZrwdTnwgKaeomZsOrkFVQf6+qrsjUnfpY=
+github.com/andrewkroh/go-examples/fields-yml v0.0.0-20221103183257-dfc38e1f9316/go.mod h1:nWSUNwrBx9S2SonPV32u9mXwyd6bYCS9TObEZvyTZeY=
 github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20220323012733-292af5d1cc57 h1:RvLU5hIreQJeXYWUExSm1SdcG/pQrVJaKLIQq+u4B4c=
 github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20220323012733-292af5d1cc57/go.mod h1:QQRwgS0yxVWZyDPhKuLOd4lAcCG2DSNcVnTcPRdii7w=
 github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20221006202209-97fbf9d48654 h1:ZRDr5PFL5wfi+vRrjbGSg2QUS0i+mg+NV7Lz0rtUq8k=
 github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20221006202209-97fbf9d48654/go.mod h1:QQRwgS0yxVWZyDPhKuLOd4lAcCG2DSNcVnTcPRdii7w=
+github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20221103183257-dfc38e1f9316 h1:GEfTBHSEqF+gy35fHrfUntjWCG+ABRG6wACtglKZywk=
+github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20221103183257-dfc38e1f9316/go.mod h1:QQRwgS0yxVWZyDPhKuLOd4lAcCG2DSNcVnTcPRdii7w=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
