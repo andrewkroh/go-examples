@@ -10,9 +10,7 @@ import (
 	"strings"
 )
 
-var (
-	command string
-)
+var command string
 
 func init() {
 	flag.StringVar(&command, "cmd", "", "command to run via 'sh -c'")

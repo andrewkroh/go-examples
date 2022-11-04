@@ -21,7 +21,7 @@ type parameter struct {
 // Scrapes the Elasticsearch Ingest Node docs to produce a JSON document
 // containing the parameters for each processor.
 func main() {
-	var elasticsearchVersion = flag.String("es-version", "current", "Documentation branch (e.g. current, 8.4, etc)")
+	elasticsearchVersion := flag.String("es-version", "current", "Documentation branch (e.g. current, 8.4, etc)")
 	flag.Parse()
 
 	// Instantiate collector
