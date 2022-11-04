@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -149,7 +150,10 @@ const sampleDoc = `{
   }`
 
 func TestFlatten(t *testing.T) {
-	obj, err := ReadObject(bytes.NewBufferString(sampleDoc))
+	dec := json.NewDecoder(bytes.NewBufferString(sampleDoc))
+	dec.DisallowUnknownFields()
+
+	obj, err := ReadObject(dec)
 	require.NoError(t, err)
 
 	flat := Flatten(obj)
