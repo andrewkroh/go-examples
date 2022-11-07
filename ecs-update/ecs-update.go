@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -15,6 +14,9 @@ import (
 	"text/template"
 
 	"github.com/coreos/go-semver/semver"
+	"github.com/goccy/go-yaml"
+	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/parser"
 	"go.uber.org/multierr"
 
 	"github.com/andrewkroh/go-examples/ecs-update/fleetpkg"
@@ -139,14 +141,16 @@ func updatePackage(path, ecsVersion string) error {
 	}
 
 	if formatVersion != "" {
-		pkg.Manifest.OriginalData.FormatVersion = formatVersion
-		if formatVersion == "2.0.0" {
-			pkg.Manifest.OriginalData.License = ""
-		}
-		err = WriteDocument(&pkg.Manifest, pkg.Manifest.WriteYAML)
+		var file *ast.File
+		file, err = parser.ParseFile(pkg.Manifest.FilePath, parser.ParseComments)
 		if err != nil {
-			return err
+			log.Fatalf("failed to parse manifest for update: %v", err)
 		}
+		err = multierr.Append(err, updateFormatVersion(file, formatVersion))
+		if formatVersion == "2.0.0" {
+			err = multierr.Append(err, removeLicenseField(file))
+		}
+		err = multierr.Append(err, os.WriteFile(pkg.Manifest.FilePath, []byte(file.String()+"\n"), 0o644))
 	}
 
 	if pkg.BuildManifest == nil {
@@ -154,13 +158,13 @@ func updatePackage(path, ecsVersion string) error {
 		return nil
 	}
 
-	err = WriteDocument(pkg.BuildManifest, nil)
+	err = multierr.Append(err, WriteDocument(pkg.BuildManifest))
 	for _, ds := range pkg.DataStreams {
 		if ds.DefaultPipeline != nil {
-			err = multierr.Append(err, WriteDocument(ds.DefaultPipeline, nil))
+			err = multierr.Append(err, WriteDocument(ds.DefaultPipeline))
 		}
 		if ds.SampleEvent != nil {
-			err = multierr.Append(err, WriteDocument(ds.SampleEvent, nil))
+			err = multierr.Append(err, WriteDocument(ds.SampleEvent))
 		}
 	}
 
@@ -202,18 +206,14 @@ func updatePackage(path, ecsVersion string) error {
 	return nil
 }
 
-func WriteDocument[T any](doc *fleetpkg.YAMLDocument[T], encode func(io.Writer) error) error {
+func WriteDocument[T any](doc *fleetpkg.YAMLDocument[T]) error {
 	f, err := os.Create(doc.FilePath)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	if encode != nil {
-		err = encode(f)
-	} else {
-		_, err = f.Write(doc.RawYAML)
-	}
+	_, err = f.Write(doc.RawYAML)
 
 	return err
 }
@@ -321,4 +321,59 @@ func getVersion() string {
 		return "latest"
 	}
 	return info.Main.Version
+}
+
+func updateFormatVersion(file *ast.File, version string) error {
+	path, err := yaml.PathString("$.format_version")
+	if err != nil {
+		return fmt.Errorf("failed to get version path: %v", err)
+	}
+	n, err := path.FilterFile(file)
+	if err != nil {
+		return fmt.Errorf("failed to get version node: %v", err)
+	}
+	switch n := n.(type) {
+	case *ast.StringNode:
+		n.Value = version
+	default:
+		return fmt.Errorf("unexpected version field type: %T", n)
+	}
+	return nil
+}
+
+func removeLicenseField(file *ast.File) error {
+	license, err := yaml.PathString("$.license")
+	if err != nil {
+		return fmt.Errorf("failed to get license path: %v", err)
+	}
+	n, err := license.FilterFile(file)
+	if err != nil {
+		if yaml.IsNotFoundNodeError(err) {
+			return nil
+		}
+		return fmt.Errorf("failed to get license node: %v", err)
+	}
+	switch n := n.(type) {
+	case *ast.StringNode:
+		for _, d := range file.Docs {
+			m := ast.Parent(d, n)
+			if m == nil {
+				continue
+			}
+			switch p := ast.Parent(d, m).(type) {
+			case *ast.MappingNode:
+				for i, e := range p.Values {
+					if e == m {
+						p.Values = append(p.Values[:i], p.Values[i+1:]...)
+						break
+					}
+				}
+			default:
+				return fmt.Errorf("failed to get license parent node: %v", err)
+			}
+		}
+	default:
+		return fmt.Errorf("unexpected license field type: %T", n)
+	}
+	return nil
 }
