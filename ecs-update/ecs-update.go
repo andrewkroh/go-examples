@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -15,6 +14,9 @@ import (
 	"text/template"
 
 	"github.com/coreos/go-semver/semver"
+	"github.com/goccy/go-yaml"
+	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/parser"
 	"go.uber.org/multierr"
 
 	"github.com/andrewkroh/go-examples/ecs-update/fleetpkg"
@@ -38,6 +40,7 @@ following operations:
 
 var (
 	ecsVersion        string
+	formatVersion     string
 	ecsGitReference   string
 	pullRequestNumber string
 	owner             string
@@ -46,6 +49,7 @@ var (
 
 func init() {
 	flag.StringVar(&ecsVersion, "ecs-version", "", "ECS version (e.g. 8.3.0)")
+	flag.StringVar(&formatVersion, "format-version", "", "Fleet package format version (empty, 1.0.0 or 2.0.0)")
 	flag.StringVar(&ecsGitReference, "ecs-git-ref", "", "Git reference of ECS repo. Git tags are recommended. Defaults to release branch of the ecs-version (e.g. uses 8.3 for 8.3.0).")
 	flag.StringVar(&pullRequestNumber, "pr", "", "Pull request number")
 	flag.StringVar(&owner, "owner", "", "Only modify packages owned by this team.")
@@ -61,6 +65,11 @@ func main() {
 
 	if ecsVersion == "" {
 		log.Fatal("-ecs-version is required")
+	}
+	switch formatVersion {
+	case "", "1.0.0", "2.0.0":
+	default:
+		log.Fatalf("invalid -format-version %q", formatVersion)
 	}
 
 	for _, p := range flag.Args() {
@@ -106,7 +115,7 @@ func updatePackage(path, ecsVersion string) error {
 		}
 
 		// No changes.
-		if oldECSReference == newECSReference {
+		if oldECSReference == newECSReference && formatVersion == "" {
 			return nil
 		}
 	}
@@ -131,18 +140,31 @@ func updatePackage(path, ecsVersion string) error {
 		}
 	}
 
+	if formatVersion != "" {
+		var file *ast.File
+		file, err = parser.ParseFile(pkg.Manifest.FilePath, parser.ParseComments)
+		if err != nil {
+			log.Fatalf("failed to parse manifest for update: %v", err)
+		}
+		err = multierr.Append(err, updateFormatVersion(file, formatVersion))
+		if formatVersion == "2.0.0" {
+			err = multierr.Append(err, removeLicenseField(file))
+		}
+		err = multierr.Append(err, os.WriteFile(pkg.Manifest.FilePath, []byte(file.String()+"\n"), 0o644))
+	}
+
 	if pkg.BuildManifest == nil {
 		log.Println("WARN:", pkg.Manifest.OriginalData.Name, ": No build manifest found in package.")
 		return nil
 	}
 
-	err = WriteDocument(pkg.BuildManifest, pkg.BuildManifest.WriteYAML)
+	err = multierr.Append(err, WriteDocument(pkg.BuildManifest))
 	for _, ds := range pkg.DataStreams {
 		if ds.DefaultPipeline != nil {
-			err = multierr.Append(err, WriteDocument(ds.DefaultPipeline, ds.DefaultPipeline.WriteYAML))
+			err = multierr.Append(err, WriteDocument(ds.DefaultPipeline))
 		}
 		if ds.SampleEvent != nil {
-			err = multierr.Append(err, WriteDocument(ds.SampleEvent, func(w io.Writer) error { return ds.SampleEvent.WriteJSON(w, 4) }))
+			err = multierr.Append(err, WriteDocument(ds.SampleEvent))
 		}
 	}
 
@@ -166,6 +188,7 @@ func updatePackage(path, ecsVersion string) error {
 	msg, err := CommitMessage{
 		Manifest:            pkg.Manifest.OriginalData,
 		ECSVersion:          ecsVersion,
+		FormatVersion:       formatVersion,
 		ECSGitReference:     ecsGitReference,
 		OldECSReference:     oldECSReference,
 		PipelineECSVersions: oldPipelineVersions,
@@ -183,7 +206,7 @@ func updatePackage(path, ecsVersion string) error {
 	return nil
 }
 
-func WriteDocument[T any](doc *fleetpkg.YAMLDocument[T], encode func(io.Writer) error) error {
+func WriteDocument[T any](doc *fleetpkg.YAMLDocument[T]) error {
 	f, err := os.Create(doc.FilePath)
 	if err != nil {
 		return err
@@ -191,6 +214,7 @@ func WriteDocument[T any](doc *fleetpkg.YAMLDocument[T], encode func(io.Writer) 
 	defer f.Close()
 
 	_, err = f.Write(doc.RawYAML)
+
 	return err
 }
 
@@ -269,12 +293,13 @@ It was referencing elastic/ecs {{ .OldECSReference }} and no pipelines set ecs.v
 {{ end }}
 
 [git-generate]
-go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version={{ .ECSVersion }} {{ if .ECSGitReference }}-ecs-git-ref={{ .ECSGitReference }} {{ end }}{{ if .PullRequestNumber }}-pr={{ .PullRequestNumber }} {{ end }}{{ if .SampleEvents }}-sample-events {{ end }}packages/{{ .Manifest.Name }}
+go run github.com/andrewkroh/go-examples/ecs-update@{{ toolVersion }} -ecs-version={{ .ECSVersion }}{{ with .ECSGitReference }} -ecs-git-ref={{.}}{{ end }}{{ with .FormatVersion }} -format-version={{.}}{{ end }}{{ with .PullRequestNumber }} -pr={{.}} {{ end }}{{ if .SampleEvents }}-sample-events {{ end }}packages/{{ .Manifest.Name }}
 `)))
 
 type CommitMessage struct {
 	Manifest            fleetpkg.Manifest
 	ECSVersion          string
+	FormatVersion       string
 	ECSGitReference     string
 	OldECSReference     string
 	PipelineECSVersions []string
@@ -296,4 +321,59 @@ func getVersion() string {
 		return "latest"
 	}
 	return info.Main.Version
+}
+
+func updateFormatVersion(file *ast.File, version string) error {
+	path, err := yaml.PathString("$.format_version")
+	if err != nil {
+		return fmt.Errorf("failed to get version path: %v", err)
+	}
+	n, err := path.FilterFile(file)
+	if err != nil {
+		return fmt.Errorf("failed to get version node: %v", err)
+	}
+	switch n := n.(type) {
+	case *ast.StringNode:
+		n.Value = version
+	default:
+		return fmt.Errorf("unexpected version field type: %T", n)
+	}
+	return nil
+}
+
+func removeLicenseField(file *ast.File) error {
+	license, err := yaml.PathString("$.license")
+	if err != nil {
+		return fmt.Errorf("failed to get license path: %v", err)
+	}
+	n, err := license.FilterFile(file)
+	if err != nil {
+		if yaml.IsNotFoundNodeError(err) {
+			return nil
+		}
+		return fmt.Errorf("failed to get license node: %v", err)
+	}
+	switch n := n.(type) {
+	case *ast.StringNode:
+		for _, d := range file.Docs {
+			m := ast.Parent(d, n)
+			if m == nil {
+				continue
+			}
+			switch p := ast.Parent(d, m).(type) {
+			case *ast.MappingNode:
+				for i, e := range p.Values {
+					if e == m {
+						p.Values = append(p.Values[:i], p.Values[i+1:]...)
+						break
+					}
+				}
+			default:
+				return fmt.Errorf("failed to get license parent node: %v", err)
+			}
+		}
+	default:
+		return fmt.Errorf("unexpected license field type: %T", n)
+	}
+	return nil
 }
