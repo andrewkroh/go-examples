@@ -13,10 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
 
       - name: Read .go-version file
         id: goversion
-        run: echo "::set-output name=version::$(cat .go-version)"
+        run: echo "version=$(cat .go-version)" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-go@v3
         with:
@@ -28,7 +30,7 @@ jobs:
       - name: Run golangci-lint
         run: >
           go run .github/each-module.go -cmd
-          'golangci-lint run --new-from-rev=HEAD~ --out-format=github-actions --path-prefix=PATH_PREFIX ./...'
+          'golangci-lint run --new-from-rev="HEAD~1" --out-format=github-actions --path-prefix=PATH_PREFIX ./...'
 
   go-mod-tidy:
     name: go-mod-tidy
@@ -38,7 +40,7 @@ jobs:
 
       - name: Read .go-version file
         id: goversion
-        run: echo "::set-output name=version::$(cat .go-version)"
+        run: echo "version=$(cat .go-version)" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-go@v3
         with:

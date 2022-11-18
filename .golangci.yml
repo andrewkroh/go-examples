@@ -7,26 +7,23 @@ run:
 linters:
   disable-all: true
   enable:
-    - deadcode
     - errcheck
     - gosimple
     - govet
     - ineffassign
     - staticcheck
-    - structcheck
     - stylecheck
     - typecheck
     - unused
-    - varcheck
     - depguard
     - errorlint
     - gofumpt
     - goimports
     - godox
-    - ifshort
     - misspell
     - prealloc
     - unconvert
+    - unused
     - revive
   fast: false
 
