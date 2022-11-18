@@ -1,6 +1,6 @@
 # WebAssembly Runtime Example
 
-This example executes a Rust program compiled to WebAssembly (`sample.wasm`)
+This example executes a Rust program compiled to WebAssembly (`decode_msgpack.wasm`)
 inside of a Go binary. The Go binary uses a Wasmer as its WebAssembly runtime.
 go-wasmer provides bindings that use cgo. The wasmer libary is
 bundled into go-wasmer (for certain architectures).
@@ -9,4 +9,6 @@ bundled into go-wasmer (for certain architectures).
 
 To execute:
 
-`go run wasm.go`
+`make -C sample-wasm`
+
+`go run .`

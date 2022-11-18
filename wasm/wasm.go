@@ -3,9 +3,10 @@ package main
 import (
 	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	"github.com/dustin/go-humanize"
@@ -32,9 +33,12 @@ const (
 )
 
 func main() {
-	wasmBytes, err := ioutil.ReadFile("sample-wasm/target/wasm32-unknown-unknown/debug/examples/decode_msgpack.wasm")
+	wasmBytes, err := os.ReadFile("sample-wasm/target/wasm32-unknown-unknown/release/examples/decode_msgpack.wasm")
 	if err != nil {
-		panic(err)
+		if errors.Is(err, os.ErrNotExist) {
+			log.Fatalln("Build the wasm file by running `make` in the sample_wasm dir. Error:", err)
+		}
+		log.Fatal(err)
 	}
 	log.Printf("WASM size: %v", humanize.Bytes(uint64(len(wasmBytes))))
 
