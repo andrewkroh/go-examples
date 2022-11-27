@@ -1,4 +1,4 @@
-// Package logfmt is a toy parser for log messages encoded in "logfmt". An
+// Package participle is a toy parser for log messages encoded in "logfmt"
 // example message is:
 //
 //	at=info method=GET path=/ host=mutelight.org fwd="124.133.52.161"
@@ -13,7 +13,7 @@
 //	https://github.com/sirupsen/logrus/blob/f8bf7650dccb756cea26edaf9217aab85500fe07/text_formatter.go
 //
 //nolint:govet,revive // Struct-tags use shorthand participle format for readability.
-package logfmt
+package participle
 
 import (
 	"github.com/alecthomas/participle/v2"
