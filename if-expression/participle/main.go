@@ -1,5 +1,5 @@
 //nolint:govet,revive // Struct-tags use shorthand participle format for readability.
-package main
+package participle
 
 import (
 	"fmt"

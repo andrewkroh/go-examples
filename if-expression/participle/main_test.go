@@ -1,4 +1,4 @@
-package main
+package participle
 
 import (
 	"testing"
@@ -70,7 +70,33 @@ func BenchmarkExpressionEval(b *testing.B) {
 	}
 
 	b.ResetTimer()
+	var r interface{}
 	for i := 0; i < b.N; i++ {
-		program.Eval(ctx)
+		r = program.Eval(ctx)
 	}
+	result = r.(bool)
+}
+
+var result bool
+
+func BenchmarkIf(b *testing.B) {
+	ctx := Context{
+		map[string]interface{}{
+			"myVar": "192.168.10.11",
+		},
+	}
+
+	b.ResetTimer()
+	var r bool
+	for i := 0; i < b.N; i++ {
+		r = nativeGoExpr(ctx)
+	}
+	result = r
+}
+
+func nativeGoExpr(ctx Context) bool {
+	if val, found := ctx.vars["myVar"]; found {
+		return val == "192.168.10.11"
+	}
+	return false
 }
