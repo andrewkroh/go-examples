@@ -66,10 +66,11 @@ func main() {
 	if ecsVersion == "" {
 		log.Fatal("-ecs-version is required")
 	}
-	switch formatVersion {
-	case "", "1.0.0", "2.0.0":
-	default:
-		log.Fatalf("invalid -format-version %q", formatVersion)
+
+	if formatVersion != "" {
+		if _, err := semver.NewVersion(formatVersion); err != nil {
+			log.Fatalf("invalid -format-version %q: %v", formatVersion, err)
+		}
 	}
 
 	for _, p := range flag.Args() {
