@@ -9,9 +9,9 @@ import (
 )
 
 // Version is the ECS version embedded.
-const Version = "8.5"
+const Version = "8.7"
 
-//go:generate curl -L -o ecs_flat.yml https://raw.githubusercontent.com/elastic/ecs/v8.5.0-rc1/generated/ecs/ecs_flat.yml
+//go:generate curl -L -o ecs_flat.yml https://raw.githubusercontent.com/elastic/ecs/v8.7.0/generated/ecs/ecs_flat.yml
 
 var (
 	//go:embed ecs_flat.yml

@@ -547,86 +547,6 @@ client.user.name:
   original_fieldset: user
   short: Short name or login of the user.
   type: keyword
-client.user.risk.calculated_level:
-  dashed_name: client-user-risk-calculated-level
-  description: A risk classification level calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: High
-  flat_name: client.user.risk.calculated_level
-  ignore_above: 1024
-  level: extended
-  name: calculated_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: keyword
-client.user.risk.calculated_score:
-  dashed_name: client-user-risk-calculated-score
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: 880.73
-  flat_name: client.user.risk.calculated_score
-  level: extended
-  name: calculated_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: float
-client.user.risk.calculated_score_norm:
-  dashed_name: client-user-risk-calculated-score-norm
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring, and normalized to a range of 0 to
-    100.
-  example: 88.73
-  flat_name: client.user.risk.calculated_score_norm
-  level: extended
-  name: calculated_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an internal system.
-  type: float
-client.user.risk.static_level:
-  dashed_name: client-user-risk-static-level
-  description: A risk classification level obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: High
-  flat_name: client.user.risk.static_level
-  ignore_above: 1024
-  level: extended
-  name: static_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: keyword
-client.user.risk.static_score:
-  dashed_name: client-user-risk-static-score
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: 830.0
-  flat_name: client.user.risk.static_score
-  level: extended
-  name: static_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: float
-client.user.risk.static_score_norm:
-  dashed_name: client-user-risk-static-score-norm
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform, and normalized to a range
-    of 0 to 100.
-  example: 83.0
-  flat_name: client.user.risk.static_score_norm
-  level: extended
-  name: static_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an external system.
-  type: float
 client.user.roles:
   dashed_name: client-user-roles
   description: Array of user roles at the time of the event.
@@ -1698,86 +1618,6 @@ destination.user.name:
   original_fieldset: user
   short: Short name or login of the user.
   type: keyword
-destination.user.risk.calculated_level:
-  dashed_name: destination-user-risk-calculated-level
-  description: A risk classification level calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: High
-  flat_name: destination.user.risk.calculated_level
-  ignore_above: 1024
-  level: extended
-  name: calculated_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: keyword
-destination.user.risk.calculated_score:
-  dashed_name: destination-user-risk-calculated-score
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: 880.73
-  flat_name: destination.user.risk.calculated_score
-  level: extended
-  name: calculated_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: float
-destination.user.risk.calculated_score_norm:
-  dashed_name: destination-user-risk-calculated-score-norm
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring, and normalized to a range of 0 to
-    100.
-  example: 88.73
-  flat_name: destination.user.risk.calculated_score_norm
-  level: extended
-  name: calculated_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an internal system.
-  type: float
-destination.user.risk.static_level:
-  dashed_name: destination-user-risk-static-level
-  description: A risk classification level obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: High
-  flat_name: destination.user.risk.static_level
-  ignore_above: 1024
-  level: extended
-  name: static_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: keyword
-destination.user.risk.static_score:
-  dashed_name: destination-user-risk-static-score
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: 830.0
-  flat_name: destination.user.risk.static_score
-  level: extended
-  name: static_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: float
-destination.user.risk.static_score_norm:
-  dashed_name: destination-user-risk-static-score-norm
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform, and normalized to a range
-    of 0 to 100.
-  example: 83.0
-  flat_name: destination.user.risk.static_score_norm
-  level: extended
-  name: static_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an external system.
-  type: float
 destination.user.roles:
   dashed_name: destination-user-roles
   description: Array of user roles at the time of the event.
@@ -1790,6 +1630,56 @@ destination.user.roles:
   - array
   original_fieldset: user
   short: Array of user roles at the time of the event.
+  type: keyword
+device.id:
+  dashed_name: device-id
+  description: "The unique identifier of a device. The identifier must not change\
+    \ across application sessions but stay fixex for an instance of a (mobile) device.\
+    \ \nOn iOS, this value must be equal to the vendor identifier (https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor).\
+    \ On Android, this value must be equal to the Firebase Installation ID or a globally\
+    \ unique UUID which is persisted across sessions in your application.\nFor GDPR\
+    \ and data protection law reasons this identifier should not carry information\
+    \ that would allow to identify a user."
+  example: 00000000-54b3-e7c7-0000-000046bffd97
+  flat_name: device.id
+  ignore_above: 1024
+  level: extended
+  name: id
+  normalize: []
+  short: The unique identifier of a device.
+  type: keyword
+device.manufacturer:
+  dashed_name: device-manufacturer
+  description: The vendor name of the device manufacturer.
+  example: Samsung
+  flat_name: device.manufacturer
+  ignore_above: 1024
+  level: extended
+  name: manufacturer
+  normalize: []
+  short: The vendor name of the device manufacturer.
+  type: keyword
+device.model.identifier:
+  dashed_name: device-model-identifier
+  description: The machine readable identifier of the device model.
+  example: SM-G920F
+  flat_name: device.model.identifier
+  ignore_above: 1024
+  level: extended
+  name: model.identifier
+  normalize: []
+  short: The machine readable identifier of the device model.
+  type: keyword
+device.model.name:
+  dashed_name: device-model-name
+  description: The human readable marketing name of the device model.
+  example: Samsung Galaxy S6
+  flat_name: device.model.name
+  ignore_above: 1024
+  level: extended
+  name: model.name
+  normalize: []
+  short: The human readable marketing name of the device model.
   type: keyword
 dll.code_signature.digest_algorithm:
   dashed_name: dll-code-signature-digest-algorithm
@@ -2064,6 +1954,67 @@ dll.pe.file_version:
   original_fieldset: pe
   short: Process name.
   type: keyword
+dll.pe.go_import_hash:
+  dashed_name: dll-pe-go-import-hash
+  description: 'A hash of the Go language imports in a PE file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: dll.pe.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the Go language imports in a PE file.
+  type: keyword
+dll.pe.go_imports:
+  dashed_name: dll-pe-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: dll.pe.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: pe
+  short: List of imported Go language element names and types.
+  type: flattened
+dll.pe.go_imports_names_entropy:
+  dashed_name: dll-pe-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: dll.pe.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+dll.pe.go_imports_names_var_entropy:
+  dashed_name: dll-pe-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: dll.pe.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+dll.pe.go_stripped:
+  dashed_name: dll-pe-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: dll.pe.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: pe
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 dll.pe.imphash:
   dashed_name: dll-pe-imphash
   description: 'A hash of the imports in a PE file. An imphash -- or import hash --
@@ -2080,6 +2031,58 @@ dll.pe.imphash:
   original_fieldset: pe
   short: A hash of the imports in a PE file.
   type: keyword
+dll.pe.import_hash:
+  dashed_name: dll-pe-import-hash
+  description: 'A hash of the imports in a PE file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a synonym for imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: dll.pe.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the imports in a PE file.
+  type: keyword
+dll.pe.imports:
+  dashed_name: dll-pe-imports
+  description: List of imported element names and types.
+  flat_name: dll.pe.imports
+  level: extended
+  name: imports
+  normalize:
+  - array
+  original_fieldset: pe
+  short: List of imported element names and types.
+  type: flattened
+dll.pe.imports_names_entropy:
+  dashed_name: dll-pe-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: dll.pe.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+dll.pe.imports_names_var_entropy:
+  dashed_name: dll-pe-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: dll.pe.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 dll.pe.original_file_name:
   dashed_name: dll-pe-original-file-name
   description: Internal name of the file, provided at compile-time.
@@ -2120,6 +2123,75 @@ dll.pe.product:
   original_fieldset: pe
   short: Internal product name of the file, provided at compile-time.
   type: keyword
+dll.pe.sections:
+  dashed_name: dll-pe-sections
+  description: 'An array containing an object for each section of the PE file.
+
+    The keys that should be present in these objects are defined by sub-fields underneath
+    `pe.sections.*`.'
+  flat_name: dll.pe.sections
+  level: extended
+  name: sections
+  normalize:
+  - array
+  original_fieldset: pe
+  short: Section information of the PE file.
+  type: nested
+dll.pe.sections.entropy:
+  dashed_name: dll-pe-sections-entropy
+  description: Shannon entropy calculation from the section.
+  flat_name: dll.pe.sections.entropy
+  format: number
+  level: extended
+  name: sections.entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the section.
+  type: long
+dll.pe.sections.name:
+  dashed_name: dll-pe-sections-name
+  description: PE Section List name.
+  flat_name: dll.pe.sections.name
+  ignore_above: 1024
+  level: extended
+  name: sections.name
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List name.
+  type: keyword
+dll.pe.sections.physical_size:
+  dashed_name: dll-pe-sections-physical-size
+  description: PE Section List physical size.
+  flat_name: dll.pe.sections.physical_size
+  format: bytes
+  level: extended
+  name: sections.physical_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List physical size.
+  type: long
+dll.pe.sections.var_entropy:
+  dashed_name: dll-pe-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: dll.pe.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
+dll.pe.sections.virtual_size:
+  dashed_name: dll-pe-sections-virtual-size
+  description: PE Section List virtual size. This is always the same as `physical_size`.
+  flat_name: dll.pe.sections.virtual_size
+  format: string
+  level: extended
+  name: sections.virtual_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List virtual size. This is always the same as `physical_size`.
+  type: long
 dns.answers:
   dashed_name: dns-answers
   description: 'An array containing an object for each answer section returned by
@@ -2803,6 +2875,24 @@ event.agent_id_status:
   type: keyword
 event.category:
   allowed_values:
+  - description: Events in this category annotate API calls that occured on a system.
+      Typical sources for those events could be from the Operating System level through
+      the native libraries (for example Windows Win32, Linux libc, etc.), or managed
+      sources of events (such as ETW, syslog), but can also include network protocols
+      (such as SOAP, RPC, Websocket, REST, etc.)
+    expected_event_types:
+    - access
+    - admin
+    - allowed
+    - change
+    - creation
+    - deletion
+    - denied
+    - end
+    - info
+    - start
+    - user
+    name: api
   - description: Events in this category are related to the challenge and response
       process in which credentials are supplied and verified to allow the creation
       of a session. Common sources for these logs are Windows event logs and ssh logs.
@@ -2905,6 +2995,13 @@ event.category:
     - denied
     - info
     name: intrusion_detection
+  - description: Events in this category refer to the loading of a library, such as
+      (dll / so / dynlib), into a process. Use this category to visualize and analyze
+      library loading related activity on hosts.  Keep in mind that driver related
+      activity will be captured under the "driver" category above.
+    expected_event_types:
+    - start
+    name: library
   - description: Malware detection events and alerts. Use this category to visualize
       and analyze malware detections from EDR/EPP systems such as Elastic Endpoint
       Security, Symantec Endpoint Protection, Crowdstrike, and network IDS/IPS systems
@@ -2972,6 +3069,12 @@ event.category:
     expected_event_types:
     - indicator
     name: threat
+  - description: Relating to vulnerability scan results. Use this category to analyze
+      vulnerabilities detected by Tenable, Qualys, internal scanners, and other vulnerability
+      management sources.
+    expected_event_types:
+    - info
+    name: vulnerability
   - description: 'Relating to web server access. Use this category to create a dashboard
       of web server/proxy activity from apache, IIS, nginx web servers, etc. Note:
       events from network observers such as Zeek http log may also be included in
@@ -3922,6 +4025,67 @@ file.elf.exports:
   original_fieldset: elf
   short: List of exported element names and types.
   type: flattened
+file.elf.go_import_hash:
+  dashed_name: file-elf-go-import-hash
+  description: 'A hash of the Go language imports in an ELF file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: file.elf.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the Go language imports in an ELF file.
+  type: keyword
+file.elf.go_imports:
+  dashed_name: file-elf-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: file.elf.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: elf
+  short: List of imported Go language element names and types.
+  type: flattened
+file.elf.go_imports_names_entropy:
+  dashed_name: file-elf-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: file.elf.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+file.elf.go_imports_names_var_entropy:
+  dashed_name: file-elf-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: file.elf.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+file.elf.go_stripped:
+  dashed_name: file-elf-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: file.elf.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: elf
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 file.elf.header.abi_version:
   dashed_name: file-elf-header-abi-version
   description: Version of the ELF Application Binary Interface (ABI).
@@ -4010,6 +4174,22 @@ file.elf.header.version:
   original_fieldset: elf
   short: Version of the ELF header.
   type: keyword
+file.elf.import_hash:
+  dashed_name: file-elf-import-hash
+  description: 'A hash of the imports in an ELF file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is an ELF implementation of the Windows PE imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: file.elf.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the imports in an ELF file.
+  type: keyword
 file.elf.imports:
   dashed_name: file-elf-imports
   description: List of imported element names and types.
@@ -4021,6 +4201,31 @@ file.elf.imports:
   original_fieldset: elf
   short: List of imported element names and types.
   type: flattened
+file.elf.imports_names_entropy:
+  dashed_name: file-elf-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: file.elf.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+file.elf.imports_names_var_entropy:
+  dashed_name: file-elf-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: file.elf.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 file.elf.sections:
   dashed_name: file-elf-sections
   description: 'An array containing an object for each section of the ELF file.
@@ -4112,6 +4317,17 @@ file.elf.sections.type:
   original_fieldset: elf
   short: ELF Section List type.
   type: keyword
+file.elf.sections.var_entropy:
+  dashed_name: file-elf-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: file.elf.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
 file.elf.sections.virtual_address:
   dashed_name: file-elf-sections-virtual-address
   description: ELF Section List virtual address.
@@ -4340,6 +4556,204 @@ file.inode:
   normalize: []
   short: Inode representing the file in the filesystem.
   type: keyword
+file.macho.go_import_hash:
+  dashed_name: file-macho-go-import-hash
+  description: 'A hash of the Go language imports in a Mach-O file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: file.macho.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: macho
+  short: A hash of the Go language imports in a Mach-O file.
+  type: keyword
+file.macho.go_imports:
+  dashed_name: file-macho-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: file.macho.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: macho
+  short: List of imported Go language element names and types.
+  type: flattened
+file.macho.go_imports_names_entropy:
+  dashed_name: file-macho-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: file.macho.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+file.macho.go_imports_names_var_entropy:
+  dashed_name: file-macho-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: file.macho.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+file.macho.go_stripped:
+  dashed_name: file-macho-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: file.macho.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: macho
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
+file.macho.import_hash:
+  dashed_name: file-macho-import-hash
+  description: 'A hash of the imports in a Mach-O file. An import hash can be used
+    to fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a synonym for symhash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: file.macho.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: macho
+  short: A hash of the imports in a Mach-O file.
+  type: keyword
+file.macho.imports:
+  dashed_name: file-macho-imports
+  description: List of imported element names and types.
+  flat_name: file.macho.imports
+  level: extended
+  name: imports
+  normalize:
+  - array
+  original_fieldset: macho
+  short: List of imported element names and types.
+  type: flattened
+file.macho.imports_names_entropy:
+  dashed_name: file-macho-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: file.macho.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+file.macho.imports_names_var_entropy:
+  dashed_name: file-macho-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: file.macho.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
+file.macho.sections:
+  dashed_name: file-macho-sections
+  description: 'An array containing an object for each section of the Mach-O file.
+
+    The keys that should be present in these objects are defined by sub-fields underneath
+    `macho.sections.*`.'
+  flat_name: file.macho.sections
+  level: extended
+  name: sections
+  normalize:
+  - array
+  original_fieldset: macho
+  short: Section information of the Mach-O file.
+  type: nested
+file.macho.sections.entropy:
+  dashed_name: file-macho-sections-entropy
+  description: Shannon entropy calculation from the section.
+  flat_name: file.macho.sections.entropy
+  format: number
+  level: extended
+  name: sections.entropy
+  normalize: []
+  original_fieldset: macho
+  short: Shannon entropy calculation from the section.
+  type: long
+file.macho.sections.name:
+  dashed_name: file-macho-sections-name
+  description: Mach-O Section List name.
+  flat_name: file.macho.sections.name
+  ignore_above: 1024
+  level: extended
+  name: sections.name
+  normalize: []
+  original_fieldset: macho
+  short: Mach-O Section List name.
+  type: keyword
+file.macho.sections.physical_size:
+  dashed_name: file-macho-sections-physical-size
+  description: Mach-O Section List physical size.
+  flat_name: file.macho.sections.physical_size
+  format: bytes
+  level: extended
+  name: sections.physical_size
+  normalize: []
+  original_fieldset: macho
+  short: Mach-O Section List physical size.
+  type: long
+file.macho.sections.var_entropy:
+  dashed_name: file-macho-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: file.macho.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
+file.macho.sections.virtual_size:
+  dashed_name: file-macho-sections-virtual-size
+  description: Mach-O Section List virtual size. This is always the same as `physical_size`.
+  flat_name: file.macho.sections.virtual_size
+  format: string
+  level: extended
+  name: sections.virtual_size
+  normalize: []
+  original_fieldset: macho
+  short: Mach-O Section List virtual size. This is always the same as `physical_size`.
+  type: long
+file.macho.symhash:
+  dashed_name: file-macho-symhash
+  description: 'A hash of the imports in a Mach-O file. An import hash can be used
+    to fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a Mach-O implementation of the Windows PE imphash'
+  example: d3ccf195b62a9279c3c19af1080497ec
+  flat_name: file.macho.symhash
+  ignore_above: 1024
+  level: extended
+  name: symhash
+  normalize: []
+  original_fieldset: macho
+  short: A hash of the imports in a Mach-O file.
+  type: keyword
 file.mime_type:
   dashed_name: file-mime-type
   description: MIME type should identify the format of the file or stream of bytes
@@ -4459,6 +4873,67 @@ file.pe.file_version:
   original_fieldset: pe
   short: Process name.
   type: keyword
+file.pe.go_import_hash:
+  dashed_name: file-pe-go-import-hash
+  description: 'A hash of the Go language imports in a PE file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: file.pe.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the Go language imports in a PE file.
+  type: keyword
+file.pe.go_imports:
+  dashed_name: file-pe-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: file.pe.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: pe
+  short: List of imported Go language element names and types.
+  type: flattened
+file.pe.go_imports_names_entropy:
+  dashed_name: file-pe-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: file.pe.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+file.pe.go_imports_names_var_entropy:
+  dashed_name: file-pe-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: file.pe.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+file.pe.go_stripped:
+  dashed_name: file-pe-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: file.pe.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: pe
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 file.pe.imphash:
   dashed_name: file-pe-imphash
   description: 'A hash of the imports in a PE file. An imphash -- or import hash --
@@ -4475,6 +4950,58 @@ file.pe.imphash:
   original_fieldset: pe
   short: A hash of the imports in a PE file.
   type: keyword
+file.pe.import_hash:
+  dashed_name: file-pe-import-hash
+  description: 'A hash of the imports in a PE file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a synonym for imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: file.pe.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the imports in a PE file.
+  type: keyword
+file.pe.imports:
+  dashed_name: file-pe-imports
+  description: List of imported element names and types.
+  flat_name: file.pe.imports
+  level: extended
+  name: imports
+  normalize:
+  - array
+  original_fieldset: pe
+  short: List of imported element names and types.
+  type: flattened
+file.pe.imports_names_entropy:
+  dashed_name: file-pe-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: file.pe.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+file.pe.imports_names_var_entropy:
+  dashed_name: file-pe-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: file.pe.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 file.pe.original_file_name:
   dashed_name: file-pe-original-file-name
   description: Internal name of the file, provided at compile-time.
@@ -4515,6 +5042,75 @@ file.pe.product:
   original_fieldset: pe
   short: Internal product name of the file, provided at compile-time.
   type: keyword
+file.pe.sections:
+  dashed_name: file-pe-sections
+  description: 'An array containing an object for each section of the PE file.
+
+    The keys that should be present in these objects are defined by sub-fields underneath
+    `pe.sections.*`.'
+  flat_name: file.pe.sections
+  level: extended
+  name: sections
+  normalize:
+  - array
+  original_fieldset: pe
+  short: Section information of the PE file.
+  type: nested
+file.pe.sections.entropy:
+  dashed_name: file-pe-sections-entropy
+  description: Shannon entropy calculation from the section.
+  flat_name: file.pe.sections.entropy
+  format: number
+  level: extended
+  name: sections.entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the section.
+  type: long
+file.pe.sections.name:
+  dashed_name: file-pe-sections-name
+  description: PE Section List name.
+  flat_name: file.pe.sections.name
+  ignore_above: 1024
+  level: extended
+  name: sections.name
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List name.
+  type: keyword
+file.pe.sections.physical_size:
+  dashed_name: file-pe-sections-physical-size
+  description: PE Section List physical size.
+  flat_name: file.pe.sections.physical_size
+  format: bytes
+  level: extended
+  name: sections.physical_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List physical size.
+  type: long
+file.pe.sections.var_entropy:
+  dashed_name: file-pe-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: file.pe.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
+file.pe.sections.virtual_size:
+  dashed_name: file-pe-sections-virtual-size
+  description: PE Section List virtual size. This is always the same as `physical_size`.
+  flat_name: file.pe.sections.virtual_size
+  format: string
+  level: extended
+  name: sections.virtual_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List virtual size. This is always the same as `physical_size`.
+  type: long
 file.size:
   dashed_name: file-size
   description: 'File size in bytes.
@@ -5174,8 +5770,9 @@ host.name:
   dashed_name: host-name
   description: 'Name of the host.
 
-    It can contain what `hostname` returns on Unix systems, the fully qualified domain
-    name, or a name specified by the user. The sender decides which value to use.'
+    It can contain what hostname returns on Unix systems, the fully qualified domain
+    name (FQDN), or a name specified by the user. The recommended value is the lowercase
+    FQDN of the host.'
   flat_name: host.name
   ignore_above: 1024
   level: core
@@ -7165,6 +7762,67 @@ process.elf.exports:
   original_fieldset: elf
   short: List of exported element names and types.
   type: flattened
+process.elf.go_import_hash:
+  dashed_name: process-elf-go-import-hash
+  description: 'A hash of the Go language imports in an ELF file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: process.elf.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the Go language imports in an ELF file.
+  type: keyword
+process.elf.go_imports:
+  dashed_name: process-elf-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: process.elf.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: elf
+  short: List of imported Go language element names and types.
+  type: flattened
+process.elf.go_imports_names_entropy:
+  dashed_name: process-elf-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: process.elf.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+process.elf.go_imports_names_var_entropy:
+  dashed_name: process-elf-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: process.elf.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+process.elf.go_stripped:
+  dashed_name: process-elf-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: process.elf.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: elf
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 process.elf.header.abi_version:
   dashed_name: process-elf-header-abi-version
   description: Version of the ELF Application Binary Interface (ABI).
@@ -7253,6 +7911,22 @@ process.elf.header.version:
   original_fieldset: elf
   short: Version of the ELF header.
   type: keyword
+process.elf.import_hash:
+  dashed_name: process-elf-import-hash
+  description: 'A hash of the imports in an ELF file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is an ELF implementation of the Windows PE imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: process.elf.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the imports in an ELF file.
+  type: keyword
 process.elf.imports:
   dashed_name: process-elf-imports
   description: List of imported element names and types.
@@ -7264,6 +7938,31 @@ process.elf.imports:
   original_fieldset: elf
   short: List of imported element names and types.
   type: flattened
+process.elf.imports_names_entropy:
+  dashed_name: process-elf-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: process.elf.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+process.elf.imports_names_var_entropy:
+  dashed_name: process-elf-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: process.elf.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 process.elf.sections:
   dashed_name: process-elf-sections
   description: 'An array containing an object for each section of the ELF file.
@@ -7355,6 +8054,17 @@ process.elf.sections.type:
   original_fieldset: elf
   short: ELF Section List type.
   type: keyword
+process.elf.sections.var_entropy:
+  dashed_name: process-elf-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: process.elf.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
 process.elf.sections.virtual_address:
   dashed_name: process-elf-sections-virtual-address
   description: ELF Section List virtual address.
@@ -7584,7 +8294,6 @@ process.entry_leader.entry_meta.source.ip:
   short: IP address of the source.
   type: ip
 process.entry_leader.entry_meta.type:
-  beta: This field is beta and subject to change.
   dashed_name: process-entry-leader-entry-meta-type
   description: 'The entry type for the entry session leader. Values include: init(e.g
     systemd), sshd, ssm, kubelet, teleport, terminal, console
@@ -7637,7 +8346,6 @@ process.entry_leader.group.name:
   short: Name of the group.
   type: keyword
 process.entry_leader.interactive:
-  beta: This field is beta and subject to change.
   dashed_name: process-entry-leader-interactive
   description: 'Whether the process is connected to an interactive shell.
 
@@ -7825,7 +8533,6 @@ process.entry_leader.real_user.name:
   short: Short name or login of the user.
   type: keyword
 process.entry_leader.same_as_process:
-  beta: This field is beta and subject to change.
   dashed_name: process-entry-leader-same-as-process
   description: 'This boolean is used to identify if a leader process is the same as
     the top level process.
@@ -7939,7 +8646,6 @@ process.entry_leader.supplemental_groups.name:
   short: Name of the group.
   type: keyword
 process.entry_leader.tty:
-  beta: This field is beta and subject to change.
   dashed_name: process-entry-leader-tty
   description: Information about the controlling TTY device. If set, the process belongs
     to an interactive session.
@@ -7951,7 +8657,6 @@ process.entry_leader.tty:
   short: Information about the controlling TTY device.
   type: object
 process.entry_leader.tty.char_device.major:
-  beta: This field is beta and subject to change.
   dashed_name: process-entry-leader-tty-char-device-major
   description: The major number identifies the driver associated with the device.
     The character device's major and minor numbers can be algorithmically combined
@@ -7966,7 +8671,6 @@ process.entry_leader.tty.char_device.major:
   short: The TTY character device's major number.
   type: long
 process.entry_leader.tty.char_device.minor:
-  beta: This field is beta and subject to change.
   dashed_name: process-entry-leader-tty-char-device-minor
   description: "The minor number is used only by the driver specified by the major\
     \ number; other parts of the kernel don\u2019t use it, and merely pass it along\
@@ -8176,7 +8880,6 @@ process.group_leader.group.name:
   short: Name of the group.
   type: keyword
 process.group_leader.interactive:
-  beta: This field is beta and subject to change.
   dashed_name: process-group-leader-interactive
   description: 'Whether the process is connected to an interactive shell.
 
@@ -8278,7 +8981,6 @@ process.group_leader.real_user.name:
   short: Short name or login of the user.
   type: keyword
 process.group_leader.same_as_process:
-  beta: This field is beta and subject to change.
   dashed_name: process-group-leader-same-as-process
   description: 'This boolean is used to identify if a leader process is the same as
     the top level process.
@@ -8392,7 +9094,6 @@ process.group_leader.supplemental_groups.name:
   short: Name of the group.
   type: keyword
 process.group_leader.tty:
-  beta: This field is beta and subject to change.
   dashed_name: process-group-leader-tty
   description: Information about the controlling TTY device. If set, the process belongs
     to an interactive session.
@@ -8404,7 +9105,6 @@ process.group_leader.tty:
   short: Information about the controlling TTY device.
   type: object
 process.group_leader.tty.char_device.major:
-  beta: This field is beta and subject to change.
   dashed_name: process-group-leader-tty-char-device-major
   description: The major number identifies the driver associated with the device.
     The character device's major and minor numbers can be algorithmically combined
@@ -8419,7 +9119,6 @@ process.group_leader.tty.char_device.major:
   short: The TTY character device's major number.
   type: long
 process.group_leader.tty.char_device.minor:
-  beta: This field is beta and subject to change.
   dashed_name: process-group-leader-tty-char-device-minor
   description: "The minor number is used only by the driver specified by the major\
     \ number; other parts of the kernel don\u2019t use it, and merely pass it along\
@@ -8555,7 +9254,6 @@ process.hash.tlsh:
   short: TLSH hash.
   type: keyword
 process.interactive:
-  beta: This field is beta and subject to change.
   dashed_name: process-interactive
   description: 'Whether the process is connected to an interactive shell.
 
@@ -8575,6 +9273,315 @@ process.interactive:
   normalize: []
   short: Whether the process is connected to an interactive shell.
   type: boolean
+process.io:
+  beta: This field is beta and subject to change.
+  dashed_name: process-io
+  description: 'A chunk of input or output (IO) from a single process.
+
+    This field only appears on the top level process object, which is the process
+    that wrote the output or read the input.'
+  flat_name: process.io
+  level: extended
+  name: io
+  normalize: []
+  short: A chunk of input or output (IO) from a single process.
+  type: object
+process.io.bytes_skipped:
+  beta: This field is beta and subject to change.
+  dashed_name: process-io-bytes-skipped
+  description: An array of byte offsets and lengths denoting where IO data has been
+    skipped.
+  flat_name: process.io.bytes_skipped
+  level: extended
+  name: io.bytes_skipped
+  normalize:
+  - array
+  short: An array of byte offsets and lengths denoting where IO data has been skipped.
+  type: object
+process.io.bytes_skipped.length:
+  beta: This field is beta and subject to change.
+  dashed_name: process-io-bytes-skipped-length
+  description: The length of bytes skipped.
+  flat_name: process.io.bytes_skipped.length
+  level: extended
+  name: io.bytes_skipped.length
+  normalize: []
+  short: The length of bytes skipped.
+  type: long
+process.io.bytes_skipped.offset:
+  beta: This field is beta and subject to change.
+  dashed_name: process-io-bytes-skipped-offset
+  description: The byte offset into this event's io.text (or io.bytes in the future)
+    where length bytes were skipped.
+  flat_name: process.io.bytes_skipped.offset
+  level: extended
+  name: io.bytes_skipped.offset
+  normalize: []
+  short: The byte offset into this event's io.text (or io.bytes in the future) where
+    length bytes were skipped.
+  type: long
+process.io.max_bytes_per_process_exceeded:
+  beta: This field is beta and subject to change.
+  dashed_name: process-io-max-bytes-per-process-exceeded
+  description: If true, the process producing the output has exceeded the max_kilobytes_per_process
+    configuration setting.
+  flat_name: process.io.max_bytes_per_process_exceeded
+  level: extended
+  name: io.max_bytes_per_process_exceeded
+  normalize: []
+  short: If true, the process producing the output has exceeded the max_kilobytes_per_process
+    configuration setting.
+  type: boolean
+process.io.text:
+  beta: This field is beta and subject to change.
+  dashed_name: process-io-text
+  description: 'A chunk of output or input sanitized to UTF-8.
+
+    Best efforts are made to ensure complete lines are captured in these events. Assumptions
+    should NOT be made that multiple lines will appear in the same event. TTY output
+    may contain terminal control codes such as for cursor movement, so some string
+    queries may not match due to terminal codes inserted between characters of a word.'
+  flat_name: process.io.text
+  level: extended
+  name: io.text
+  normalize: []
+  short: A chunk of output or input sanitized to UTF-8.
+  type: wildcard
+process.io.total_bytes_captured:
+  beta: This field is beta and subject to change.
+  dashed_name: process-io-total-bytes-captured
+  description: The total number of bytes captured in this event.
+  flat_name: process.io.total_bytes_captured
+  level: extended
+  name: io.total_bytes_captured
+  normalize: []
+  short: The total number of bytes captured in this event.
+  type: long
+process.io.total_bytes_skipped:
+  beta: This field is beta and subject to change.
+  dashed_name: process-io-total-bytes-skipped
+  description: The total number of bytes that were not captured due to implementation
+    restrictions such as buffer size limits. Implementors should strive to ensure
+    this value is always zero
+  flat_name: process.io.total_bytes_skipped
+  level: extended
+  name: io.total_bytes_skipped
+  normalize: []
+  short: The total number of bytes that were not captured due to implementation restrictions
+    such as buffer size limits.
+  type: long
+process.io.type:
+  beta: This field is beta and subject to change.
+  dashed_name: process-io-type
+  description: 'The type of object on which the IO action (read or write) was taken.
+
+    Currently only ''tty'' is supported. Other types may be added in the future for
+    ''file'' and ''socket'' support.'
+  flat_name: process.io.type
+  ignore_above: 1024
+  level: extended
+  name: io.type
+  normalize: []
+  short: The type of object on which the IO action (read or write) was taken.
+  type: keyword
+process.macho.go_import_hash:
+  dashed_name: process-macho-go-import-hash
+  description: 'A hash of the Go language imports in a Mach-O file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: process.macho.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: macho
+  short: A hash of the Go language imports in a Mach-O file.
+  type: keyword
+process.macho.go_imports:
+  dashed_name: process-macho-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: process.macho.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: macho
+  short: List of imported Go language element names and types.
+  type: flattened
+process.macho.go_imports_names_entropy:
+  dashed_name: process-macho-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: process.macho.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+process.macho.go_imports_names_var_entropy:
+  dashed_name: process-macho-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: process.macho.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+process.macho.go_stripped:
+  dashed_name: process-macho-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: process.macho.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: macho
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
+process.macho.import_hash:
+  dashed_name: process-macho-import-hash
+  description: 'A hash of the imports in a Mach-O file. An import hash can be used
+    to fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a synonym for symhash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: process.macho.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: macho
+  short: A hash of the imports in a Mach-O file.
+  type: keyword
+process.macho.imports:
+  dashed_name: process-macho-imports
+  description: List of imported element names and types.
+  flat_name: process.macho.imports
+  level: extended
+  name: imports
+  normalize:
+  - array
+  original_fieldset: macho
+  short: List of imported element names and types.
+  type: flattened
+process.macho.imports_names_entropy:
+  dashed_name: process-macho-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: process.macho.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+process.macho.imports_names_var_entropy:
+  dashed_name: process-macho-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: process.macho.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
+process.macho.sections:
+  dashed_name: process-macho-sections
+  description: 'An array containing an object for each section of the Mach-O file.
+
+    The keys that should be present in these objects are defined by sub-fields underneath
+    `macho.sections.*`.'
+  flat_name: process.macho.sections
+  level: extended
+  name: sections
+  normalize:
+  - array
+  original_fieldset: macho
+  short: Section information of the Mach-O file.
+  type: nested
+process.macho.sections.entropy:
+  dashed_name: process-macho-sections-entropy
+  description: Shannon entropy calculation from the section.
+  flat_name: process.macho.sections.entropy
+  format: number
+  level: extended
+  name: sections.entropy
+  normalize: []
+  original_fieldset: macho
+  short: Shannon entropy calculation from the section.
+  type: long
+process.macho.sections.name:
+  dashed_name: process-macho-sections-name
+  description: Mach-O Section List name.
+  flat_name: process.macho.sections.name
+  ignore_above: 1024
+  level: extended
+  name: sections.name
+  normalize: []
+  original_fieldset: macho
+  short: Mach-O Section List name.
+  type: keyword
+process.macho.sections.physical_size:
+  dashed_name: process-macho-sections-physical-size
+  description: Mach-O Section List physical size.
+  flat_name: process.macho.sections.physical_size
+  format: bytes
+  level: extended
+  name: sections.physical_size
+  normalize: []
+  original_fieldset: macho
+  short: Mach-O Section List physical size.
+  type: long
+process.macho.sections.var_entropy:
+  dashed_name: process-macho-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: process.macho.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
+process.macho.sections.virtual_size:
+  dashed_name: process-macho-sections-virtual-size
+  description: Mach-O Section List virtual size. This is always the same as `physical_size`.
+  flat_name: process.macho.sections.virtual_size
+  format: string
+  level: extended
+  name: sections.virtual_size
+  normalize: []
+  original_fieldset: macho
+  short: Mach-O Section List virtual size. This is always the same as `physical_size`.
+  type: long
+process.macho.symhash:
+  dashed_name: process-macho-symhash
+  description: 'A hash of the imports in a Mach-O file. An import hash can be used
+    to fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a Mach-O implementation of the Windows PE imphash'
+  example: d3ccf195b62a9279c3c19af1080497ec
+  flat_name: process.macho.symhash
+  ignore_above: 1024
+  level: extended
+  name: symhash
+  normalize: []
+  original_fieldset: macho
+  short: A hash of the imports in a Mach-O file.
+  type: keyword
 process.name:
   dashed_name: process-name
   description: 'Process name.
@@ -8823,6 +9830,67 @@ process.parent.elf.exports:
   original_fieldset: elf
   short: List of exported element names and types.
   type: flattened
+process.parent.elf.go_import_hash:
+  dashed_name: process-parent-elf-go-import-hash
+  description: 'A hash of the Go language imports in an ELF file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: process.parent.elf.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the Go language imports in an ELF file.
+  type: keyword
+process.parent.elf.go_imports:
+  dashed_name: process-parent-elf-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: process.parent.elf.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: elf
+  short: List of imported Go language element names and types.
+  type: flattened
+process.parent.elf.go_imports_names_entropy:
+  dashed_name: process-parent-elf-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: process.parent.elf.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+process.parent.elf.go_imports_names_var_entropy:
+  dashed_name: process-parent-elf-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: process.parent.elf.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+process.parent.elf.go_stripped:
+  dashed_name: process-parent-elf-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: process.parent.elf.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: elf
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 process.parent.elf.header.abi_version:
   dashed_name: process-parent-elf-header-abi-version
   description: Version of the ELF Application Binary Interface (ABI).
@@ -8911,6 +9979,22 @@ process.parent.elf.header.version:
   original_fieldset: elf
   short: Version of the ELF header.
   type: keyword
+process.parent.elf.import_hash:
+  dashed_name: process-parent-elf-import-hash
+  description: 'A hash of the imports in an ELF file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is an ELF implementation of the Windows PE imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: process.parent.elf.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the imports in an ELF file.
+  type: keyword
 process.parent.elf.imports:
   dashed_name: process-parent-elf-imports
   description: List of imported element names and types.
@@ -8922,6 +10006,31 @@ process.parent.elf.imports:
   original_fieldset: elf
   short: List of imported element names and types.
   type: flattened
+process.parent.elf.imports_names_entropy:
+  dashed_name: process-parent-elf-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: process.parent.elf.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+process.parent.elf.imports_names_var_entropy:
+  dashed_name: process-parent-elf-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: process.parent.elf.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 process.parent.elf.sections:
   dashed_name: process-parent-elf-sections
   description: 'An array containing an object for each section of the ELF file.
@@ -9013,6 +10122,17 @@ process.parent.elf.sections.type:
   original_fieldset: elf
   short: ELF Section List type.
   type: keyword
+process.parent.elf.sections.var_entropy:
+  dashed_name: process-parent-elf-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: process.parent.elf.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
 process.parent.elf.sections.virtual_address:
   dashed_name: process-parent-elf-sections-virtual-address
   description: ELF Section List virtual address.
@@ -9298,7 +10418,6 @@ process.parent.hash.tlsh:
   short: TLSH hash.
   type: keyword
 process.parent.interactive:
-  beta: This field is beta and subject to change.
   dashed_name: process-parent-interactive
   description: 'Whether the process is connected to an interactive shell.
 
@@ -9319,6 +10438,204 @@ process.parent.interactive:
   original_fieldset: process
   short: Whether the process is connected to an interactive shell.
   type: boolean
+process.parent.macho.go_import_hash:
+  dashed_name: process-parent-macho-go-import-hash
+  description: 'A hash of the Go language imports in a Mach-O file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: process.parent.macho.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: macho
+  short: A hash of the Go language imports in a Mach-O file.
+  type: keyword
+process.parent.macho.go_imports:
+  dashed_name: process-parent-macho-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: process.parent.macho.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: macho
+  short: List of imported Go language element names and types.
+  type: flattened
+process.parent.macho.go_imports_names_entropy:
+  dashed_name: process-parent-macho-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: process.parent.macho.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+process.parent.macho.go_imports_names_var_entropy:
+  dashed_name: process-parent-macho-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: process.parent.macho.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+process.parent.macho.go_stripped:
+  dashed_name: process-parent-macho-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: process.parent.macho.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: macho
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
+process.parent.macho.import_hash:
+  dashed_name: process-parent-macho-import-hash
+  description: 'A hash of the imports in a Mach-O file. An import hash can be used
+    to fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a synonym for symhash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: process.parent.macho.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: macho
+  short: A hash of the imports in a Mach-O file.
+  type: keyword
+process.parent.macho.imports:
+  dashed_name: process-parent-macho-imports
+  description: List of imported element names and types.
+  flat_name: process.parent.macho.imports
+  level: extended
+  name: imports
+  normalize:
+  - array
+  original_fieldset: macho
+  short: List of imported element names and types.
+  type: flattened
+process.parent.macho.imports_names_entropy:
+  dashed_name: process-parent-macho-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: process.parent.macho.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+process.parent.macho.imports_names_var_entropy:
+  dashed_name: process-parent-macho-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: process.parent.macho.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
+process.parent.macho.sections:
+  dashed_name: process-parent-macho-sections
+  description: 'An array containing an object for each section of the Mach-O file.
+
+    The keys that should be present in these objects are defined by sub-fields underneath
+    `macho.sections.*`.'
+  flat_name: process.parent.macho.sections
+  level: extended
+  name: sections
+  normalize:
+  - array
+  original_fieldset: macho
+  short: Section information of the Mach-O file.
+  type: nested
+process.parent.macho.sections.entropy:
+  dashed_name: process-parent-macho-sections-entropy
+  description: Shannon entropy calculation from the section.
+  flat_name: process.parent.macho.sections.entropy
+  format: number
+  level: extended
+  name: sections.entropy
+  normalize: []
+  original_fieldset: macho
+  short: Shannon entropy calculation from the section.
+  type: long
+process.parent.macho.sections.name:
+  dashed_name: process-parent-macho-sections-name
+  description: Mach-O Section List name.
+  flat_name: process.parent.macho.sections.name
+  ignore_above: 1024
+  level: extended
+  name: sections.name
+  normalize: []
+  original_fieldset: macho
+  short: Mach-O Section List name.
+  type: keyword
+process.parent.macho.sections.physical_size:
+  dashed_name: process-parent-macho-sections-physical-size
+  description: Mach-O Section List physical size.
+  flat_name: process.parent.macho.sections.physical_size
+  format: bytes
+  level: extended
+  name: sections.physical_size
+  normalize: []
+  original_fieldset: macho
+  short: Mach-O Section List physical size.
+  type: long
+process.parent.macho.sections.var_entropy:
+  dashed_name: process-parent-macho-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: process.parent.macho.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: macho
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
+process.parent.macho.sections.virtual_size:
+  dashed_name: process-parent-macho-sections-virtual-size
+  description: Mach-O Section List virtual size. This is always the same as `physical_size`.
+  flat_name: process.parent.macho.sections.virtual_size
+  format: string
+  level: extended
+  name: sections.virtual_size
+  normalize: []
+  original_fieldset: macho
+  short: Mach-O Section List virtual size. This is always the same as `physical_size`.
+  type: long
+process.parent.macho.symhash:
+  dashed_name: process-parent-macho-symhash
+  description: 'A hash of the imports in a Mach-O file. An import hash can be used
+    to fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a Mach-O implementation of the Windows PE imphash'
+  example: d3ccf195b62a9279c3c19af1080497ec
+  flat_name: process.parent.macho.symhash
+  ignore_above: 1024
+  level: extended
+  name: symhash
+  normalize: []
+  original_fieldset: macho
+  short: A hash of the imports in a Mach-O file.
+  type: keyword
 process.parent.name:
   dashed_name: process-parent-name
   description: 'Process name.
@@ -9385,6 +10702,67 @@ process.parent.pe.file_version:
   original_fieldset: pe
   short: Process name.
   type: keyword
+process.parent.pe.go_import_hash:
+  dashed_name: process-parent-pe-go-import-hash
+  description: 'A hash of the Go language imports in a PE file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: process.parent.pe.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the Go language imports in a PE file.
+  type: keyword
+process.parent.pe.go_imports:
+  dashed_name: process-parent-pe-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: process.parent.pe.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: pe
+  short: List of imported Go language element names and types.
+  type: flattened
+process.parent.pe.go_imports_names_entropy:
+  dashed_name: process-parent-pe-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: process.parent.pe.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+process.parent.pe.go_imports_names_var_entropy:
+  dashed_name: process-parent-pe-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: process.parent.pe.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+process.parent.pe.go_stripped:
+  dashed_name: process-parent-pe-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: process.parent.pe.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: pe
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 process.parent.pe.imphash:
   dashed_name: process-parent-pe-imphash
   description: 'A hash of the imports in a PE file. An imphash -- or import hash --
@@ -9401,6 +10779,58 @@ process.parent.pe.imphash:
   original_fieldset: pe
   short: A hash of the imports in a PE file.
   type: keyword
+process.parent.pe.import_hash:
+  dashed_name: process-parent-pe-import-hash
+  description: 'A hash of the imports in a PE file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a synonym for imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: process.parent.pe.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the imports in a PE file.
+  type: keyword
+process.parent.pe.imports:
+  dashed_name: process-parent-pe-imports
+  description: List of imported element names and types.
+  flat_name: process.parent.pe.imports
+  level: extended
+  name: imports
+  normalize:
+  - array
+  original_fieldset: pe
+  short: List of imported element names and types.
+  type: flattened
+process.parent.pe.imports_names_entropy:
+  dashed_name: process-parent-pe-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: process.parent.pe.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+process.parent.pe.imports_names_var_entropy:
+  dashed_name: process-parent-pe-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: process.parent.pe.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 process.parent.pe.original_file_name:
   dashed_name: process-parent-pe-original-file-name
   description: Internal name of the file, provided at compile-time.
@@ -9441,6 +10871,75 @@ process.parent.pe.product:
   original_fieldset: pe
   short: Internal product name of the file, provided at compile-time.
   type: keyword
+process.parent.pe.sections:
+  dashed_name: process-parent-pe-sections
+  description: 'An array containing an object for each section of the PE file.
+
+    The keys that should be present in these objects are defined by sub-fields underneath
+    `pe.sections.*`.'
+  flat_name: process.parent.pe.sections
+  level: extended
+  name: sections
+  normalize:
+  - array
+  original_fieldset: pe
+  short: Section information of the PE file.
+  type: nested
+process.parent.pe.sections.entropy:
+  dashed_name: process-parent-pe-sections-entropy
+  description: Shannon entropy calculation from the section.
+  flat_name: process.parent.pe.sections.entropy
+  format: number
+  level: extended
+  name: sections.entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the section.
+  type: long
+process.parent.pe.sections.name:
+  dashed_name: process-parent-pe-sections-name
+  description: PE Section List name.
+  flat_name: process.parent.pe.sections.name
+  ignore_above: 1024
+  level: extended
+  name: sections.name
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List name.
+  type: keyword
+process.parent.pe.sections.physical_size:
+  dashed_name: process-parent-pe-sections-physical-size
+  description: PE Section List physical size.
+  flat_name: process.parent.pe.sections.physical_size
+  format: bytes
+  level: extended
+  name: sections.physical_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List physical size.
+  type: long
+process.parent.pe.sections.var_entropy:
+  dashed_name: process-parent-pe-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: process.parent.pe.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
+process.parent.pe.sections.virtual_size:
+  dashed_name: process-parent-pe-sections-virtual-size
+  description: PE Section List virtual size. This is always the same as `physical_size`.
+  flat_name: process.parent.pe.sections.virtual_size
+  format: string
+  level: extended
+  name: sections.virtual_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List virtual size. This is always the same as `physical_size`.
+  type: long
 process.parent.pgid:
   dashed_name: process-parent-pgid
   description: 'Deprecated for removal in next major version release. This field is
@@ -9643,7 +11142,6 @@ process.parent.title:
   short: Process title.
   type: keyword
 process.parent.tty:
-  beta: This field is beta and subject to change.
   dashed_name: process-parent-tty
   description: Information about the controlling TTY device. If set, the process belongs
     to an interactive session.
@@ -9655,7 +11153,6 @@ process.parent.tty:
   short: Information about the controlling TTY device.
   type: object
 process.parent.tty.char_device.major:
-  beta: This field is beta and subject to change.
   dashed_name: process-parent-tty-char-device-major
   description: The major number identifies the driver associated with the device.
     The character device's major and minor numbers can be algorithmically combined
@@ -9670,7 +11167,6 @@ process.parent.tty.char_device.major:
   short: The TTY character device's major number.
   type: long
 process.parent.tty.char_device.minor:
-  beta: This field is beta and subject to change.
   dashed_name: process-parent-tty-char-device-minor
   description: "The minor number is used only by the driver specified by the major\
     \ number; other parts of the kernel don\u2019t use it, and merely pass it along\
@@ -9787,6 +11283,67 @@ process.pe.file_version:
   original_fieldset: pe
   short: Process name.
   type: keyword
+process.pe.go_import_hash:
+  dashed_name: process-pe-go-import-hash
+  description: 'A hash of the Go language imports in a PE file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: process.pe.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the Go language imports in a PE file.
+  type: keyword
+process.pe.go_imports:
+  dashed_name: process-pe-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: process.pe.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: pe
+  short: List of imported Go language element names and types.
+  type: flattened
+process.pe.go_imports_names_entropy:
+  dashed_name: process-pe-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: process.pe.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+process.pe.go_imports_names_var_entropy:
+  dashed_name: process-pe-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: process.pe.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+process.pe.go_stripped:
+  dashed_name: process-pe-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: process.pe.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: pe
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 process.pe.imphash:
   dashed_name: process-pe-imphash
   description: 'A hash of the imports in a PE file. An imphash -- or import hash --
@@ -9803,6 +11360,58 @@ process.pe.imphash:
   original_fieldset: pe
   short: A hash of the imports in a PE file.
   type: keyword
+process.pe.import_hash:
+  dashed_name: process-pe-import-hash
+  description: 'A hash of the imports in a PE file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a synonym for imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: process.pe.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the imports in a PE file.
+  type: keyword
+process.pe.imports:
+  dashed_name: process-pe-imports
+  description: List of imported element names and types.
+  flat_name: process.pe.imports
+  level: extended
+  name: imports
+  normalize:
+  - array
+  original_fieldset: pe
+  short: List of imported element names and types.
+  type: flattened
+process.pe.imports_names_entropy:
+  dashed_name: process-pe-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: process.pe.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+process.pe.imports_names_var_entropy:
+  dashed_name: process-pe-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: process.pe.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 process.pe.original_file_name:
   dashed_name: process-pe-original-file-name
   description: Internal name of the file, provided at compile-time.
@@ -9843,6 +11452,75 @@ process.pe.product:
   original_fieldset: pe
   short: Internal product name of the file, provided at compile-time.
   type: keyword
+process.pe.sections:
+  dashed_name: process-pe-sections
+  description: 'An array containing an object for each section of the PE file.
+
+    The keys that should be present in these objects are defined by sub-fields underneath
+    `pe.sections.*`.'
+  flat_name: process.pe.sections
+  level: extended
+  name: sections
+  normalize:
+  - array
+  original_fieldset: pe
+  short: Section information of the PE file.
+  type: nested
+process.pe.sections.entropy:
+  dashed_name: process-pe-sections-entropy
+  description: Shannon entropy calculation from the section.
+  flat_name: process.pe.sections.entropy
+  format: number
+  level: extended
+  name: sections.entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the section.
+  type: long
+process.pe.sections.name:
+  dashed_name: process-pe-sections-name
+  description: PE Section List name.
+  flat_name: process.pe.sections.name
+  ignore_above: 1024
+  level: extended
+  name: sections.name
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List name.
+  type: keyword
+process.pe.sections.physical_size:
+  dashed_name: process-pe-sections-physical-size
+  description: PE Section List physical size.
+  flat_name: process.pe.sections.physical_size
+  format: bytes
+  level: extended
+  name: sections.physical_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List physical size.
+  type: long
+process.pe.sections.var_entropy:
+  dashed_name: process-pe-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: process.pe.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
+process.pe.sections.virtual_size:
+  dashed_name: process-pe-sections-virtual-size
+  description: PE Section List virtual size. This is always the same as `physical_size`.
+  flat_name: process.pe.sections.virtual_size
+  format: string
+  level: extended
+  name: sections.virtual_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List virtual size. This is always the same as `physical_size`.
+  type: long
 process.pgid:
   dashed_name: process-pgid
   description: 'Deprecated for removal in next major version release. This field is
@@ -10122,7 +11800,6 @@ process.session_leader.group.name:
   short: Name of the group.
   type: keyword
 process.session_leader.interactive:
-  beta: This field is beta and subject to change.
   dashed_name: process-session-leader-interactive
   description: 'Whether the process is connected to an interactive shell.
 
@@ -10310,7 +11987,6 @@ process.session_leader.real_user.name:
   short: Short name or login of the user.
   type: keyword
 process.session_leader.same_as_process:
-  beta: This field is beta and subject to change.
   dashed_name: process-session-leader-same-as-process
   description: 'This boolean is used to identify if a leader process is the same as
     the top level process.
@@ -10424,7 +12100,6 @@ process.session_leader.supplemental_groups.name:
   short: Name of the group.
   type: keyword
 process.session_leader.tty:
-  beta: This field is beta and subject to change.
   dashed_name: process-session-leader-tty
   description: Information about the controlling TTY device. If set, the process belongs
     to an interactive session.
@@ -10436,7 +12111,6 @@ process.session_leader.tty:
   short: Information about the controlling TTY device.
   type: object
 process.session_leader.tty.char_device.major:
-  beta: This field is beta and subject to change.
   dashed_name: process-session-leader-tty-char-device-major
   description: The major number identifies the driver associated with the device.
     The character device's major and minor numbers can be algorithmically combined
@@ -10451,7 +12125,6 @@ process.session_leader.tty.char_device.major:
   short: The TTY character device's major number.
   type: long
 process.session_leader.tty.char_device.minor:
-  beta: This field is beta and subject to change.
   dashed_name: process-session-leader-tty-char-device-minor
   description: "The minor number is used only by the driver specified by the major\
     \ number; other parts of the kernel don\u2019t use it, and merely pass it along\
@@ -10581,7 +12254,6 @@ process.title:
   short: Process title.
   type: keyword
 process.tty:
-  beta: This field is beta and subject to change.
   dashed_name: process-tty
   description: Information about the controlling TTY device. If set, the process belongs
     to an interactive session.
@@ -10592,7 +12264,6 @@ process.tty:
   short: Information about the controlling TTY device.
   type: object
 process.tty.char_device.major:
-  beta: This field is beta and subject to change.
   dashed_name: process-tty-char-device-major
   description: The major number identifies the driver associated with the device.
     The character device's major and minor numbers can be algorithmically combined
@@ -10606,7 +12277,6 @@ process.tty.char_device.major:
   short: The TTY character device's major number.
   type: long
 process.tty.char_device.minor:
-  beta: This field is beta and subject to change.
   dashed_name: process-tty-char-device-minor
   description: "The minor number is used only by the driver specified by the major\
     \ number; other parts of the kernel don\u2019t use it, and merely pass it along\
@@ -11404,86 +13074,6 @@ server.user.name:
   original_fieldset: user
   short: Short name or login of the user.
   type: keyword
-server.user.risk.calculated_level:
-  dashed_name: server-user-risk-calculated-level
-  description: A risk classification level calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: High
-  flat_name: server.user.risk.calculated_level
-  ignore_above: 1024
-  level: extended
-  name: calculated_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: keyword
-server.user.risk.calculated_score:
-  dashed_name: server-user-risk-calculated-score
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: 880.73
-  flat_name: server.user.risk.calculated_score
-  level: extended
-  name: calculated_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: float
-server.user.risk.calculated_score_norm:
-  dashed_name: server-user-risk-calculated-score-norm
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring, and normalized to a range of 0 to
-    100.
-  example: 88.73
-  flat_name: server.user.risk.calculated_score_norm
-  level: extended
-  name: calculated_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an internal system.
-  type: float
-server.user.risk.static_level:
-  dashed_name: server-user-risk-static-level
-  description: A risk classification level obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: High
-  flat_name: server.user.risk.static_level
-  ignore_above: 1024
-  level: extended
-  name: static_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: keyword
-server.user.risk.static_score:
-  dashed_name: server-user-risk-static-score
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: 830.0
-  flat_name: server.user.risk.static_score
-  level: extended
-  name: static_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: float
-server.user.risk.static_score_norm:
-  dashed_name: server-user-risk-static-score-norm
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform, and normalized to a range
-    of 0 to 100.
-  example: 83.0
-  flat_name: server.user.risk.static_score_norm
-  level: extended
-  name: static_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an external system.
-  type: float
 server.user.roles:
   dashed_name: server-user-roles
   description: Array of user roles at the time of the event.
@@ -12531,86 +14121,6 @@ source.user.name:
   original_fieldset: user
   short: Short name or login of the user.
   type: keyword
-source.user.risk.calculated_level:
-  dashed_name: source-user-risk-calculated-level
-  description: A risk classification level calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: High
-  flat_name: source.user.risk.calculated_level
-  ignore_above: 1024
-  level: extended
-  name: calculated_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: keyword
-source.user.risk.calculated_score:
-  dashed_name: source-user-risk-calculated-score
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: 880.73
-  flat_name: source.user.risk.calculated_score
-  level: extended
-  name: calculated_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: float
-source.user.risk.calculated_score_norm:
-  dashed_name: source-user-risk-calculated-score-norm
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring, and normalized to a range of 0 to
-    100.
-  example: 88.73
-  flat_name: source.user.risk.calculated_score_norm
-  level: extended
-  name: calculated_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an internal system.
-  type: float
-source.user.risk.static_level:
-  dashed_name: source-user-risk-static-level
-  description: A risk classification level obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: High
-  flat_name: source.user.risk.static_level
-  ignore_above: 1024
-  level: extended
-  name: static_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: keyword
-source.user.risk.static_score:
-  dashed_name: source-user-risk-static-score
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: 830.0
-  flat_name: source.user.risk.static_score
-  level: extended
-  name: static_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: float
-source.user.risk.static_score_norm:
-  dashed_name: source-user-risk-static-score-norm
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform, and normalized to a range
-    of 0 to 100.
-  example: 83.0
-  flat_name: source.user.risk.static_score_norm
-  level: extended
-  name: static_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an external system.
-  type: float
 source.user.roles:
   dashed_name: source-user-roles
   description: Array of user roles at the time of the event.
@@ -13016,6 +14526,67 @@ threat.enrichments.indicator.file.elf.exports:
   original_fieldset: elf
   short: List of exported element names and types.
   type: flattened
+threat.enrichments.indicator.file.elf.go_import_hash:
+  dashed_name: threat-enrichments-indicator-file-elf-go-import-hash
+  description: 'A hash of the Go language imports in an ELF file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: threat.enrichments.indicator.file.elf.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the Go language imports in an ELF file.
+  type: keyword
+threat.enrichments.indicator.file.elf.go_imports:
+  dashed_name: threat-enrichments-indicator-file-elf-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: threat.enrichments.indicator.file.elf.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: elf
+  short: List of imported Go language element names and types.
+  type: flattened
+threat.enrichments.indicator.file.elf.go_imports_names_entropy:
+  dashed_name: threat-enrichments-indicator-file-elf-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: threat.enrichments.indicator.file.elf.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+threat.enrichments.indicator.file.elf.go_imports_names_var_entropy:
+  dashed_name: threat-enrichments-indicator-file-elf-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: threat.enrichments.indicator.file.elf.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+threat.enrichments.indicator.file.elf.go_stripped:
+  dashed_name: threat-enrichments-indicator-file-elf-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: threat.enrichments.indicator.file.elf.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: elf
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 threat.enrichments.indicator.file.elf.header.abi_version:
   dashed_name: threat-enrichments-indicator-file-elf-header-abi-version
   description: Version of the ELF Application Binary Interface (ABI).
@@ -13104,6 +14675,22 @@ threat.enrichments.indicator.file.elf.header.version:
   original_fieldset: elf
   short: Version of the ELF header.
   type: keyword
+threat.enrichments.indicator.file.elf.import_hash:
+  dashed_name: threat-enrichments-indicator-file-elf-import-hash
+  description: 'A hash of the imports in an ELF file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is an ELF implementation of the Windows PE imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: threat.enrichments.indicator.file.elf.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the imports in an ELF file.
+  type: keyword
 threat.enrichments.indicator.file.elf.imports:
   dashed_name: threat-enrichments-indicator-file-elf-imports
   description: List of imported element names and types.
@@ -13115,6 +14702,31 @@ threat.enrichments.indicator.file.elf.imports:
   original_fieldset: elf
   short: List of imported element names and types.
   type: flattened
+threat.enrichments.indicator.file.elf.imports_names_entropy:
+  dashed_name: threat-enrichments-indicator-file-elf-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: threat.enrichments.indicator.file.elf.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+threat.enrichments.indicator.file.elf.imports_names_var_entropy:
+  dashed_name: threat-enrichments-indicator-file-elf-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: threat.enrichments.indicator.file.elf.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 threat.enrichments.indicator.file.elf.sections:
   dashed_name: threat-enrichments-indicator-file-elf-sections
   description: 'An array containing an object for each section of the ELF file.
@@ -13206,6 +14818,17 @@ threat.enrichments.indicator.file.elf.sections.type:
   original_fieldset: elf
   short: ELF Section List type.
   type: keyword
+threat.enrichments.indicator.file.elf.sections.var_entropy:
+  dashed_name: threat-enrichments-indicator-file-elf-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: threat.enrichments.indicator.file.elf.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
 threat.enrichments.indicator.file.elf.sections.virtual_address:
   dashed_name: threat-enrichments-indicator-file-elf-sections-virtual-address
   description: ELF Section List virtual address.
@@ -13564,6 +15187,67 @@ threat.enrichments.indicator.file.pe.file_version:
   original_fieldset: pe
   short: Process name.
   type: keyword
+threat.enrichments.indicator.file.pe.go_import_hash:
+  dashed_name: threat-enrichments-indicator-file-pe-go-import-hash
+  description: 'A hash of the Go language imports in a PE file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: threat.enrichments.indicator.file.pe.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the Go language imports in a PE file.
+  type: keyword
+threat.enrichments.indicator.file.pe.go_imports:
+  dashed_name: threat-enrichments-indicator-file-pe-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: threat.enrichments.indicator.file.pe.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: pe
+  short: List of imported Go language element names and types.
+  type: flattened
+threat.enrichments.indicator.file.pe.go_imports_names_entropy:
+  dashed_name: threat-enrichments-indicator-file-pe-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: threat.enrichments.indicator.file.pe.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+threat.enrichments.indicator.file.pe.go_imports_names_var_entropy:
+  dashed_name: threat-enrichments-indicator-file-pe-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: threat.enrichments.indicator.file.pe.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+threat.enrichments.indicator.file.pe.go_stripped:
+  dashed_name: threat-enrichments-indicator-file-pe-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: threat.enrichments.indicator.file.pe.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: pe
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 threat.enrichments.indicator.file.pe.imphash:
   dashed_name: threat-enrichments-indicator-file-pe-imphash
   description: 'A hash of the imports in a PE file. An imphash -- or import hash --
@@ -13580,6 +15264,58 @@ threat.enrichments.indicator.file.pe.imphash:
   original_fieldset: pe
   short: A hash of the imports in a PE file.
   type: keyword
+threat.enrichments.indicator.file.pe.import_hash:
+  dashed_name: threat-enrichments-indicator-file-pe-import-hash
+  description: 'A hash of the imports in a PE file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a synonym for imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: threat.enrichments.indicator.file.pe.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the imports in a PE file.
+  type: keyword
+threat.enrichments.indicator.file.pe.imports:
+  dashed_name: threat-enrichments-indicator-file-pe-imports
+  description: List of imported element names and types.
+  flat_name: threat.enrichments.indicator.file.pe.imports
+  level: extended
+  name: imports
+  normalize:
+  - array
+  original_fieldset: pe
+  short: List of imported element names and types.
+  type: flattened
+threat.enrichments.indicator.file.pe.imports_names_entropy:
+  dashed_name: threat-enrichments-indicator-file-pe-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: threat.enrichments.indicator.file.pe.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+threat.enrichments.indicator.file.pe.imports_names_var_entropy:
+  dashed_name: threat-enrichments-indicator-file-pe-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: threat.enrichments.indicator.file.pe.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 threat.enrichments.indicator.file.pe.original_file_name:
   dashed_name: threat-enrichments-indicator-file-pe-original-file-name
   description: Internal name of the file, provided at compile-time.
@@ -13620,6 +15356,75 @@ threat.enrichments.indicator.file.pe.product:
   original_fieldset: pe
   short: Internal product name of the file, provided at compile-time.
   type: keyword
+threat.enrichments.indicator.file.pe.sections:
+  dashed_name: threat-enrichments-indicator-file-pe-sections
+  description: 'An array containing an object for each section of the PE file.
+
+    The keys that should be present in these objects are defined by sub-fields underneath
+    `pe.sections.*`.'
+  flat_name: threat.enrichments.indicator.file.pe.sections
+  level: extended
+  name: sections
+  normalize:
+  - array
+  original_fieldset: pe
+  short: Section information of the PE file.
+  type: nested
+threat.enrichments.indicator.file.pe.sections.entropy:
+  dashed_name: threat-enrichments-indicator-file-pe-sections-entropy
+  description: Shannon entropy calculation from the section.
+  flat_name: threat.enrichments.indicator.file.pe.sections.entropy
+  format: number
+  level: extended
+  name: sections.entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the section.
+  type: long
+threat.enrichments.indicator.file.pe.sections.name:
+  dashed_name: threat-enrichments-indicator-file-pe-sections-name
+  description: PE Section List name.
+  flat_name: threat.enrichments.indicator.file.pe.sections.name
+  ignore_above: 1024
+  level: extended
+  name: sections.name
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List name.
+  type: keyword
+threat.enrichments.indicator.file.pe.sections.physical_size:
+  dashed_name: threat-enrichments-indicator-file-pe-sections-physical-size
+  description: PE Section List physical size.
+  flat_name: threat.enrichments.indicator.file.pe.sections.physical_size
+  format: bytes
+  level: extended
+  name: sections.physical_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List physical size.
+  type: long
+threat.enrichments.indicator.file.pe.sections.var_entropy:
+  dashed_name: threat-enrichments-indicator-file-pe-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: threat.enrichments.indicator.file.pe.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
+threat.enrichments.indicator.file.pe.sections.virtual_size:
+  dashed_name: threat-enrichments-indicator-file-pe-sections-virtual-size
+  description: PE Section List virtual size. This is always the same as `physical_size`.
+  flat_name: threat.enrichments.indicator.file.pe.sections.virtual_size
+  format: string
+  level: extended
+  name: sections.virtual_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List virtual size. This is always the same as `physical_size`.
+  type: long
 threat.enrichments.indicator.file.size:
   dashed_name: threat-enrichments-indicator-file-size
   description: 'File size in bytes.
@@ -14153,11 +15958,13 @@ threat.enrichments.indicator.last_seen:
 threat.enrichments.indicator.marking.tlp:
   dashed_name: threat-enrichments-indicator-marking-tlp
   description: Traffic Light Protocol sharing markings.
-  example: WHITE
+  example: CLEAR
   expected_values:
   - WHITE
+  - CLEAR
   - GREEN
   - AMBER
+  - AMBER+STRICT
   - RED
   flat_name: threat.enrichments.indicator.marking.tlp
   ignore_above: 1024
@@ -14165,6 +15972,17 @@ threat.enrichments.indicator.marking.tlp:
   name: enrichments.indicator.marking.tlp
   normalize: []
   short: Indicator TLP marking
+  type: keyword
+threat.enrichments.indicator.marking.tlp_version:
+  dashed_name: threat-enrichments-indicator-marking-tlp-version
+  description: Traffic Light Protocol version.
+  example: 2.0
+  flat_name: threat.enrichments.indicator.marking.tlp_version
+  ignore_above: 1024
+  level: extended
+  name: enrichments.indicator.marking.tlp_version
+  normalize: []
+  short: Indicator TLP version
   type: keyword
 threat.enrichments.indicator.modified_at:
   dashed_name: threat-enrichments-indicator-modified-at
@@ -14177,6 +15995,29 @@ threat.enrichments.indicator.modified_at:
   normalize: []
   short: Date/time indicator was last updated.
   type: date
+threat.enrichments.indicator.name:
+  dashed_name: threat-enrichments-indicator-name
+  description: The display name indicator in an UI friendly format
+  example: 5.2.75.227
+  expected_values:
+  - 5.2.75.227
+  - 2a02:cf40:add:4002:91f2:a9b2:e09a:6fc6
+  - https://example.com/some/path
+  - example.com
+  - 373d34874d7bc89fd4cefa6272ee80bf
+  - b0e914d1bbe19433cc9df64ea1ca07fe77f7b150b511b786e46e007941a62bd7
+  - email@example.com
+  - HKLM\\SOFTWARE\\Microsoft\\Active
+  - 13335
+  - 00:00:5e:00:53:af
+  - 8008
+  flat_name: threat.enrichments.indicator.name
+  ignore_above: 1024
+  level: extended
+  name: enrichments.indicator.name
+  normalize: []
+  short: Indicator display name
+  type: keyword
 threat.enrichments.indicator.port:
   dashed_name: threat-enrichments-indicator-port
   description: Identifies a threat indicator as a port number (irrespective of direction).
@@ -15404,6 +17245,67 @@ threat.indicator.file.elf.exports:
   original_fieldset: elf
   short: List of exported element names and types.
   type: flattened
+threat.indicator.file.elf.go_import_hash:
+  dashed_name: threat-indicator-file-elf-go-import-hash
+  description: 'A hash of the Go language imports in an ELF file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: threat.indicator.file.elf.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the Go language imports in an ELF file.
+  type: keyword
+threat.indicator.file.elf.go_imports:
+  dashed_name: threat-indicator-file-elf-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: threat.indicator.file.elf.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: elf
+  short: List of imported Go language element names and types.
+  type: flattened
+threat.indicator.file.elf.go_imports_names_entropy:
+  dashed_name: threat-indicator-file-elf-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: threat.indicator.file.elf.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+threat.indicator.file.elf.go_imports_names_var_entropy:
+  dashed_name: threat-indicator-file-elf-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: threat.indicator.file.elf.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+threat.indicator.file.elf.go_stripped:
+  dashed_name: threat-indicator-file-elf-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: threat.indicator.file.elf.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: elf
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 threat.indicator.file.elf.header.abi_version:
   dashed_name: threat-indicator-file-elf-header-abi-version
   description: Version of the ELF Application Binary Interface (ABI).
@@ -15492,6 +17394,22 @@ threat.indicator.file.elf.header.version:
   original_fieldset: elf
   short: Version of the ELF header.
   type: keyword
+threat.indicator.file.elf.import_hash:
+  dashed_name: threat-indicator-file-elf-import-hash
+  description: 'A hash of the imports in an ELF file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is an ELF implementation of the Windows PE imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: threat.indicator.file.elf.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: elf
+  short: A hash of the imports in an ELF file.
+  type: keyword
 threat.indicator.file.elf.imports:
   dashed_name: threat-indicator-file-elf-imports
   description: List of imported element names and types.
@@ -15503,6 +17421,31 @@ threat.indicator.file.elf.imports:
   original_fieldset: elf
   short: List of imported element names and types.
   type: flattened
+threat.indicator.file.elf.imports_names_entropy:
+  dashed_name: threat-indicator-file-elf-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: threat.indicator.file.elf.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+threat.indicator.file.elf.imports_names_var_entropy:
+  dashed_name: threat-indicator-file-elf-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: threat.indicator.file.elf.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 threat.indicator.file.elf.sections:
   dashed_name: threat-indicator-file-elf-sections
   description: 'An array containing an object for each section of the ELF file.
@@ -15594,6 +17537,17 @@ threat.indicator.file.elf.sections.type:
   original_fieldset: elf
   short: ELF Section List type.
   type: keyword
+threat.indicator.file.elf.sections.var_entropy:
+  dashed_name: threat-indicator-file-elf-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: threat.indicator.file.elf.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: elf
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
 threat.indicator.file.elf.sections.virtual_address:
   dashed_name: threat-indicator-file-elf-sections-virtual-address
   description: ELF Section List virtual address.
@@ -15952,6 +17906,67 @@ threat.indicator.file.pe.file_version:
   original_fieldset: pe
   short: Process name.
   type: keyword
+threat.indicator.file.pe.go_import_hash:
+  dashed_name: threat-indicator-file-pe-go-import-hash
+  description: 'A hash of the Go language imports in a PE file excluding standard
+    library imports. An import hash can be used to fingerprint binaries even after
+    recompilation or other code-level transformations have occurred, which would change
+    more traditional hash values.
+
+    The algorithm used to calculate the Go symbol hash and a reference implementation
+    are available [here](https://github.com/elastic/toutoumomoma).'
+  example: 10bddcb4cee42080f76c88d9ff964491
+  flat_name: threat.indicator.file.pe.go_import_hash
+  ignore_above: 1024
+  level: extended
+  name: go_import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the Go language imports in a PE file.
+  type: keyword
+threat.indicator.file.pe.go_imports:
+  dashed_name: threat-indicator-file-pe-go-imports
+  description: List of imported Go language element names and types.
+  flat_name: threat.indicator.file.pe.go_imports
+  level: extended
+  name: go_imports
+  normalize: []
+  original_fieldset: pe
+  short: List of imported Go language element names and types.
+  type: flattened
+threat.indicator.file.pe.go_imports_names_entropy:
+  dashed_name: threat-indicator-file-pe-go-imports-names-entropy
+  description: Shannon entropy calculation from the list of Go imports.
+  flat_name: threat.indicator.file.pe.go_imports_names_entropy
+  format: number
+  level: extended
+  name: go_imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of Go imports.
+  type: long
+threat.indicator.file.pe.go_imports_names_var_entropy:
+  dashed_name: threat-indicator-file-pe-go-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of Go imports.
+  flat_name: threat.indicator.file.pe.go_imports_names_var_entropy
+  format: number
+  level: extended
+  name: go_imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of Go imports.
+  type: long
+threat.indicator.file.pe.go_stripped:
+  dashed_name: threat-indicator-file-pe-go-stripped
+  description: Set to true if the file is a Go executable that has had its symbols
+    stripped or obfuscated and false if an unobfuscated Go executable.
+  flat_name: threat.indicator.file.pe.go_stripped
+  level: extended
+  name: go_stripped
+  normalize: []
+  original_fieldset: pe
+  short: Whether the file is a stripped or obfuscated Go executable.
+  type: boolean
 threat.indicator.file.pe.imphash:
   dashed_name: threat-indicator-file-pe-imphash
   description: 'A hash of the imports in a PE file. An imphash -- or import hash --
@@ -15968,6 +17983,58 @@ threat.indicator.file.pe.imphash:
   original_fieldset: pe
   short: A hash of the imports in a PE file.
   type: keyword
+threat.indicator.file.pe.import_hash:
+  dashed_name: threat-indicator-file-pe-import-hash
+  description: 'A hash of the imports in a PE file. An import hash can be used to
+    fingerprint binaries even after recompilation or other code-level transformations
+    have occurred, which would change more traditional hash values.
+
+    This is a synonym for imphash.'
+  example: d41d8cd98f00b204e9800998ecf8427e
+  flat_name: threat.indicator.file.pe.import_hash
+  ignore_above: 1024
+  level: extended
+  name: import_hash
+  normalize: []
+  original_fieldset: pe
+  short: A hash of the imports in a PE file.
+  type: keyword
+threat.indicator.file.pe.imports:
+  dashed_name: threat-indicator-file-pe-imports
+  description: List of imported element names and types.
+  flat_name: threat.indicator.file.pe.imports
+  level: extended
+  name: imports
+  normalize:
+  - array
+  original_fieldset: pe
+  short: List of imported element names and types.
+  type: flattened
+threat.indicator.file.pe.imports_names_entropy:
+  dashed_name: threat-indicator-file-pe-imports-names-entropy
+  description: Shannon entropy calculation from the list of imported element names
+    and types.
+  flat_name: threat.indicator.file.pe.imports_names_entropy
+  format: number
+  level: extended
+  name: imports_names_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the list of imported element names and types.
+  type: long
+threat.indicator.file.pe.imports_names_var_entropy:
+  dashed_name: threat-indicator-file-pe-imports-names-var-entropy
+  description: Variance for Shannon entropy calculation from the list of imported
+    element names and types.
+  flat_name: threat.indicator.file.pe.imports_names_var_entropy
+  format: number
+  level: extended
+  name: imports_names_var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the list of imported element
+    names and types.
+  type: long
 threat.indicator.file.pe.original_file_name:
   dashed_name: threat-indicator-file-pe-original-file-name
   description: Internal name of the file, provided at compile-time.
@@ -16008,6 +18075,75 @@ threat.indicator.file.pe.product:
   original_fieldset: pe
   short: Internal product name of the file, provided at compile-time.
   type: keyword
+threat.indicator.file.pe.sections:
+  dashed_name: threat-indicator-file-pe-sections
+  description: 'An array containing an object for each section of the PE file.
+
+    The keys that should be present in these objects are defined by sub-fields underneath
+    `pe.sections.*`.'
+  flat_name: threat.indicator.file.pe.sections
+  level: extended
+  name: sections
+  normalize:
+  - array
+  original_fieldset: pe
+  short: Section information of the PE file.
+  type: nested
+threat.indicator.file.pe.sections.entropy:
+  dashed_name: threat-indicator-file-pe-sections-entropy
+  description: Shannon entropy calculation from the section.
+  flat_name: threat.indicator.file.pe.sections.entropy
+  format: number
+  level: extended
+  name: sections.entropy
+  normalize: []
+  original_fieldset: pe
+  short: Shannon entropy calculation from the section.
+  type: long
+threat.indicator.file.pe.sections.name:
+  dashed_name: threat-indicator-file-pe-sections-name
+  description: PE Section List name.
+  flat_name: threat.indicator.file.pe.sections.name
+  ignore_above: 1024
+  level: extended
+  name: sections.name
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List name.
+  type: keyword
+threat.indicator.file.pe.sections.physical_size:
+  dashed_name: threat-indicator-file-pe-sections-physical-size
+  description: PE Section List physical size.
+  flat_name: threat.indicator.file.pe.sections.physical_size
+  format: bytes
+  level: extended
+  name: sections.physical_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List physical size.
+  type: long
+threat.indicator.file.pe.sections.var_entropy:
+  dashed_name: threat-indicator-file-pe-sections-var-entropy
+  description: Variance for Shannon entropy calculation from the section.
+  flat_name: threat.indicator.file.pe.sections.var_entropy
+  format: number
+  level: extended
+  name: sections.var_entropy
+  normalize: []
+  original_fieldset: pe
+  short: Variance for Shannon entropy calculation from the section.
+  type: long
+threat.indicator.file.pe.sections.virtual_size:
+  dashed_name: threat-indicator-file-pe-sections-virtual-size
+  description: PE Section List virtual size. This is always the same as `physical_size`.
+  flat_name: threat.indicator.file.pe.sections.virtual_size
+  format: string
+  level: extended
+  name: sections.virtual_size
+  normalize: []
+  original_fieldset: pe
+  short: PE Section List virtual size. This is always the same as `physical_size`.
+  type: long
 threat.indicator.file.size:
   dashed_name: threat-indicator-file-size
   description: 'File size in bytes.
@@ -16541,11 +18677,13 @@ threat.indicator.last_seen:
 threat.indicator.marking.tlp:
   dashed_name: threat-indicator-marking-tlp
   description: Traffic Light Protocol sharing markings.
-  example: WHITE
+  example: CLEAR
   expected_values:
   - WHITE
+  - CLEAR
   - GREEN
   - AMBER
+  - AMBER+STRICT
   - RED
   flat_name: threat.indicator.marking.tlp
   ignore_above: 1024
@@ -16553,6 +18691,17 @@ threat.indicator.marking.tlp:
   name: indicator.marking.tlp
   normalize: []
   short: Indicator TLP marking
+  type: keyword
+threat.indicator.marking.tlp_version:
+  dashed_name: threat-indicator-marking-tlp-version
+  description: Traffic Light Protocol version.
+  example: 2.0
+  flat_name: threat.indicator.marking.tlp_version
+  ignore_above: 1024
+  level: extended
+  name: indicator.marking.tlp_version
+  normalize: []
+  short: Indicator TLP version
   type: keyword
 threat.indicator.modified_at:
   dashed_name: threat-indicator-modified-at
@@ -16565,6 +18714,29 @@ threat.indicator.modified_at:
   normalize: []
   short: Date/time indicator was last updated.
   type: date
+threat.indicator.name:
+  dashed_name: threat-indicator-name
+  description: The display name indicator in an UI friendly format
+  example: 5.2.75.227
+  expected_values:
+  - 5.2.75.227
+  - 2a02:cf40:add:4002:91f2:a9b2:e09a:6fc6
+  - https://example.com/some/path
+  - example.com
+  - 373d34874d7bc89fd4cefa6272ee80bf
+  - b0e914d1bbe19433cc9df64ea1ca07fe77f7b150b511b786e46e007941a62bd7
+  - email@example.com
+  - HKLM\\SOFTWARE\\Microsoft\\Active
+  - 13335
+  - 00:00:5e:00:53:af
+  - 8008
+  flat_name: threat.indicator.name
+  ignore_above: 1024
+  level: extended
+  name: indicator.name
+  normalize: []
+  short: Indicator display name
+  type: keyword
 threat.indicator.port:
   dashed_name: threat-indicator-port
   description: Identifies a threat indicator as a port number (irrespective of direction).
@@ -18806,86 +20978,6 @@ user.changes.name:
   original_fieldset: user
   short: Short name or login of the user.
   type: keyword
-user.changes.risk.calculated_level:
-  dashed_name: user-changes-risk-calculated-level
-  description: A risk classification level calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: High
-  flat_name: user.changes.risk.calculated_level
-  ignore_above: 1024
-  level: extended
-  name: calculated_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: keyword
-user.changes.risk.calculated_score:
-  dashed_name: user-changes-risk-calculated-score
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: 880.73
-  flat_name: user.changes.risk.calculated_score
-  level: extended
-  name: calculated_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: float
-user.changes.risk.calculated_score_norm:
-  dashed_name: user-changes-risk-calculated-score-norm
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring, and normalized to a range of 0 to
-    100.
-  example: 88.73
-  flat_name: user.changes.risk.calculated_score_norm
-  level: extended
-  name: calculated_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an internal system.
-  type: float
-user.changes.risk.static_level:
-  dashed_name: user-changes-risk-static-level
-  description: A risk classification level obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: High
-  flat_name: user.changes.risk.static_level
-  ignore_above: 1024
-  level: extended
-  name: static_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: keyword
-user.changes.risk.static_score:
-  dashed_name: user-changes-risk-static-score
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: 830.0
-  flat_name: user.changes.risk.static_score
-  level: extended
-  name: static_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: float
-user.changes.risk.static_score_norm:
-  dashed_name: user-changes-risk-static-score-norm
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform, and normalized to a range
-    of 0 to 100.
-  example: 83.0
-  flat_name: user.changes.risk.static_score_norm
-  level: extended
-  name: static_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an external system.
-  type: float
 user.changes.roles:
   dashed_name: user-changes-roles
   description: Array of user roles at the time of the event.
@@ -19029,86 +21121,6 @@ user.effective.name:
   original_fieldset: user
   short: Short name or login of the user.
   type: keyword
-user.effective.risk.calculated_level:
-  dashed_name: user-effective-risk-calculated-level
-  description: A risk classification level calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: High
-  flat_name: user.effective.risk.calculated_level
-  ignore_above: 1024
-  level: extended
-  name: calculated_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: keyword
-user.effective.risk.calculated_score:
-  dashed_name: user-effective-risk-calculated-score
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: 880.73
-  flat_name: user.effective.risk.calculated_score
-  level: extended
-  name: calculated_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: float
-user.effective.risk.calculated_score_norm:
-  dashed_name: user-effective-risk-calculated-score-norm
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring, and normalized to a range of 0 to
-    100.
-  example: 88.73
-  flat_name: user.effective.risk.calculated_score_norm
-  level: extended
-  name: calculated_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an internal system.
-  type: float
-user.effective.risk.static_level:
-  dashed_name: user-effective-risk-static-level
-  description: A risk classification level obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: High
-  flat_name: user.effective.risk.static_level
-  ignore_above: 1024
-  level: extended
-  name: static_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: keyword
-user.effective.risk.static_score:
-  dashed_name: user-effective-risk-static-score
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: 830.0
-  flat_name: user.effective.risk.static_score
-  level: extended
-  name: static_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: float
-user.effective.risk.static_score_norm:
-  dashed_name: user-effective-risk-static-score-norm
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform, and normalized to a range
-    of 0 to 100.
-  example: 83.0
-  flat_name: user.effective.risk.static_score_norm
-  level: extended
-  name: static_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an external system.
-  type: float
 user.effective.roles:
   dashed_name: user-effective-roles
   description: Array of user roles at the time of the event.
@@ -19432,86 +21444,6 @@ user.target.name:
   original_fieldset: user
   short: Short name or login of the user.
   type: keyword
-user.target.risk.calculated_level:
-  dashed_name: user-target-risk-calculated-level
-  description: A risk classification level calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: High
-  flat_name: user.target.risk.calculated_level
-  ignore_above: 1024
-  level: extended
-  name: calculated_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: keyword
-user.target.risk.calculated_score:
-  dashed_name: user-target-risk-calculated-score
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring.
-  example: 880.73
-  flat_name: user.target.risk.calculated_score
-  level: extended
-  name: calculated_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score calculated by an internal system as part of entity
-    analytics and entity risk scoring.
-  type: float
-user.target.risk.calculated_score_norm:
-  dashed_name: user-target-risk-calculated-score-norm
-  description: A risk classification score calculated by an internal system as part
-    of entity analytics and entity risk scoring, and normalized to a range of 0 to
-    100.
-  example: 88.73
-  flat_name: user.target.risk.calculated_score_norm
-  level: extended
-  name: calculated_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an internal system.
-  type: float
-user.target.risk.static_level:
-  dashed_name: user-target-risk-static-level
-  description: A risk classification level obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: High
-  flat_name: user.target.risk.static_level
-  ignore_above: 1024
-  level: extended
-  name: static_level
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification level obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: keyword
-user.target.risk.static_score:
-  dashed_name: user-target-risk-static-score
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform.
-  example: 830.0
-  flat_name: user.target.risk.static_score
-  level: extended
-  name: static_score
-  normalize: []
-  original_fieldset: risk
-  short: A risk classification score obtained from outside the system, such as from
-    some external Threat Intelligence Platform.
-  type: float
-user.target.risk.static_score_norm:
-  dashed_name: user-target-risk-static-score-norm
-  description: A risk classification score obtained from outside the system, such
-    as from some external Threat Intelligence Platform, and normalized to a range
-    of 0 to 100.
-  example: 83.0
-  flat_name: user.target.risk.static_score_norm
-  level: extended
-  name: static_score_norm
-  normalize: []
-  original_fieldset: risk
-  short: A normalized risk score calculated by an external system.
-  type: float
 user.target.roles:
   dashed_name: user-target-roles
   description: Array of user roles at the time of the event.
