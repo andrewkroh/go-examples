@@ -63,7 +63,9 @@ func TestMarshalJSON(t *testing.T) {
 	enc := json.NewEncoder(buf)
 	enc.SetEscapeHTML(false)
 	enc.SetIndent("", "  ")
-	enc.Encode(data)
+	if err := enc.Encode(data); err != nil {
+		t.Fatal(err)
+	}
 
 	assert.JSONEq(t, expected, buf.String())
 }

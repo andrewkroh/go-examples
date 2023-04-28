@@ -5,6 +5,7 @@ import "encoding/json"
 // https://developer.hashicorp.com/terraform/language/syntax/json
 
 type File struct {
+	Comment       string                  `json:"//,omitempty"`       // File level comment.
 	Variables     map[string]Variable     `json:"variable,omitempty"` // Name to variable definition.
 	ResourceTypes map[string]ResourceType `json:"resource,omitempty"` // Resource type to name.
 	Outputs       map[string]Output       `json:"output,omitempty"`   // Name to output variable definition.
