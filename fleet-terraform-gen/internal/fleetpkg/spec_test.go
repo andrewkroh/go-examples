@@ -1,14 +1,17 @@
 package fleetpkg
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestLoadIntegration(t *testing.T) {
-	i, err := LoadIntegration("/Users/akroh/code/elastic/integrations/packages/github")
+	integ, err := LoadIntegration("../../../ecs-update/fleetpkg/testdata/my_package")
 	require.NoError(t, err)
 
-	t.Log(i)
+	data, err := json.MarshalIndent(integ, "", "  ")
+	require.NoError(t, err)
+	t.Logf("%s", data)
 }
