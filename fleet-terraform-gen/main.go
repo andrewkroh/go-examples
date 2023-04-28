@@ -58,7 +58,7 @@ func main() {
 	if listPackages {
 		// NOTE: This is WIP to print out the meaningful combination of
 		// package policy template, data streams, and inputs.
-		walkPackages(packagePath, func(pkg *fleetpkg.Integration, err error) error {
+		err := walkPackages(packagePath, func(pkg *fleetpkg.Integration, err error) error {
 			if err != nil {
 				log.Println(err)
 				return nil
@@ -68,7 +68,7 @@ func main() {
 				for _, input := range pt.Inputs {
 					columns := []string{pkg.Manifest.Name, pt.Name, input.Type}
 					if len(pt.DataStreams) == 0 {
-						fmt.Println(strings.Join(append(columns), "|"))
+						fmt.Println(strings.Join(columns, "|"))
 					} else {
 						for _, ds := range pt.DataStreams {
 							fmt.Println(strings.Join(append(columns, ds), "|"))
@@ -78,6 +78,9 @@ func main() {
 			}
 			return nil
 		})
+		if err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 
@@ -115,7 +118,7 @@ func generateModule(packagePath, policyTemplateName, dataStreamName, inputType s
 	}
 
 	var (
-		manifest            fleetpkg.Manifest = pkg.Manifest
+		manifest            = pkg.Manifest
 		policyTemplate      *fleetpkg.PolicyTemplate
 		policyTemplateInput *fleetpkg.Input
 		dataStream          *fleetpkg.DataStream
@@ -201,8 +204,7 @@ func generateModule(packagePath, policyTemplateName, dataStreamName, inputType s
 		return nil, err
 	}
 
-	// TODO: Pass this to the module when this is supported by it.
-	_, err = buildVariableExpression(packageLevelVarAssociations)
+	packageLevelVarExpression, err := buildVariableExpression(packageLevelVarAssociations)
 	if err != nil {
 		return nil, err
 	}
@@ -236,6 +238,7 @@ func generateModule(packagePath, policyTemplateName, dataStreamName, inputType s
 					PolicyTemplate:          policyTemplate.Name,
 					DataStream:              dataStreamName,
 					InputType:               stream.Input,
+					PackageVariablesJSON:    packageLevelVarExpression,
 					InputVariablesJSON:      inputLevelVarExpression,
 					DataStreamVariablesJSON: dataStreamVarExpression,
 					AllDataStreams:          allDataStreams,
@@ -329,10 +332,7 @@ func dataType(v fleetpkg.Var) (string, error) {
 		tfType = "bool"
 	case "integer":
 		tfType = "number"
-	case "select":
-		// TODO: Not sure if this is a plain string.
-		fallthrough
-	case "password", "email", "text", "textarea", "time_zone", "url", "yaml":
+	case "password", "email", "select", "text", "textarea", "time_zone", "url", "yaml":
 		tfType = "string"
 	default:
 		// package-spec controls the allow types.
@@ -354,6 +354,7 @@ type FleetPackagePolicyModule struct {
 	PolicyTemplate          string   `json:"policy_template"`
 	DataStream              string   `json:"data_stream"`
 	InputType               string   `json:"input_type"`
+	PackageVariablesJSON    string   `json:"package_variables_json,omitempty"`
 	InputVariablesJSON      string   `json:"input_variables_json,omitempty"`
 	DataStreamVariablesJSON string   `json:"data_stream_variables_json,omitempty"`
 	AllDataStreams          []string `json:"all_data_streams"`
