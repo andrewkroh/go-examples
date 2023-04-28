@@ -1,7 +1,5 @@
 github.com/andrewkroh/go-examples/fields-yml v0.0.0-20221103183257-dfc38e1f9316 h1:L7Ln3aD/aaZrwdTnwgKaeomZsOrkFVQf6+qrsjUnfpY=
 github.com/andrewkroh/go-examples/fields-yml v0.0.0-20221103183257-dfc38e1f9316/go.mod h1:nWSUNwrBx9S2SonPV32u9mXwyd6bYCS9TObEZvyTZeY=
-github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20221103183257-dfc38e1f9316 h1:GEfTBHSEqF+gy35fHrfUntjWCG+ABRG6wACtglKZywk=
-github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20221103183257-dfc38e1f9316/go.mod h1:QQRwgS0yxVWZyDPhKuLOd4lAcCG2DSNcVnTcPRdii7w=
 github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20230425184753-e89ddab7f0e5 h1:S5yfSTcuSEfCpLMq3+KOWkQTmZS+wG5YlwvP/HV4GoQ=
 github.com/andrewkroh/go-examples/fields-yml-gen v0.0.0-20230425184753-e89ddab7f0e5/go.mod h1:noAOivGeiFKSTD7RRDf7lo7OIDB6nhqCRT5gHlZwsRs=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
