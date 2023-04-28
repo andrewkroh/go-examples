@@ -34,7 +34,7 @@ func (v *NullableValue) MarshalJSON() ([]byte, error) {
 // Need a type that can render as JSON null,
 
 type Validation struct {
-	Condition    string `json:"condition""`
+	Condition    string `json:"condition"`
 	ErrorMessage string `json:"error_message"`
 }
 
