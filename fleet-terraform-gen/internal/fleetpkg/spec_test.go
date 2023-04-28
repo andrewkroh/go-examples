@@ -8,7 +8,7 @@ import (
 )
 
 func TestLoadIntegration(t *testing.T) {
-	integ, err := LoadIntegration("../../../ecs-update/fleetpkg/testdata/my_package")
+	integ, err := Load("../../../ecs-update/fleetpkg/testdata/my_package")
 	require.NoError(t, err)
 
 	data, err := json.MarshalIndent(integ, "", "  ")

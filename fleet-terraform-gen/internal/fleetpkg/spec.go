@@ -94,15 +94,19 @@ type Input struct {
 }
 
 type PolicyTemplate struct {
-	Name        string        `json:"name"`
-	Title       string        `json:"title"`
-	Categories  []string      `json:"categories" yaml:"categories,omitempty"`
-	Description string        `json:"description"`
-	DataStreams []string      `json:"data_streams" yaml:"data_streams,omitempty"`
-	Inputs      []Input       `json:"inputs" yaml:"inputs,omitempty"`
-	Icons       []Icons       `json:"icons" yaml:"icons,omitempty"`
-	Screenshots []Screenshots `json:"screenshots" yaml:"screenshots,omitempty"`
-	Multiple    bool          `json:"multiple" yaml:"multiple"`
+	Name         string        `json:"name"`
+	Title        string        `json:"title"`
+	Categories   []string      `json:"categories" yaml:"categories,omitempty"`
+	Description  string        `json:"description"`
+	DataStreams  []string      `json:"data_streams" yaml:"data_streams,omitempty"`
+	Inputs       []Input       `json:"inputs" yaml:"inputs,omitempty"`
+	Icons        []Icons       `json:"icons" yaml:"icons,omitempty"`
+	Screenshots  []Screenshots `json:"screenshots" yaml:"screenshots,omitempty"`
+	Multiple     bool          `json:"multiple" yaml:"multiple"`
+	Type         string        `json:"type" yaml:"type"` // Type of data stream.
+	Input        string        `json:"input" yaml:"input"`
+	TemplatePath string        `json:"template_path" yaml:"template_path"`
+	Vars         []Var         `json:"vars"` // Policy template level variables.
 }
 
 type Owner struct {
@@ -130,39 +134,6 @@ type Stream struct {
 }
 
 func Load(path string) (*Integration, error) {
-	type manifest struct {
-		Type string `json:"type"`
-	}
-
-	var m manifest
-	if err := readYAML(filepath.Join(path, "manifest.yml"), &m, false); err != nil {
-		return nil, err
-	}
-
-	switch m.Type {
-	case "input":
-		return LoadInput(path)
-	case "integration", "":
-		return LoadIntegration(path)
-	default:
-		return nil, fmt.Errorf("unknown manifest type %q", m.Type)
-	}
-}
-
-func LoadInput(path string) (*Integration, error) {
-	var manifest Manifest
-	if err := readYAML(filepath.Join(path, "manifest.yml"), &manifest, false); err != nil {
-		return nil, err
-	}
-
-	// TODO: This is incomplete. Need to create an Input type.
-	integration := &Integration{
-		Manifest: manifest,
-	}
-	return integration, nil
-}
-
-func LoadIntegration(path string) (*Integration, error) {
 	var manifest Manifest
 	if err := readYAML(filepath.Join(path, "manifest.yml"), &manifest, true); err != nil {
 		return nil, err

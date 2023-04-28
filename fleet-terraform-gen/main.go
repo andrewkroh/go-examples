@@ -112,7 +112,7 @@ func getVersion() string {
 
 func generateModule(packagePath, policyTemplateName, dataStreamName, inputType string) ([]byte, error) {
 	// Read in the package metadata.
-	pkg, err := fleetpkg.LoadIntegration(packagePath)
+	pkg, err := fleetpkg.Load(packagePath)
 	if err != nil {
 		return nil, err
 	}
@@ -195,6 +195,10 @@ func generateModule(packagePath, policyTemplateName, dataStreamName, inputType s
 	if err != nil {
 		return nil, err
 	}
+	policyTemplateLevelVarAssociations, err := addVariables(policyTemplate.Vars, tfVariables)
+	if err != nil {
+		return nil, err
+	}
 	inputLevelVarAssociations, err := addVariables(policyTemplateInput.Vars, tfVariables)
 	if err != nil {
 		return nil, err
@@ -212,7 +216,9 @@ func generateModule(packagePath, policyTemplateName, dataStreamName, inputType s
 	if err != nil {
 		return nil, err
 	}
-	dataStreamVarExpression, err := buildVariableExpression(dataStreamVarAssociations)
+	// Empirically it appears that input package policy template variables are treated
+	// the same as data stream variables.
+	dataStreamVarExpression, err := buildVariableExpression(dataStreamVarAssociations, policyTemplateLevelVarAssociations)
 	if err != nil {
 		return nil, err
 	}
@@ -387,13 +393,15 @@ var variableExpressionTemplate = template.Must(template.New("jsonencode").
 {{- end }}
 })}`))
 
-func buildVariableExpression(associations map[string]string) (string, error) {
-	if len(associations) == 0 {
+func buildVariableExpression(associations ...map[string]string) (string, error) {
+	allAssociations := joinMaps(associations...)
+
+	if len(allAssociations) == 0 {
 		return "", nil
 	}
 
 	buf := new(bytes.Buffer)
-	if err := variableExpressionTemplate.Execute(buf, associations); err != nil {
+	if err := variableExpressionTemplate.Execute(buf, allAssociations); err != nil {
 		return "", err
 	}
 	return buf.String(), nil
@@ -413,4 +421,25 @@ func walkPackages(dir string, walk func(pkg *fleetpkg.Integration, err error) er
 	}
 
 	return nil
+}
+
+func joinMaps(maps ...map[string]string) map[string]string {
+	if len(maps) == 0 {
+		return nil
+	}
+	if len(maps) == 1 {
+		return maps[0]
+	}
+
+	out := map[string]string{}
+	for _, m := range maps {
+		for k, v := range m {
+			if _, found := out[k]; found {
+				panic("Multiple definitions for variable " + k)
+			}
+			out[k] = v
+		}
+	}
+
+	return out
 }
