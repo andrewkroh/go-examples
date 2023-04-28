@@ -2,4 +2,4 @@ module github.com/andrewkroh/go-examples/wifiauth
 
 go 1.19
 
-require layeh.com/radius v0.0.0-20210819152912-ad72663a72ab
+require layeh.com/radius v0.0.0-20221205141417-e7fbddd11d68
