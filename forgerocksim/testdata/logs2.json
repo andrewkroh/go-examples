@@ -1,0 +1,2228 @@
+[
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-74026",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:31:58.755Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-72832"
+            ],
+            "transactionId": "1670430718645-adb0f4de6d35521bac88-7275/0"
+        },
+        "timestamp": "2022-12-07T16:31:58.755292699Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-74070",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:32:02.941Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-72832"
+            ],
+            "transactionId": "1670430722904-b6609cf39f952fc98961-7323/0"
+        },
+        "timestamp": "2022-12-07T16:32:02.945435859Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-74094",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-72832",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:32:03.163Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-72832"
+            ],
+            "transactionId": "1670430722904-b6609cf39f952fc98961-7323/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:32:03.164283145Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-78639",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-78081",
+            "operation": "CREATE",
+            "realm": "/",
+            "runAs": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:35:50.812Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-78081"
+            ],
+            "transactionId": "6544e46d-ef05-4978-bcdc-d81fcfa305f5-request-3/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:35:50.812487429Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-85302",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-85267",
+            "operation": "CREATE",
+            "realm": "/",
+            "runAs": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:40:10.817Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-85267"
+            ],
+            "transactionId": "1670431210798-adb0f4de6d35521bac88-8471/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:40:10.81726152Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-95430",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:49:25.900Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-85267"
+            ],
+            "transactionId": "1670431765812-b6609cf39f952fc98961-9494/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:49:25.900415741Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-96358",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-72832",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:50:12.276Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-72832"
+            ],
+            "transactionId": "1670431812265-b6609cf39f952fc98961-9578/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:50:12.276971119Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-103467",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:55:59.173Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-96391"
+            ],
+            "transactionId": "1670432159152-adb0f4de6d35521bac88-10234/0"
+        },
+        "timestamp": "2022-12-07T16:55:59.173621637Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-103525",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:03.349Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-96391"
+            ],
+            "transactionId": "1670432163330-adb0f4de6d35521bac88-10241/0"
+        },
+        "timestamp": "2022-12-07T16:56:03.349406275Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-103543",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-96391",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:03.447Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-96391"
+            ],
+            "transactionId": "1670432163330-adb0f4de6d35521bac88-10241/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:56:03.447982603Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-103764",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:15.460Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103719"
+            ],
+            "transactionId": "1670432164051-adb0f4de6d35521bac88-10271/0"
+        },
+        "timestamp": "2022-12-07T16:56:15.460893473Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-103768",
+            "changedFields": [],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:15.470Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103719"
+            ],
+            "transactionId": "1670432164051-adb0f4de6d35521bac88-10271/0"
+        },
+        "timestamp": "2022-12-07T16:56:15.471025249Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-103773",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-103719",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:15.488Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103719"
+            ],
+            "transactionId": "1670432164051-adb0f4de6d35521bac88-10271/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:56:15.48898424Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-103775",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-96391",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:15.549Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-96391",
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103719"
+            ],
+            "transactionId": "1670432164051-adb0f4de6d35521bac88-10271/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:56:15.54972635Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-104681",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:34.241Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103960"
+            ],
+            "transactionId": "1670432192482-b6609cf39f952fc98961-10336/0"
+        },
+        "timestamp": "2022-12-07T16:56:34.241245105Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-104685",
+            "changedFields": [],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:34.253Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103960"
+            ],
+            "transactionId": "1670432192482-b6609cf39f952fc98961-10336/0"
+        },
+        "timestamp": "2022-12-07T16:56:34.253540243Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-104690",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-103960",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:34.269Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103960"
+            ],
+            "transactionId": "1670432192482-b6609cf39f952fc98961-10336/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:56:34.27011932Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-104692",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-103719",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:56:34.270Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103960",
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103719"
+            ],
+            "transactionId": "1670432192482-b6609cf39f952fc98961-10336/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:56:34.270544433Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-106020",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-103960",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:57:39.294Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-103960"
+            ],
+            "transactionId": "1670432259286-adb0f4de6d35521bac88-10481/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:57:39.295212738Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-106273",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:58:06.369Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-106052"
+            ],
+            "transactionId": "1670432286338-b6609cf39f952fc98961-10596/0"
+        },
+        "timestamp": "2022-12-07T16:58:06.369569169Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-106320",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:58:10.456Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-106052"
+            ],
+            "transactionId": "1670432283517-adb0f4de6d35521bac88-10544/0"
+        },
+        "timestamp": "2022-12-07T16:58:10.456479507Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-106338",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-106052",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:58:10.548Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-106052"
+            ],
+            "transactionId": "1670432283517-adb0f4de6d35521bac88-10544/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:58:10.548905685Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-106940",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:58:31.001Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-85267"
+            ],
+            "transactionId": "1670432310989-b6609cf39f952fc98961-10647/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:58:31.001650107Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-107402",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:58:41.664Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-85267"
+            ],
+            "transactionId": "1670432321653-b6609cf39f952fc98961-10666/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:58:41.664878638Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-107473",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-106052",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:58:49.182Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-106052"
+            ],
+            "transactionId": "1670432329177-b6609cf39f952fc98961-10685/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T16:58:49.182998742Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-115410",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:04:51.032Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-107506"
+            ],
+            "transactionId": "1670432691012-b6609cf39f952fc98961-11460/0"
+        },
+        "timestamp": "2022-12-07T17:04:51.032572449Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-115474",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:04:55.289Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-107506"
+            ],
+            "transactionId": "1670432695270-b6609cf39f952fc98961-11468/0"
+        },
+        "timestamp": "2022-12-07T17:04:55.289811819Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-115492",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-107506",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:04:55.380Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-107506"
+            ],
+            "transactionId": "1670432695270-b6609cf39f952fc98961-11468/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:04:55.381167091Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-115681",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:02.439Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-115636"
+            ],
+            "transactionId": "1670432697960-b6609cf39f952fc98961-11503/0"
+        },
+        "timestamp": "2022-12-07T17:05:02.439280781Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-115685",
+            "changedFields": [],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:02.448Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-115636"
+            ],
+            "transactionId": "1670432697960-b6609cf39f952fc98961-11503/0"
+        },
+        "timestamp": "2022-12-07T17:05:02.448921254Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-115690",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-115636",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:02.465Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-115636"
+            ],
+            "transactionId": "1670432697960-b6609cf39f952fc98961-11503/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:05:02.465739825Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-115692",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-107506",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:02.465Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-115636",
+                "940f4f85-0f36-43fe-a395-33650729bfe4-107506"
+            ],
+            "transactionId": "1670432697960-b6609cf39f952fc98961-11503/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:05:02.466161845Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-115738",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-115636",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:02.825Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-115636"
+            ],
+            "transactionId": "1670432702467-b6609cf39f952fc98961-11509/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:05:02.825576239Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-115873",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:09.033Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-115770"
+            ],
+            "transactionId": "1670432702535-adb0f4de6d35521bac88-11453/0"
+        },
+        "timestamp": "2022-12-07T17:05:09.033274824Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-116127",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:27.322Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-85267"
+            ],
+            "transactionId": "1670432727312-b6609cf39f952fc98961-11561/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:05:27.322283452Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-116815",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:36.964Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-115770"
+            ],
+            "transactionId": "1670432736945-adb0f4de6d35521bac88-11503/0"
+        },
+        "timestamp": "2022-12-07T17:05:36.964589933Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-116833",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-115770",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:37.051Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-115770"
+            ],
+            "transactionId": "1670432736945-adb0f4de6d35521bac88-11503/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:05:37.051998337Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-116989",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-115770",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:05:39.670Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-115770"
+            ],
+            "transactionId": "1670432737725-b6609cf39f952fc98961-11599/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:05:39.670686963Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-119574",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:07:43.833Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-117015"
+            ],
+            "transactionId": "1670432863817-b6609cf39f952fc98961-11863/0"
+        },
+        "timestamp": "2022-12-07T17:07:43.833676375Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-119621",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:07:47.965Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-117015"
+            ],
+            "transactionId": "1670432867948-adb0f4de6d35521bac88-11764/0"
+        },
+        "timestamp": "2022-12-07T17:07:47.965144785Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-119639",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-117015",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:07:48.054Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-117015"
+            ],
+            "transactionId": "1670432867948-adb0f4de6d35521bac88-11764/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:07:48.054554279Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-119921",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:08:09.639Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-119882"
+            ],
+            "transactionId": "1670432868632-b6609cf39f952fc98961-11920/0"
+        },
+        "timestamp": "2022-12-07T17:08:09.639380135Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-119925",
+            "changedFields": [],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:08:09.648Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-119882"
+            ],
+            "transactionId": "1670432868632-b6609cf39f952fc98961-11920/0"
+        },
+        "timestamp": "2022-12-07T17:08:09.649026516Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-119930",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-119882",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:08:09.663Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-119882"
+            ],
+            "transactionId": "1670432868632-b6609cf39f952fc98961-11920/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:08:09.664228741Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-119932",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-117015",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:08:09.664Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-117015",
+                "940f4f85-0f36-43fe-a395-33650729bfe4-119882"
+            ],
+            "transactionId": "1670432868632-b6609cf39f952fc98961-11920/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:08:09.664723938Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-120023",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-119882",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:08:17.405Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-119882"
+            ],
+            "transactionId": "1670432897401-adb0f4de6d35521bac88-11840/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:08:17.405768441Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-135715",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:22:04.140Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-85267"
+            ],
+            "transactionId": "1670433724102-b6609cf39f952fc98961-13452/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:22:04.14048689Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-136191",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:22:29.204Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-135776"
+            ],
+            "transactionId": "1670433749168-b6609cf39f952fc98961-13506/0"
+        },
+        "timestamp": "2022-12-07T17:22:29.20500146Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-136733",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:22:33.398Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-135776"
+            ],
+            "transactionId": "1670433753380-adb0f4de6d35521bac88-13384/0"
+        },
+        "timestamp": "2022-12-07T17:22:33.398889375Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-136754",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-135776",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:22:33.486Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-135776"
+            ],
+            "transactionId": "1670433753380-adb0f4de6d35521bac88-13384/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:22:33.486664469Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-136949",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-135776",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:22:42.554Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-135776"
+            ],
+            "transactionId": "1670433759676-b6609cf39f952fc98961-13550/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:22:42.554460823Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-137134",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:22:58.803Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-136981"
+            ],
+            "transactionId": "1670433762532-b6609cf39f952fc98961-13586/0"
+        },
+        "timestamp": "2022-12-07T17:22:58.803361287Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-137152",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-136981",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:22:58.901Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-136981"
+            ],
+            "transactionId": "1670433762532-b6609cf39f952fc98961-13586/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:22:58.90187182Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-152850",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:37:16.538Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-152703"
+            ],
+            "transactionId": "1670434615993-adb0f4de6d35521bac88-14961/0"
+        },
+        "timestamp": "2022-12-07T17:37:16.538599566Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-152854",
+            "changedFields": [
+                "fr-attr-imulti2"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:37:16.547Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-152703"
+            ],
+            "transactionId": "1670434615993-adb0f4de6d35521bac88-14961/0"
+        },
+        "timestamp": "2022-12-07T17:37:16.547771515Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-152859",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-152703",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:37:16.563Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-152703"
+            ],
+            "transactionId": "1670434615993-adb0f4de6d35521bac88-14961/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:37:16.563321621Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-152861",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-136981",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:37:16.563Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-152703",
+                "940f4f85-0f36-43fe-a395-33650729bfe4-136981"
+            ],
+            "transactionId": "1670434615993-adb0f4de6d35521bac88-14961/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:37:16.563757677Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-152950",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-152703",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:37:19.184Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-152703"
+            ],
+            "transactionId": "1670434639179-b6609cf39f952fc98961-15157/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:37:19.186282768Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-153856",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:37:38.287Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-153086"
+            ],
+            "transactionId": "1670434658272-b6609cf39f952fc98961-15198/0"
+        },
+        "timestamp": "2022-12-07T17:37:38.287673737Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-153877",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-153086",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:37:38.376Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-153086"
+            ],
+            "transactionId": "1670434658272-b6609cf39f952fc98961-15198/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:37:38.377086863Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-154072",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-153086",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:37:47.811Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-153086"
+            ],
+            "transactionId": "1670434619717-adb0f4de6d35521bac88-15056/0",
+            "userId": "id=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:37:47.812030196Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-154917",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:38:27.635Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-154104"
+            ],
+            "transactionId": "1670434699520-adb0f4de6d35521bac88-15208/0"
+        },
+        "timestamp": "2022-12-07T17:38:27.63552121Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-154935",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-154104",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:38:27.728Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-154104"
+            ],
+            "transactionId": "1670434699520-adb0f4de6d35521bac88-15208/0",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:38:27.728331373Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-155795",
+            "changedFields": [
+                "fr-attr-str1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:38:41.698Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-155301"
+            ],
+            "transactionId": "1670434721680-adb0f4de6d35521bac88-15257/0"
+        },
+        "timestamp": "2022-12-07T17:38:41.698901022Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-155800",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-155301",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:38:41.714Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-155301"
+            ],
+            "transactionId": "1670434721680-adb0f4de6d35521bac88-15257/0",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:38:41.714855975Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-155802",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-154104",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:38:41.715Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-154104",
+                "940f4f85-0f36-43fe-a395-33650729bfe4-155301"
+            ],
+            "transactionId": "1670434721680-adb0f4de6d35521bac88-15257/0",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:38:41.71524064Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-161727",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:08.305Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-161602"
+            ],
+            "transactionId": "1670435046610-adb0f4de6d35521bac88-15873/0"
+        },
+        "timestamp": "2022-12-07T17:44:08.305425675Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-161731",
+            "changedFields": [
+                "fr-attr-imulti2"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:08.315Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-161602"
+            ],
+            "transactionId": "1670435046610-adb0f4de6d35521bac88-15873/0"
+        },
+        "timestamp": "2022-12-07T17:44:08.315398006Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-161736",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-161602",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:08.330Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-161602"
+            ],
+            "transactionId": "1670435046610-adb0f4de6d35521bac88-15873/0",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:44:08.330540204Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-161738",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-155301",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:08.330Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-161602",
+                "940f4f85-0f36-43fe-a395-33650729bfe4-155301"
+            ],
+            "transactionId": "1670435046610-adb0f4de6d35521bac88-15873/0",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:44:08.330926808Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-161804",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-161602",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:10.314Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-161602"
+            ],
+            "transactionId": "1670435050309-adb0f4de6d35521bac88-15884/0",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:44:10.31440962Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-162101",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:25.169Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-161837"
+            ],
+            "transactionId": "1670435055613-b6609cf39f952fc98961-16055/0"
+        },
+        "timestamp": "2022-12-07T17:44:25.170057695Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-162187",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:29.355Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-161837"
+            ],
+            "transactionId": "1670435065189-b6609cf39f952fc98961-16067/0"
+        },
+        "timestamp": "2022-12-07T17:44:29.355879387Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-162417",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-161837",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:30.986Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-161837"
+            ],
+            "transactionId": "1670435070829-adb0f4de6d35521bac88-15926/0",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:44:30.987259568Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-163061",
+            "changedFields": [
+                "webauthnDeviceProfiles",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:49.721Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-85267"
+            ],
+            "transactionId": "1670435089711-b6609cf39f952fc98961-16118/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:44:49.721367735Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-163119",
+            "component": "Session",
+            "eventName": "AM-SESSION-LOGGED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-161837",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:44:55.981Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-161837"
+            ],
+            "transactionId": "1670435050420-adb0f4de6d35521bac88-15982/0",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:44:55.982072363Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-164555",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:45:48.818Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-163152"
+            ],
+            "transactionId": "1670435148803-b6609cf39f952fc98961-16255/0"
+        },
+        "timestamp": "2022-12-07T17:45:48.818969364Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-164605",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:45:53.009Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-163152"
+            ],
+            "transactionId": "1670435152994-adb0f4de6d35521bac88-16118/0"
+        },
+        "timestamp": "2022-12-07T17:45:53.009468548Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-164623",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-163152",
+            "operation": "CREATE",
+            "realm": "/alpha",
+            "runAs": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:45:53.093Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-163152"
+            ],
+            "transactionId": "1670435152994-adb0f4de6d35521bac88-16118/0",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:45:53.093830844Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-178235",
+            "component": "Session",
+            "eventName": "AM-SESSION-DESTROYED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-78081",
+            "operation": "DELETE",
+            "realm": "/",
+            "runAs": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T17:57:34.617Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-78081"
+            ],
+            "transactionId": "1670435854599-adb0f4de6d35521bac88-17419/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T17:57:34.618070338Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-196957",
+            "component": "Session",
+            "eventName": "AM-SESSION-IDLE_TIMED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-85267",
+            "operation": "DELETE",
+            "realm": "/",
+            "runAs": "",
+            "source": "audit",
+            "timestamp": "2022-12-07T18:14:35.760Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-85267"
+            ],
+            "transactionId": "940f4f85-0f36-43fe-a395-33650729bfe4-1",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T18:14:35.761265794Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-198175",
+            "component": "Session",
+            "eventName": "AM-SESSION-IDLE_TIMED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-163152",
+            "operation": "DELETE",
+            "realm": "/alpha",
+            "runAs": "",
+            "source": "audit",
+            "timestamp": "2022-12-07T18:15:53.131Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-163152"
+            ],
+            "transactionId": "940f4f85-0f36-43fe-a395-33650729bfe4-1",
+            "userId": "id=1b2a919f-8933-4008-bef5-54c14a34f47e,ou=user,o=alpha,ou=services,ou=am-config"
+        },
+        "timestamp": "2022-12-07T18:15:53.131900702Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-219096",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-219041",
+            "operation": "CREATE",
+            "realm": "/",
+            "runAs": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T18:34:37.806Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-219041"
+            ],
+            "transactionId": "1670438077701-b6609cf39f952fc98961-21659/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T18:34:37.807007533Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-220672",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-220634",
+            "operation": "CREATE",
+            "realm": "/",
+            "runAs": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T18:36:22.804Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-220634"
+            ],
+            "transactionId": "1670438182788-adb0f4de6d35521bac88-21718/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T18:36:22.804572887Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-252208",
+            "component": "Session",
+            "eventName": "AM-SESSION-IDLE_TIMED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-219041",
+            "operation": "DELETE",
+            "realm": "/",
+            "runAs": "",
+            "source": "audit",
+            "timestamp": "2022-12-07T19:04:37.829Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-219041"
+            ],
+            "transactionId": "940f4f85-0f36-43fe-a395-33650729bfe4-1",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T19:04:37.829778095Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-261068",
+            "component": "Session",
+            "eventName": "AM-SESSION-IDLE_TIMED_OUT",
+            "level": "INFO",
+            "objectId": "940f4f85-0f36-43fe-a395-33650729bfe4-220634",
+            "operation": "DELETE",
+            "realm": "/",
+            "runAs": "",
+            "source": "audit",
+            "timestamp": "2022-12-07T19:12:46.927Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-220634"
+            ],
+            "transactionId": "940f4f85-0f36-43fe-a395-33650729bfe4-1",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T19:12:46.927712184Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "7dc07b1b-9772-4001-8e54-9059eeee3d14-111290",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "7dc07b1b-9772-4001-8e54-9059eeee3d14-111167",
+            "operation": "CREATE",
+            "realm": "/",
+            "runAs": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T22:13:00.134Z",
+            "topic": "activity",
+            "trackingIds": [
+                "7dc07b1b-9772-4001-8e54-9059eeee3d14-111167"
+            ],
+            "transactionId": "485d85d9-84a6-41fb-94e4-083c58f06996-request-3/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T22:13:00.135519878Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "7dc07b1b-9772-4001-8e54-9059eeee3d14-124420",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "7dc07b1b-9772-4001-8e54-9059eeee3d14-124377",
+            "operation": "CREATE",
+            "realm": "/",
+            "runAs": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T22:23:08.729Z",
+            "topic": "activity",
+            "trackingIds": [
+                "7dc07b1b-9772-4001-8e54-9059eeee3d14-124377"
+            ],
+            "transactionId": "1670451788710-b6609cf39f952fc98961-46586/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T22:23:08.729961341Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "7dc07b1b-9772-4001-8e54-9059eeee3d14-129130",
+            "component": "Session",
+            "eventName": "AM-SESSION-CREATED",
+            "level": "INFO",
+            "objectId": "7dc07b1b-9772-4001-8e54-9059eeee3d14-129098",
+            "operation": "CREATE",
+            "realm": "/",
+            "runAs": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T22:27:22.316Z",
+            "topic": "activity",
+            "trackingIds": [
+                "7dc07b1b-9772-4001-8e54-9059eeee3d14-129098"
+            ],
+            "transactionId": "1670452042291-b6609cf39f952fc98961-47054/0",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T22:27:22.317159057Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "7dc07b1b-9772-4001-8e54-9059eeee3d14-146496",
+            "component": "Session",
+            "eventName": "AM-SESSION-IDLE_TIMED_OUT",
+            "level": "INFO",
+            "objectId": "7dc07b1b-9772-4001-8e54-9059eeee3d14-111167",
+            "operation": "DELETE",
+            "realm": "/",
+            "runAs": "",
+            "source": "audit",
+            "timestamp": "2022-12-07T22:43:00.191Z",
+            "topic": "activity",
+            "trackingIds": [
+                "7dc07b1b-9772-4001-8e54-9059eeee3d14-111167"
+            ],
+            "transactionId": "7dc07b1b-9772-4001-8e54-9059eeee3d14-1",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T22:43:00.192269782Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "7dc07b1b-9772-4001-8e54-9059eeee3d14-161863",
+            "component": "Session",
+            "eventName": "AM-SESSION-IDLE_TIMED_OUT",
+            "level": "INFO",
+            "objectId": "7dc07b1b-9772-4001-8e54-9059eeee3d14-124377",
+            "operation": "DELETE",
+            "realm": "/",
+            "runAs": "",
+            "source": "audit",
+            "timestamp": "2022-12-07T22:56:55.161Z",
+            "topic": "activity",
+            "trackingIds": [
+                "7dc07b1b-9772-4001-8e54-9059eeee3d14-124377"
+            ],
+            "transactionId": "7dc07b1b-9772-4001-8e54-9059eeee3d14-1",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T22:56:55.161957012Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "7dc07b1b-9772-4001-8e54-9059eeee3d14-162146",
+            "component": "Session",
+            "eventName": "AM-SESSION-IDLE_TIMED_OUT",
+            "level": "INFO",
+            "objectId": "7dc07b1b-9772-4001-8e54-9059eeee3d14-129098",
+            "operation": "DELETE",
+            "realm": "/",
+            "runAs": "",
+            "source": "audit",
+            "timestamp": "2022-12-07T22:57:22.360Z",
+            "topic": "activity",
+            "trackingIds": [
+                "7dc07b1b-9772-4001-8e54-9059eeee3d14-129098"
+            ],
+            "transactionId": "7dc07b1b-9772-4001-8e54-9059eeee3d14-1",
+            "userId": "id=d7cd65bf-743c-4753-a78f-a20daae7e3bf,ou=user,ou=am-config"
+        },
+        "timestamp": "2022-12-07T22:57:22.360924345Z",
+        "type": "application/json",
+        "source": "am-activity"
+    }
+]

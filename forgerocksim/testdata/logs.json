@@ -1,0 +1,53 @@
+[
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-74026",
+            "changedFields": [
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:31:58.755Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-72832"
+            ],
+            "transactionId": "1670430718645-adb0f4de6d35521bac88-7275/0"
+        },
+        "timestamp": "2022-12-07T16:31:58.755292699Z",
+        "type": "application/json",
+        "source": "am-activity"
+    },
+    {
+        "payload": {
+            "_id": "940f4f85-0f36-43fe-a395-33650729bfe4-74070",
+            "changedFields": [
+                "fr-attr-imulti1",
+                "modifyTimestamp"
+            ],
+            "component": "Users",
+            "eventName": "AM-IDENTITY-CHANGE",
+            "level": "INFO",
+            "objectId": "fr-idm-uuid=67412a77-137c-481d-833e-a12dd6634936,ou=user,o=alpha,o=root,ou=identities",
+            "operation": "UPDATE",
+            "realm": "/alpha",
+            "runAs": "id=dsameuser,ou=user,ou=am-config",
+            "source": "audit",
+            "timestamp": "2022-12-07T16:32:02.941Z",
+            "topic": "activity",
+            "trackingIds": [
+                "940f4f85-0f36-43fe-a395-33650729bfe4-72832"
+            ],
+            "transactionId": "1670430722904-b6609cf39f952fc98961-7323/0"
+        },
+        "timestamp": "2022-12-07T16:32:02.945435859Z",
+        "type": "application/json",
+        "source": "am-activity"
+    }
+]
