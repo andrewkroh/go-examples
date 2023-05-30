@@ -42,7 +42,7 @@ following operations:
 4. For each data stream, update the 'ecs.version' contained in sample_event.json.
 5. Build the package to update the README.md.
 6. Run the pipeline tests to regenerate the test data.
-7. Add a changelog entry.
+7. Add a changelog entry (unless -skip-changelog).
 8. Commit the changes to the package if not currently in a rebase. The commit
    message will contain the commands used to modify the package.
 `[1:]
@@ -56,6 +56,7 @@ var (
 	pullRequestNumber  string
 	owner              string
 	sampleEvents       bool
+	skipChangelog      bool
 )
 
 var semverZero = semver.Version{}
@@ -68,6 +69,7 @@ func init() {
 	flag.StringVar(&pullRequestNumber, "pr", "", "Pull request number")
 	flag.StringVar(&owner, "owner", "", "Only modify packages owned by this team.")
 	flag.BoolVar(&sampleEvents, "sample-events", false, "Generate new sample events (slow).")
+	flag.BoolVar(&skipChangelog, "skip-changelog", false, "Skip adding a changelog entry.")
 	flag.BoolVar(&normalizeOnFailure, "on-failure", false, "Rewrite ingest pipeline on_failure handlers to set event.kind=pipeline_error and normalize the error.message value.")
 }
 
@@ -143,8 +145,10 @@ func updatePackage(path string) error {
 		return err
 	}
 
-	if err = AddChangelog(path, pullRequestNumber, title(headline(result))+"."); err != nil {
-		return err
+	if !skipChangelog {
+		if err = AddChangelog(path, pullRequestNumber, title(headline(result))+"."); err != nil {
+			return err
+		}
 	}
 
 	msg, err := CommitMessage{
