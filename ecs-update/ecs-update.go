@@ -388,6 +388,10 @@ func gitGenerate(packageName string) string {
 		sb.WriteString(pullRequestNumber)
 		sb.WriteString(" ")
 	}
+	if skipChangelog {
+		sb.WriteString("-skip-changelog")
+		sb.WriteString(" ")
+	}
 	if sampleEvents {
 		sb.WriteString("-sample-events")
 	}
