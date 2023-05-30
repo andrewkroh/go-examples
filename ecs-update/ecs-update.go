@@ -392,6 +392,10 @@ func gitGenerate(packageName string) string {
 		sb.WriteString("-skip-changelog")
 		sb.WriteString(" ")
 	}
+	if normalizeOnFailure {
+		sb.WriteString("-on-failure")
+		sb.WriteString(" ")
+	}
 	if sampleEvents {
 		sb.WriteString("-sample-events")
 	}
