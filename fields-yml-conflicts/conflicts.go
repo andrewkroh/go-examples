@@ -5,9 +5,9 @@ import (
 	"flag"
 	"log"
 	"os"
+	"strings"
 
-	"github.com/andrewkroh/go-examples/fields-yml-gen/ecs"
-	"github.com/andrewkroh/go-examples/fields-yml/fieldsyml"
+	"github.com/andrewkroh/go-fleetpkg"
 )
 
 // Flags
@@ -38,10 +38,11 @@ type ConflictSource struct {
 	File string `json:"file"`
 	Line int    `json:"line"`
 	Type string `json:"type"`
+	Name string `json:"name,omitempty"`
 }
 
-func detectConflicts(fields []fieldsyml.FlatField) []Conflict {
-	allFields := map[string][]fieldsyml.FlatField{}
+func detectConflicts(fields []fleetpkg.Field) []Conflict {
+	allFields := map[string][]fleetpkg.Field{}
 
 	// Aggregate fields.
 	for _, f := range fields {
@@ -64,8 +65,8 @@ func detectConflicts(fields []fieldsyml.FlatField) []Conflict {
 			types[f.Type] = struct{}{}
 			conflict.Sources = append(conflict.Sources, ConflictSource{
 				Type: f.Type,
-				File: f.Source,
-				Line: f.SourceLine,
+				File: f.FileMetadata.Path(),
+				Line: f.FileMetadata.Line(),
 			})
 		}
 
@@ -80,6 +81,57 @@ func detectConflicts(fields []fieldsyml.FlatField) []Conflict {
 		conflict.Types = typeList
 
 		conflicts = append(conflicts, conflict)
+	}
+
+	return conflicts
+}
+
+func detectInvalidParentDataTypes(fields []fleetpkg.Field) []Conflict {
+	// Detect fields with children that are declared as scalar types.
+	parentChildRelations := map[string][]fleetpkg.Field{}
+	for _, f := range fields {
+		if idx := strings.LastIndexByte(f.Name, '.'); idx != -1 {
+			parentName := f.Name[:idx]
+
+			slice := parentChildRelations[parentName]
+			slice = append(slice, f)
+			parentChildRelations[parentName] = slice
+		}
+	}
+
+	var conflicts []Conflict
+	for _, f := range fields {
+		switch f.Type {
+		case "group", "object", "nested", "array":
+			continue
+		}
+		children, found := parentChildRelations[f.Name]
+		if !found {
+			continue
+		}
+
+		sources := []ConflictSource{
+			{
+				File: f.FileMetadata.Path(),
+				Line: f.FileMetadata.Line(),
+				Type: f.Type,
+				Name: f.Name,
+			},
+		}
+		for _, child := range children {
+			sources = append(sources, ConflictSource{
+				File: child.FileMetadata.Path(),
+				Line: child.FileMetadata.Line(),
+				Type: child.Type,
+				Name: child.Name,
+			})
+		}
+
+		conflicts = append(conflicts, Conflict{
+			Name:    f.Name,
+			Types:   []string{f.Type, "sub-fields that cannot exists on a " + f.Type},
+			Sources: sources,
+		})
 	}
 
 	return conflicts
@@ -104,24 +156,25 @@ func main() {
 		log.Fatal("Must pass a list of fields.yml files.")
 	}
 
-	fields, err := fieldsyml.ReadFieldsYAML(flag.Args()...)
+	fields, err := fleetpkg.ReadFields(flag.Args()...)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	flat, err := fieldsyml.FlattenFields(fields)
+	flat, err := fleetpkg.FlattenFields(fields)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	flat, unresolved := fieldsyml.ResolveECSReferences(flat)
+	flat, unresolved := ResolveECSReferences(flat)
 	if len(unresolved) > 0 && warn {
 		for _, f := range unresolved {
-			log.Printf("WARN: %q in %s:%d does not exist is ECS %v.", f.Name, f.Source, f.SourceLine, ecs.Version)
+			log.Printf("WARN: %q in %s:%d does not exist is ECS.", f.Name, f.FileMetadata.Path(), f.FileMetadata.Line())
 		}
 	}
 
 	conflicts := detectConflicts(flat)
+	conflicts = append(conflicts, detectInvalidParentDataTypes(flat)...)
 
 	if ignoreTextConflicts {
 		filtered := conflicts[:0]
