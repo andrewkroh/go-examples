@@ -6,7 +6,7 @@ specify `-owner <github team>` to output data from packages owned by that team.
 
 Data is sorted by variable name.
 
-`go run . -integ-dir ./elastic/integrations > vars.csv`
+`go run github.com/andrewkroh/go-examples/fleet-variables@main -integ-dir ./elastic/integrations > vars.csv`
 
 ## Example output
 
