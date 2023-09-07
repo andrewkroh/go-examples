@@ -12,7 +12,7 @@ jobs:
     name: golangci
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: '0'
 
@@ -20,7 +20,7 @@ jobs:
         id: goversion
         run: echo "version=$(cat .go-version)" >> $GITHUB_OUTPUT
 
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version: "${{ steps.goversion.outputs.version }}"
 
@@ -36,13 +36,13 @@ jobs:
     name: go-mod-tidy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Read .go-version file
         id: goversion
         run: echo "version=$(cat .go-version)" >> $GITHUB_OUTPUT
 
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version: "${{ steps.goversion.outputs.version }}"
 
