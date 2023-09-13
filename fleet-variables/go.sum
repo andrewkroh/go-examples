@@ -1,5 +1,5 @@
-github.com/andrewkroh/go-fleetpkg v0.0.5 h1:X0s+f2LaGIc2MLPQ/jMdIHZO09xnrrRvjeoFVDMBfWA=
-github.com/andrewkroh/go-fleetpkg v0.0.5/go.mod h1:FCFWIeEw6pg5dNFtIQ3f7vNA7iqTtLbiKQUyzjh477s=
+github.com/andrewkroh/go-fleetpkg v0.0.6 h1:7VHUN/27OgwbWlNLopUrUn5PkRgUaipTzZHel2ohxoo=
+github.com/andrewkroh/go-fleetpkg v0.0.6/go.mod h1:FCFWIeEw6pg5dNFtIQ3f7vNA7iqTtLbiKQUyzjh477s=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/stretchr/testify v1.8.3 h1:RP3t2pwF7cMEbC1dqtB6poj3niw/9gnV4Cjg5oW5gtY=
