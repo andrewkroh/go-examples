@@ -1,11 +1,17 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/andrewkroh/go-fleetpkg"
+	"github.com/goccy/go-yaml/parser"
 	cp "github.com/otiai10/copy"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEdit(t *testing.T) {
@@ -38,7 +44,7 @@ func TestEdit(t *testing.T) {
 	assert.Equal(t, "git@8.2", result.BuildManifest.ECSReferenceOld, "result/build_manifest/ecs_old")
 	assert.Equal(t, cfg.BuildManifest.ECSReference, result.BuildManifest.ECSReferenceNew, "result/build_manifest/ecs_new")
 
-	assert.True(t, result.Manifest.Changed, "result/manifest/changed")
+	assert.True(t, result.Manifest.FormatVersionChanged, "result/manifest/changed")
 	assert.Equal(t, "1.0.0", result.Manifest.FormatVersionOld, "result/manifest/format_version_old")
 	assert.Equal(t, cfg.Manifest.FormatVersion, result.Manifest.FormatVersionNew, "result/manifest/format_version_old")
 
@@ -65,6 +71,11 @@ func TestEdit(t *testing.T) {
 	assert.Empty(t, pkg.Manifest.License, "manifest.license")
 	assert.Empty(t, pkg.Manifest.Release, "manifest.release")
 
+	assert.Equal(t, pkg.Manifest.Conditions.Kibana.Version, "^7.16.0 || ^8.0.0")
+	manifestContents, err := os.ReadFile(filepath.Join(dir, "manifest.yml"))
+	require.NoError(t, err)
+	assert.NotContains(t, string(manifestContents), "kibana.version")
+
 	pipeline := pkg.DataStreams["item_usages"].Pipelines["default.yml"]
 	assert.Equal(t, cfg.IngestPipeline.ECSVersion,
 		pipeline.Processors[3].Attributes["value"],
@@ -89,4 +100,71 @@ foo:
 `
 
 	assert.Equal(t, expected, indent(in, 2))
+}
+
+func TestFixDottedMapKeys(t *testing.T) {
+	testCases := []struct {
+		in  string
+		out string
+	}{
+		{
+			in: `
+foo:
+  bar.baz: hello, world!
+`,
+			out: `
+foo:
+  bar:
+    baz: hello, world!
+`,
+		},
+		{
+			in: `
+foo:
+  bar.baz:
+    complex: object
+`,
+			out: `
+foo:
+  bar:
+    baz:
+      complex: object
+`,
+		},
+		// Note: this function won't merge children under the same parent.
+		{
+			in: `
+foo:
+  alpha.bravo: foo
+  alpha.charlie: bar
+`,
+			out: `
+foo:
+  alpha:
+    bravo: foo
+  alpha:
+    charlie: bar
+`,
+		},
+	}
+
+	for i, tc := range testCases {
+		tc := tc
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			f, err := parser.ParseBytes([]byte(tc.in), parser.ParseComments)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			changed, err := fixDottedMapKeys(f, "$.foo")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if tc.out == "" && changed {
+				t.Fatal("changed==true, but not changes were expected")
+			}
+
+			assert.Equal(t, strings.TrimSpace(tc.out), strings.TrimSpace(f.String()))
+		})
+	}
 }

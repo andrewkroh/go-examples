@@ -57,6 +57,7 @@ var (
 	owner              string
 	sampleEvents       bool
 	skipChangelog      bool
+	fixDottedYAMLKeys  bool
 )
 
 var semverZero = semver.Version{}
@@ -71,6 +72,7 @@ func init() {
 	flag.BoolVar(&sampleEvents, "sample-events", false, "Generate new sample events (slow).")
 	flag.BoolVar(&skipChangelog, "skip-changelog", false, "Skip adding a changelog entry.")
 	flag.BoolVar(&normalizeOnFailure, "on-failure", false, "Rewrite ingest pipeline on_failure handlers to set event.kind=pipeline_error and normalize the error.message value.")
+	flag.BoolVar(&fixDottedYAMLKeys, "fix-dotted-yaml-keys", false, "Replace YAML keys containing dots.")
 }
 
 func getVersion() string {
@@ -129,6 +131,7 @@ func updatePackage(path string) error {
 	if formatVersion != semverZero {
 		editCfg.Manifest.FormatVersion = formatVersion.String()
 	}
+	editCfg.Manifest.FixDottedKeys = fixDottedYAMLKeys
 	editCfg.BuildManifest.ECSReference = ecsGitReference
 	editCfg.IngestPipeline.NormalizeOnFailure = normalizeOnFailure
 
@@ -272,7 +275,9 @@ func headline(r *EditResult) string {
 	switch {
 	case r.BuildManifest.Changed:
 		return fmt.Sprintf("change to ECS version %v", r.BuildManifest.ECSReferenceNew)
-	case r.Manifest.Changed:
+	case r.Manifest.DottedYAMLRemoved:
+		return "removed dotted YAML keys from manifest"
+	case r.Manifest.FormatVersionChanged:
 		return fmt.Sprintf("change to format_version %v", r.Manifest.FormatVersionNew)
 	case r.IngestPipelinesChanged():
 		for _, ipr := range r.IngestPipeline {
@@ -307,7 +312,7 @@ func summarize(r *EditResult) string {
 		fmt.Fprintf(&sb, "ECS version in build manifest changed from %v to %v. ",
 			r.BuildManifest.ECSReferenceOld, r.BuildManifest.ECSReferenceNew)
 	}
-	if r.Manifest.Changed {
+	if r.Manifest.FormatVersionChanged {
 		fmt.Fprintf(&sb, "The format_version in the package manifest changed from %v to %v. ",
 			r.Manifest.FormatVersionOld, r.Manifest.FormatVersionNew)
 	}
@@ -415,6 +420,7 @@ type EditConfig struct {
 	}
 	Manifest struct {
 		FormatVersion string // Package format.
+		FixDottedKeys bool
 	}
 	IngestPipeline struct {
 		ECSVersion         string // ECS version (e.g. 8.2.0).
@@ -458,9 +464,10 @@ type BuildManifestResult struct {
 }
 
 type ManifestResult struct {
-	Changed          bool
-	FormatVersionOld string
-	FormatVersionNew string
+	DottedYAMLRemoved    bool
+	FormatVersionChanged bool
+	FormatVersionOld     string
+	FormatVersionNew     string
 }
 
 type SampleEventResult struct {
@@ -503,7 +510,8 @@ func Edit(pkg *fleetpkg.Integration, c EditConfig) (*EditResult, error) {
 	}
 
 	e.result.Changed = e.result.BuildManifest.Changed ||
-		e.result.Manifest.Changed ||
+		e.result.Manifest.DottedYAMLRemoved ||
+		e.result.Manifest.FormatVersionChanged ||
 		e.result.IngestPipelinesChanged() ||
 		e.result.SampleEventsChanged()
 
@@ -540,40 +548,43 @@ func (e *packageEditor) modifyBuildManifest() error {
 }
 
 func (e *packageEditor) modifyManifest() error {
-	if e.config.Manifest.FormatVersion == "" {
-		return nil
-	}
-	if e.config.Manifest.FormatVersion == e.pkg.Manifest.FormatVersion {
-		return nil
-	}
-
 	f, err := parser.ParseFile(e.pkg.Manifest.Path(), parser.ParseComments)
 	if err != nil {
 		return err
 	}
-	err = yamlEditString(f, "$.format_version",
-		e.config.Manifest.FormatVersion, token.DoubleQuoteType)
-	if err != nil {
-		return err
+
+	if e.config.Manifest.FixDottedKeys {
+		e.result.Manifest.DottedYAMLRemoved, err = fixDottedMapKeys(f, "$.conditions")
+		if err != nil {
+			return fmt.Errorf("failed to fix dotted map keys: %w", err)
+		}
 	}
 
-	if formatVersion := semver.New(e.config.Manifest.FormatVersion); formatVersion.Major >= 2 {
-		// license is disallowed in >= 2.0.0
-		if err := removeLicenseField(f); err != nil {
+	if e.config.Manifest.FormatVersion != "" && e.config.Manifest.FormatVersion != e.pkg.Manifest.FormatVersion {
+		err = yamlEditString(f, "$.format_version",
+			e.config.Manifest.FormatVersion, token.DoubleQuoteType)
+		if err != nil {
 			return err
 		}
 
-		// release is disallowed in >= 2.3.0
-		if formatVersion.Minor >= 3 {
-			if err := removeReleaseField(f); err != nil {
+		if formatVersion := semver.New(e.config.Manifest.FormatVersion); formatVersion.Major >= 2 {
+			// license is disallowed in >= 2.0.0
+			if err := removeLicenseField(f); err != nil {
 				return err
 			}
-		}
-	}
 
-	e.result.Manifest.Changed = true
-	e.result.Manifest.FormatVersionOld = e.pkg.Manifest.FormatVersion
-	e.result.Manifest.FormatVersionNew = e.config.Manifest.FormatVersion
+			// release is disallowed in >= 2.3.0
+			if formatVersion.Minor >= 3 {
+				if err := removeReleaseField(f); err != nil {
+					return err
+				}
+			}
+		}
+
+		e.result.Manifest.FormatVersionChanged = true
+		e.result.Manifest.FormatVersionOld = e.pkg.Manifest.FormatVersion
+		e.result.Manifest.FormatVersionNew = e.config.Manifest.FormatVersion
+	}
 
 	return os.WriteFile(e.pkg.Manifest.Path(), []byte(f.String()+"\n"), 0o644)
 }
@@ -873,6 +884,89 @@ func appendOrReplaceNode(seq *ast.SequenceNode, index int, node ast.Node) bool {
 	}
 
 	return false
+}
+
+// fixDottedMapKeys will locate the map specified by the YAML path and replace
+// any key names that contain dots with a nested object. For example, given a
+// YAML path of `$.my_map` will convert
+//
+//	 my_map:
+//		  foo.bar: {}
+//
+// to
+//
+//	 my_map:
+//		  foo:
+//		    bar: {}
+func fixDottedMapKeys(f *ast.File, mapPath string) (bool, error) {
+	path, err := yaml.PathString(mapPath)
+	if err != nil {
+		return false, err
+	}
+
+	node, err := path.FilterFile(f)
+	if err != nil {
+		if yaml.IsNotFoundNodeError(err) {
+			return false, nil
+		}
+	}
+
+	var changed bool
+	switch v := node.(type) {
+	// For maps with a single key.
+	case *ast.MappingValueNode:
+		return fixDottedMapNode(v)
+	// For maps with a more than one key.
+	case *ast.MappingNode:
+		for _, n := range v.Values {
+			itemChanged, err := fixDottedMapNode(n)
+			if err != nil {
+				return false, err
+			}
+
+			if itemChanged {
+				changed = true
+			}
+		}
+	default:
+		return false, fmt.Errorf("node found at path %s is not a map (found %T)", mapPath, node)
+	}
+
+	return changed, nil
+}
+
+func fixDottedMapNode(original *ast.MappingValueNode) (bool, error) {
+	stringKey, ok := original.Key.(*ast.StringNode)
+	if !ok {
+		return false, fmt.Errorf("found non-string map key: %#v", original.Key)
+	}
+
+	before, after, found := strings.Cut(stringKey.Value, ".")
+	if !found {
+		return false, nil
+	}
+
+	node := newNode(before + ":\n  " + after + ": PLACEHOLDER")
+	newMapValueNode := node.(*ast.MappingValueNode)
+
+	// Replace the placeholder with the original value.
+	// This will allow complex YAML structures to be represented correctly.
+	newMapValueNode.Value.(*ast.MappingValueNode).Value = original.Value
+	newMapValueNode.AddColumn(original.Start.Position.IndentNum)
+
+	original.Key = newMapValueNode.Key
+	original.Value = newMapValueNode.Value
+	return true, nil
+}
+
+// newNode returns a new ast.Node created from the given YAML string.
+func newNode(body string) ast.Node {
+	set, err := parser.ParseBytes([]byte(body), parser.ParseComments)
+	if err != nil {
+		panic(err)
+	}
+
+	return set.Docs[0].Body
 }
 
 // nodeEquals compares the two nodes by marshaling the node to an any
