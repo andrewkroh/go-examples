@@ -28,6 +28,7 @@ func TestEdit(t *testing.T) {
 	var cfg EditConfig
 	cfg.BuildManifest.ECSReference = "git@9.1.2"
 	cfg.Manifest.FormatVersion = "2.6.0"
+	cfg.Manifest.FixDottedKeys = true
 	cfg.IngestPipeline.ECSVersion = "11.12.13"
 	cfg.IngestPipeline.NormalizeOnFailure = true
 	cfg.SampleEvent.ECSVersion = "1.2.3"
