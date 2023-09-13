@@ -14,8 +14,8 @@ You must have a local clone of `elastic/integrations`.
 
 ```shell
 go run github.com/andrewkroh/go-examples/fleetpkg-indexer@main \
-  -packages-dir ~/code/elastic/integrations/packages
-  -es-url https://localhost:9200 \
+  -packages-dir ~/code/elastic/integrations/packages \
+  -es-url "https://localhost:9200" \
   -insecure \
   -u elastic \
   -p changeme
