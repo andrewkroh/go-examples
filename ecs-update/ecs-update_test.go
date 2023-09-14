@@ -169,3 +169,32 @@ foo:
 		})
 	}
 }
+
+func TestAddChangelog(t *testing.T) {
+	dir := t.TempDir()
+	if err := cp.Copy("testdata/my_package", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	pkg, err := fleetpkg.Read(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	const description = "TEST FIX"
+	newVersion, err := addChangelogEntry(pkg, enhancementChange, "https://example.com", description)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err = setManifestVersion(pkg.Manifest.Path(), newVersion); err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := os.ReadFile(pkg.Changelog.Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Contains(t, string(data), description)
+}

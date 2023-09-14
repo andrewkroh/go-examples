@@ -57,6 +57,7 @@ var (
 	owner              string
 	sampleEvents       bool
 	skipChangelog      bool
+	changeType         changeTypeFlag
 	fixDottedYAMLKeys  bool
 )
 
@@ -71,8 +72,50 @@ func init() {
 	flag.StringVar(&owner, "owner", "", "Only modify packages owned by this team.")
 	flag.BoolVar(&sampleEvents, "sample-events", false, "Generate new sample events (slow).")
 	flag.BoolVar(&skipChangelog, "skip-changelog", false, "Skip adding a changelog entry.")
+	flag.Var(&changeType, "change-type", "Type of change (bugfix, enhancement or breaking-change) for the changelog entry.")
 	flag.BoolVar(&normalizeOnFailure, "on-failure", false, "Rewrite ingest pipeline on_failure handlers to set event.kind=pipeline_error and normalize the error.message value.")
 	flag.BoolVar(&fixDottedYAMLKeys, "fix-dotted-yaml-keys", false, "Replace YAML keys containing dots.")
+}
+
+var _ flag.Value = (*changeTypeFlag)(nil)
+
+type changeTypeFlag uint8
+
+const (
+	enhancementChange changeTypeFlag = iota
+	bugfixChange                     = iota
+	breakingChange
+)
+
+var changeTypeNames = map[changeTypeFlag]string{
+	enhancementChange: "enhancement",
+	bugfixChange:      "bugfix",
+	breakingChange:    "breaking-change",
+}
+
+func (ct *changeTypeFlag) String() string {
+	if name, found := changeTypeNames[*ct]; found {
+		return name
+	}
+	return "unknown"
+}
+
+func (ct *changeTypeFlag) Set(value string) error {
+	value = strings.ToLower(value)
+
+	switch {
+	case strings.HasPrefix(value, "bu") && strings.HasPrefix("bugfix", value):
+		*ct = bugfixChange
+		return nil
+	case strings.HasPrefix(value, "e") && strings.HasPrefix("enhancement", value):
+		*ct = enhancementChange
+		return nil
+	case strings.HasPrefix(value, "br") && strings.HasPrefix("breaking-change", value):
+		*ct = breakingChange
+		return nil
+	default:
+		return fmt.Errorf("invalid change type %q", value)
+	}
 }
 
 func getVersion() string {
@@ -149,7 +192,17 @@ func updatePackage(path string) error {
 	}
 
 	if !skipChangelog {
-		if err = AddChangelog(path, pullRequestNumber, title(headline(result))+"."); err != nil {
+		pr := "{{ PULL_REQUEST_NUMBER }}"
+		if pullRequestNumber != "" {
+			pr = pullRequestNumber
+		}
+		pr = "https://github.com/elastic/integrations/pull/" + pr
+
+		ver, err := addChangelogEntry(pkg, changeType, pr, title(headline(result))+".")
+		if err != nil {
+			return err
+		}
+		if err = setManifestVersion(pkg.Manifest.Path(), ver); err != nil {
 			return err
 		}
 	}
@@ -218,17 +271,6 @@ func Commit(path, message string) error {
 	return ExecutePlan(path, []string{
 		`git add -u .`,
 		`git commit -F ` + f.Name(),
-	})
-}
-
-func AddChangelog(path, pr, description string) error {
-	cmd := fmt.Sprintf(`elastic-package-changelog add-next --type=enhancement -d=%q `, description)
-	if pr != "" {
-		cmd += "--pr=" + pr
-	}
-
-	return ExecutePlan(path, []string{
-		cmd,
 	})
 }
 
@@ -1148,4 +1190,128 @@ func createStringLiteral(s string, n int) (ast.Node, error) {
 	}
 
 	return f.Docs[0].Body, nil
+}
+
+// addChangelogEntry modifies the changelog by adding a new entry to the top.
+// If there are unreleased changes (e.g. '-next' versions) in the changelog, then
+// those changes will be rolled into the new release version.
+func addChangelogEntry(pkg *fleetpkg.Integration, changeType changeTypeFlag, link, description string) (newVersion string, err error) {
+	changes, unreleaseCount, err := unreleasedChanges(pkg)
+	if err != nil {
+		return "", err
+	}
+
+	changes = append(changes, fleetpkg.Change{
+		Description: description,
+		Type:        changeType.String(),
+		Link:        link,
+	})
+
+	relVer := semver.Must(semver.NewVersion(pkg.Manifest.Version))
+	switch changeType {
+	case breakingChange:
+		relVer.BumpMajor()
+	case enhancementChange:
+		relVer.BumpMinor()
+	case bugfixChange:
+		relVer.BumpPatch()
+	default:
+		return "", fmt.Errorf("invalid change type %q", changeType)
+	}
+
+	newRelNode, err := newChangelogReleaseNode(relVer.String(), changes)
+	if err != nil {
+		return "", err
+	}
+
+	if err = modifyChangelog(pkg.Changelog.Path(), unreleaseCount, newRelNode); err != nil {
+		return "", err
+	}
+
+	return relVer.String(), nil
+}
+
+func newChangelogReleaseNode(version string, changes []fleetpkg.Change) (ast.Node, error) {
+	release := fleetpkg.Release{
+		Version: version,
+		Changes: changes,
+	}
+
+	node, err := yaml.ValueToNode(release)
+	if err != nil {
+		return nil, err
+	}
+
+	// The 'changes' list needs indented by two spaces.
+	changesPath, _ := yaml.PathString("$.changes")
+	changesNode, _ := changesPath.FilterNode(node)
+	changesNode.AddColumn(2)
+
+	return node, err
+}
+
+func modifyChangelog(changelogPath string, deleteCount int, latestRelease ast.Node) error {
+	f, err := parser.ParseFile(changelogPath, parser.ParseComments)
+	if err != nil {
+		return err
+	}
+
+	firstReleasePath, err := yaml.PathString("$[0]")
+	if err != nil {
+		return err
+	}
+
+	firstReleaseNode, err := firstReleasePath.FilterFile(f)
+	if err != nil {
+		return err
+	}
+
+	n := ast.Parent(f.Docs[0], firstReleaseNode)
+
+	seqNode, ok := n.(*ast.SequenceNode)
+	if !ok {
+		return fmt.Errorf("expected ast.SequenceNode, but got %T", n)
+	}
+
+	seqNode.Values = seqNode.Values[deleteCount:]
+	seqNode.Values = append([]ast.Node{latestRelease}, seqNode.Values...)
+
+	return os.WriteFile(changelogPath, []byte(f.String()), 0o644)
+}
+
+func unreleasedChanges(pkg *fleetpkg.Integration) (unreleasedChanges []fleetpkg.Change, unreleaseCount int, err error) {
+	manifestVer, err := semver.NewVersion(pkg.Manifest.Version)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to parse package version: %w", err)
+	}
+
+	for _, rel := range pkg.Changelog.Releases {
+		relVer, err := semver.NewVersion(rel.Version)
+		if err != nil {
+			return nil, 0, fmt.Errorf("failed to parse changelog release version: %w", err)
+		}
+
+		// manifest.version >= release version
+		if manifestVer.Equal(*relVer) || !manifestVer.LessThan(*relVer) {
+			break
+		}
+
+		unreleasedChanges = append(unreleasedChanges, rel.Changes...)
+		unreleaseCount++
+	}
+
+	return unreleasedChanges, unreleaseCount, nil
+}
+
+func setManifestVersion(manifestPath, version string) error {
+	f, err := parser.ParseFile(manifestPath, parser.ParseComments)
+	if err != nil {
+		return err
+	}
+
+	if err = yamlEditString(f, "$.version", version, token.DoubleQuoteType); err != nil {
+		return err
+	}
+
+	return os.WriteFile(manifestPath, []byte(f.String()), 0o644)
 }

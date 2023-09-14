@@ -3,7 +3,7 @@ module github.com/andrewkroh/go-examples/ecs-update
 go 1.19
 
 require (
-	github.com/andrewkroh/go-fleetpkg v0.0.6
+	github.com/andrewkroh/go-fleetpkg v0.0.7
 	github.com/coreos/go-semver v0.3.1
 	github.com/goccy/go-yaml v1.11.0
 	github.com/mitchellh/go-wordwrap v1.0.1
