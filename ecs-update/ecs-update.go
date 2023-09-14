@@ -2,13 +2,16 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"reflect"
 	"runtime/debug"
@@ -59,6 +62,7 @@ var (
 	skipChangelog      bool
 	changeType         changeTypeFlag
 	fixDottedYAMLKeys  bool
+	verbose            bool
 )
 
 var semverZero = semver.Version{}
@@ -75,6 +79,7 @@ func init() {
 	flag.Var(&changeType, "change-type", "Type of change (bugfix, enhancement or breaking-change) for the changelog entry.")
 	flag.BoolVar(&normalizeOnFailure, "on-failure", false, "Rewrite ingest pipeline on_failure handlers to set event.kind=pipeline_error and normalize the error.message value.")
 	flag.BoolVar(&fixDottedYAMLKeys, "fix-dotted-yaml-keys", false, "Replace YAML keys containing dots.")
+	flag.BoolVar(&verbose, "v", false, "Verbose output")
 }
 
 var _ flag.Value = (*changeTypeFlag)(nil)
@@ -141,14 +146,61 @@ func main() {
 		}
 	}
 
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
+	var hasError bool
+	results := map[string]*updateResult{}
 	for _, p := range flag.Args() {
-		if err := updatePackage(p); err != nil {
-			log.Fatalf("Error: for %v: %v", p, err)
+		if ctx.Err() != nil {
+			break
 		}
+
+		if err := updatePackage(p, results); err != nil {
+			hasError = true
+			log.Printf("%s: Failed: %v", filepath.Base(p), err)
+		}
+	}
+
+	f, err := os.Create(filepath.Join(os.TempDir(), "ecs-update-result.json"))
+	if err != nil {
+		log.Fatalf("Failed writing detailed result report: %v", err)
+	}
+	defer f.Close()
+
+	enc := json.NewEncoder(f)
+	enc.SetIndent("", "  ")
+	enc.SetEscapeHTML(false)
+	if err = enc.Encode(maps.Values(results)); err != nil {
+		log.Fatalf("Failed writing detailed result report: %v", err)
+	}
+
+	finished := "Completed"
+	if ctx.Err() != nil {
+		finished = "Interrupted"
+	}
+
+	status := "No errors"
+	if hasError {
+		status = "Failed"
+	}
+
+	log.Printf("%s. %s. Details written to %s", finished, status, f.Name())
+	if hasError {
+		os.Exit(1)
 	}
 }
 
-func updatePackage(path string) error {
+type updateResult struct {
+	Package string `json:"package"`
+	Changed bool   `json:"changed"`
+	Failed  bool   `json:"failed,omitempty"`
+	Error   string `json:"error,omitempty"`
+	Stdout  string `json:"stdout,omitempty"`
+	Stderr  string `json:"stderr,omitempty"`
+}
+
+func updatePackage(path string, results map[string]*updateResult) error {
 	pkg, err := fleetpkg.Read(path)
 	if err != nil {
 		return err
@@ -166,6 +218,8 @@ func updatePackage(path string) error {
 		}
 	}
 
+	results[pkg.Manifest.Name] = &updateResult{Package: pkg.Manifest.Name}
+
 	var editCfg EditConfig
 	if ecsVersion != semverZero {
 		editCfg.IngestPipeline.ECSVersion = ecsVersion.String()
@@ -180,14 +234,25 @@ func updatePackage(path string) error {
 
 	result, err := Edit(pkg, editCfg)
 	if err != nil {
+		results[pkg.Manifest.Name].Failed = true
+		results[pkg.Manifest.Name].Error = err.Error()
 		return err
 	}
+	results[pkg.Manifest.Name].Changed = result.Changed
+
 	if !result.Changed {
-		log.Printf("%s: No changes.", pkg.Manifest.Name)
+		if verbose {
+			log.Printf("%s: No changes.", pkg.Manifest.Name)
+		}
 		return nil
 	}
 
-	if err = BuildAndUpdate(path); err != nil {
+	stdout, stderr, err := BuildAndUpdate(path)
+	results[pkg.Manifest.Name].Stdout = stdout
+	results[pkg.Manifest.Name].Stderr = stderr
+	if err != nil {
+		results[pkg.Manifest.Name].Failed = true
+		results[pkg.Manifest.Name].Error = err.Error()
 		return err
 	}
 
@@ -230,7 +295,7 @@ func title(s string) string {
 	return strings.ToUpper(first) + remainder
 }
 
-func BuildAndUpdate(path string) error {
+func BuildAndUpdate(path string) (stdout, stderr string, err error) {
 	if sampleEvents {
 		return ExecutePlan(path, []string{
 			"elastic-package clean",
@@ -247,7 +312,7 @@ func BuildAndUpdate(path string) error {
 	return ExecutePlan(path, []string{
 		"elastic-package format",
 		`elastic-package build`,
-		`elastic-package test pipeline -g`,
+		`elastic-package test pipeline -g --report-format xUnit`,
 	})
 }
 
@@ -268,24 +333,33 @@ func Commit(path, message string) error {
 		return err
 	}
 
-	return ExecutePlan(path, []string{
+	_, _, err = ExecutePlan(path, []string{
 		`git add -u .`,
 		`git commit -F ` + f.Name(),
 	})
+	return err
 }
 
-func ExecutePlan(pwd string, plan []string) error {
+func ExecutePlan(pwd string, plan []string) (stdout, stderr string, err error) {
+	stdoutBuf, stderrBuf := new(bytes.Buffer), new(bytes.Buffer)
+
+	var outWriter, errWriter io.Writer = stdoutBuf, stderrBuf
+	if verbose {
+		outWriter = io.MultiWriter(os.Stdout, stdoutBuf)
+		errWriter = io.MultiWriter(os.Stderr, stderrBuf)
+	}
+
 	for _, cmd := range plan {
 		cmd := exec.Command("sh", "-c", cmd)
 		cmd.Dir = pwd
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
+		cmd.Stdout = outWriter
+		cmd.Stderr = errWriter
 		if err := cmd.Run(); err != nil {
-			return fmt.Errorf("failed running %q: %w", cmd, err)
+			return stdoutBuf.String(), stderrBuf.String(), fmt.Errorf("failed running %q: %w", cmd, err)
 		}
 	}
 
-	return nil
+	return stdoutBuf.String(), stderrBuf.String(), nil
 }
 
 var commitTmpl = template.Must(template.New("commit").Funcs(template.FuncMap{
@@ -415,6 +489,10 @@ func gitGenerate(packageName string) string {
 	sb.WriteString(getVersion())
 	sb.WriteString(" ")
 
+	if verbose {
+		sb.WriteString("-v")
+		sb.WriteString(" ")
+	}
 	if ecsVersion != (semver.Version{}) {
 		sb.WriteString("-ecs-version=")
 		sb.WriteString(ecsVersion.String())
@@ -439,8 +517,17 @@ func gitGenerate(packageName string) string {
 		sb.WriteString("-skip-changelog")
 		sb.WriteString(" ")
 	}
+	if changeType > 0 {
+		sb.WriteString("-change-type=")
+		sb.WriteString(changeType.String())
+		sb.WriteString(" ")
+	}
 	if normalizeOnFailure {
 		sb.WriteString("-on-failure")
+		sb.WriteString(" ")
+	}
+	if fixDottedYAMLKeys {
+		sb.WriteString("-fix-dotted-yaml-keys")
 		sb.WriteString(" ")
 	}
 	if sampleEvents {
@@ -628,7 +715,7 @@ func (e *packageEditor) modifyManifest() error {
 		e.result.Manifest.FormatVersionNew = e.config.Manifest.FormatVersion
 	}
 
-	return os.WriteFile(e.pkg.Manifest.Path(), []byte(f.String()+"\n"), 0o644)
+	return os.WriteFile(e.pkg.Manifest.Path(), []byte(f.String()), 0o644)
 }
 
 func (e *packageEditor) modifySampleEvents() error {
