@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"crypto/tls"
@@ -64,6 +65,7 @@ type commonFields struct {
 	Input          []string `json:"@input,omitempty"`
 	PolicyTemplate []string `json:"@policy_template,omitempty"`
 	Owner          string   `json:"@owner"`
+	Attributes     []string `json:"@attributes,omitempty"` // Attributes holds deprecated and rsa2elk.
 }
 
 type manifest struct {
@@ -129,7 +131,7 @@ func main() {
 	ts, _ := elasticIntegrationsCommitTimestamp(packagesDir, commit)
 	commitTime := jsonTime(ts)
 
-	// WARNING: This is a mess, apologies. It was a very quick hack to answer
+	// WARNING: This is a mess, apologies. It was a rapid hack to answer
 	// some questions and explore the data.
 
 	for _, integ := range integrations {
@@ -146,6 +148,19 @@ func main() {
 			}
 		}
 
+		deprecated := strings.Contains(strings.ToLower(integ.Manifest.Description), "deprecated")
+		rsa2elk, err := fileContains(filepath.Join(integ.Path(), "data_stream/*/agent/stream/*.hbs"), []byte("nwparser"))
+		if err != nil {
+			slog.Warn("Failed to determine if package is rsa2elk", slog.String("integration", integ.Manifest.Name), slog.String("error", err.Error()))
+		}
+		var attributes []string
+		if deprecated {
+			attributes = append(attributes, "deprecated")
+		}
+		if rsa2elk {
+			attributes = append(attributes, "rsa2elk")
+		}
+
 		var docs []any
 
 		// Root-level variables
@@ -160,6 +175,7 @@ func main() {
 					PolicyTemplate: allPolicyTemplateNames,
 					Owner:          integ.Manifest.Owner.Github,
 					Input:          allPackageInputs,
+					Attributes:     attributes,
 				},
 				Var: v,
 			})
@@ -179,6 +195,7 @@ func main() {
 							Input:          []string{input.Type},
 							PolicyTemplate: []string{pt.Name},
 							Owner:          integ.Manifest.Owner.Github,
+							Attributes:     attributes,
 						},
 						Var: v,
 					})
@@ -210,6 +227,7 @@ func main() {
 						Input:          policyTemplateInputs,
 						PolicyTemplate: []string{pt.Name},
 						Owner:          integ.Manifest.Owner.Github,
+						Attributes:     attributes,
 					},
 					Var: v,
 				})
@@ -227,6 +245,7 @@ func main() {
 					PolicyTemplate: []string{pt.Name},
 					Input:          policyTemplateInputs,
 					Owner:          integ.Manifest.Owner.Github,
+					Attributes:     attributes,
 				},
 				PolicyTemplate: pt,
 			})
@@ -245,6 +264,7 @@ func main() {
 				PolicyTemplate: allPolicyTemplateNames,
 				Input:          allPackageInputs,
 				Owner:          integ.Manifest.Owner.Github,
+				Attributes:     attributes,
 			},
 			Manifest: integ.Manifest,
 		})
@@ -261,6 +281,7 @@ func main() {
 					Input:          allPackageInputs,
 					PolicyTemplate: allPolicyTemplateNames,
 					Owner:          integ.Manifest.Owner.Github,
+					Attributes:     attributes,
 				},
 				BuildManifest: *integ.Build,
 			})
@@ -281,6 +302,7 @@ func main() {
 							DataStream:  dsName,
 							Input:       []string{stream.Input},
 							Owner:       integ.Manifest.Owner.Github,
+							Attributes:  attributes,
 							// TODO: Set the associated policy_templates.
 						},
 						Var: streamVar,
@@ -308,6 +330,7 @@ func main() {
 					DataStream:  dsName,
 					Input:       allDataStreamInputs,
 					Owner:       integ.Manifest.Owner.Github,
+					Attributes:  attributes,
 				},
 				DataStreamManifest: ds.Manifest,
 			})
@@ -323,6 +346,7 @@ func main() {
 						Integration: integ.Manifest.Name,
 						DataStream:  dsName,
 						Owner:       integ.Manifest.Owner.Github,
+						Attributes:  attributes,
 					},
 					SampleEvent: ds.SampleEvent.Event,
 				})
@@ -347,6 +371,7 @@ func main() {
 						DataStream:  dsName,
 						Input:       allDataStreamInputs,
 						Owner:       integ.Manifest.Owner.Github,
+						Attributes:  attributes,
 					},
 					Field: f,
 				})
@@ -506,4 +531,43 @@ func sourceURLWithLine(commit string, meta fleetpkg.FileMetadata) string {
 func sourceURL(commit, path string) string {
 	_, repoPath, _ := strings.Cut(path, "integrations/")
 	return fmt.Sprintf("https://github.com/elastic/integrations/blob/%v/%v", commit, repoPath)
+}
+
+func fileContains(glob string, exactMatch []byte) (bool, error) {
+	files, err := filepath.Glob(glob)
+	if err != nil {
+		return false, err
+	}
+
+	for _, path := range files {
+		found, err := grepFile(path, exactMatch)
+		if err != nil {
+			return false, err
+		}
+
+		if found {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func grepFile(file string, exactMatch []byte) (bool, error) {
+	f, err := os.Open(file)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		if bytes.Contains(scanner.Bytes(), exactMatch) {
+			return true, nil
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return false, err
+	}
+	return false, nil
 }

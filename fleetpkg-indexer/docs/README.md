@@ -6,7 +6,12 @@ into Elasticsearch.
 You can use the data to answer questions like this and more:
 
 - What ECS fields are declared in a data stream?
+  `@type:field and @integration:1password and @data_stream:audit_events`
 - Are the fields with the same name but different data types?
+- What packages are not deprecated but are "rsa2elk"?
+  - `@attributes:"rsa2elk" and not @attributes:"deprecated" and @type:"manifest" and @owner:"elastic/security-external-integrations" `
+- What packages are deprecated?
+  - `@attributes:"deprecated" and @type:"manifest"`
 
 ### Usage Example
 
@@ -52,6 +57,7 @@ fields are added to the documents to help with pivoting and correlating.
 - `@timestamp` - Timestamp of the git commit.
 - `@url` - URL pointing to source file in GitHub.
 - `@input` - Associated input types.
+- `@attributes` - Contains tags like `deprecated` or `rsa2elk`.
 
 ### Known issues
 
