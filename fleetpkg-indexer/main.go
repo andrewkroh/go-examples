@@ -9,8 +9,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log/slog"
+	"mime/multipart"
 	"net/http"
+	"net/textproto"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -28,24 +32,31 @@ import (
 //go:embed assets/mapping.json
 var indexMapping string
 
+//go:embed assets/dashboard.ndjson
+var dashboardNDJSON []byte
+
 var (
 	packagesDir      string
 	index            string // Index to write to.
 	elasticsearchURL string
+	kibanaURL        string
 	username         string
 	password         string
 	apiKey           string
 	insecure         bool
+	dashboard        bool
 )
 
 func init() {
 	flag.StringVar(&packagesDir, "packages-dir", "", "Directory containing Fleet packages.")
 	flag.StringVar(&index, "index", "fleet-integrations", "name of index to create")
 	flag.StringVar(&elasticsearchURL, "es-url", "http://localhost:9200", "Elasticsearch URL")
-	flag.StringVar(&username, "u", "", "Elasticsearch username")
-	flag.StringVar(&password, "p", "", "Elasticsearch password")
-	flag.StringVar(&apiKey, "api-key", "", "Elasticsearch API key")
+	flag.StringVar(&kibanaURL, "kibana-url", "http://localhost:5601", "Kibana URL")
+	flag.StringVar(&username, "u", "", "Username")
+	flag.StringVar(&password, "p", "", "Password")
+	flag.StringVar(&apiKey, "api-key", "", "API key")
 	flag.BoolVar(&insecure, "insecure", false, "Proceed and operate even for TLS server connections considered insecure.")
+	flag.BoolVar(&dashboard, "dashboard", false, "Install the dashboard and exit.")
 	flag.Usage = usage
 }
 
@@ -117,6 +128,16 @@ type field struct {
 
 func main() {
 	flag.Parse()
+
+	if dashboard {
+		if err := importSavedObject(context.Background(), dashboardNDJSON); err != nil {
+			slog.Error("Failed to install dashboard.",
+				slog.String("error", err.Error()))
+			os.Exit(1)
+		}
+		slog.Info("Dashboard installed.")
+		return
+	}
 
 	if packagesDir == "" {
 		flag.Usage()
@@ -586,4 +607,67 @@ func grepFile(file string, exactMatch []byte) (bool, error) {
 		return false, err
 	}
 	return false, nil
+}
+
+// https://www.elastic.co/guide/en/kibana/current/saved-objects-api-import.html
+func importSavedObject(ctx context.Context, content []byte) error {
+	// Create base Kibana URL with basic auth.
+	u, err := url.Parse(kibanaURL)
+	if err != nil {
+		return err
+	}
+	u.User = url.UserPassword(username, password)
+
+	q := u.Query()
+	q.Set("overwrite", "true")
+	u.RawQuery = q.Encode()
+
+	// Setup http client (with optional insecure TLS).
+	customTransport := http.DefaultTransport.(*http.Transport).Clone()
+	if insecure {
+		customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+	client := &http.Client{Transport: customTransport}
+
+	bodyBuf := new(bytes.Buffer)
+
+	// Metadata part request.
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Type", "application/x-ndjson")
+	h.Set("Content-Disposition", `form-data; name="file"; filename="dashboard.ndjson"`)
+
+	mpWriter := multipart.NewWriter(bodyBuf)
+	part, err := mpWriter.CreatePart(h)
+	if err != nil {
+		return err
+	}
+	if _, err = part.Write(content); err != nil {
+		return err
+	}
+	if err = mpWriter.Close(); err != nil {
+		return err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, u.JoinPath("/api/saved_objects/_import").String(), bodyBuf)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("kbn-xsrf", "true")
+	req.Header.Set("Content-Type", mpWriter.FormDataContentType())
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to install dashboard to kibana: status=%d, body=%s", resp.StatusCode, body)
+	}
+	return nil
 }

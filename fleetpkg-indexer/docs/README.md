@@ -15,7 +15,18 @@ You can use the data to answer questions like this and more:
 
 ### Usage Example
 
-You must have a local clone of `elastic/integrations`.
+Install dashboards (do this once).
+
+```shell
+go run github.com/andrewkroh/go-examples/fleetpkg-indexer@main \
+  -dashboard \
+  -kibana-url "https://localhost:5601" \
+  -insecure \
+  -u elastic \
+  -p changeme
+```
+
+Index the data. You must have a local clone of `elastic/integrations`.
 
 ```shell
 go run github.com/andrewkroh/go-examples/fleetpkg-indexer@main \
