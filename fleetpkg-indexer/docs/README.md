@@ -63,3 +63,35 @@ fields are added to the documents to help with pivoting and correlating.
 
 - Annotation with the related `@policy_template` is not fully implemented.
 - Fields related to input type packages are not indexed.
+
+### Integration Package Component Relationships
+
+- An integration contains one or more policy templates.
+- Each policy template is displayed as a card in the Fleet integration UI.
+- A policy template selects combinations of data streams and input types.
+- The intersection of the "allowed" inputs from the policy template and the
+available inputs in the "allowed" data streams from the policy template
+determines what inputs can be configured.
+- There are four places where variables can be declared.
+- Fields are specified per data stream.
+
+```mermaid
+graph TD
+    I[Integration]
+    PT[Policy Template]
+    PTI[Policy Template input]
+    V[Variable]
+    F[Field]
+    DS[Data Stream]
+    DSI[Data Stream input]
+    I --> PT
+    PT -. selects .-> PTI
+    I -- declares --> V
+    PT --= declares --> V
+    PTI -- declares --> V
+    DS --> F
+    PT -. selects .-> DS
+    I -- contains --> DS
+    DS --> DSI
+    DSI -- declares --> V
+```
