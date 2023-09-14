@@ -194,7 +194,7 @@ func main() {
 type updateResult struct {
 	Package string `json:"package"`
 	Changed bool   `json:"changed"`
-	Failed  bool   `json:"failed,omitempty"`
+	Failed  bool   `json:"failed"`
 	Error   string `json:"error,omitempty"`
 	Stdout  string `json:"stdout,omitempty"`
 	Stderr  string `json:"stderr,omitempty"`
