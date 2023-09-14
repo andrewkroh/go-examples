@@ -57,14 +57,17 @@ fields are added to the documents to help with pivoting and correlating.
 - `@timestamp` - Timestamp of the git commit.
 - `@url` - URL pointing to source file in GitHub.
 - `@input` - Associated input types.
-- `@attributes` - Contains tags like `deprecated` or `rsa2elk`.
+- `@attributes.deprecated` - Is the package deprecated? Determine via the `description`.
+- `@attributes.rsa2elk` - Is this package generated through the [rsa2elk project](https://github.com/adriansr/nwdevice2filebeat)?
 
 ### Known issues
 
-- Annotation with the related `@policy_template` is not fully implemented.
 - Fields related to input type packages are not indexed.
 
 ### Integration Package Component Relationships
+
+The structure of packages is complicated because of the relationships
+between policy templates, data streams, and inputs.
 
 - An integration contains one or more policy templates.
 - Each policy template is displayed as a card in the Fleet integration UI.

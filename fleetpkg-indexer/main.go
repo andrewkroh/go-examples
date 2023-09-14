@@ -9,12 +9,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -22,6 +22,7 @@ import (
 	"github.com/andrewkroh/go-fleetpkg"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
+	"golang.org/x/exp/maps"
 )
 
 //go:embed assets/mapping.json
@@ -48,6 +49,12 @@ func init() {
 	flag.Usage = usage
 }
 
+func usage() {
+	fmt.Fprintln(os.Stdout, "Usage:")
+	fmt.Fprintln(os.Stdout, "    fleetpkg-indexer [flags]")
+	flag.PrintDefaults()
+}
+
 type jsonTime time.Time
 
 func (t jsonTime) MarshalJSON() ([]byte, error) {
@@ -61,7 +68,7 @@ type commonFields struct {
 	Commit         string     `json:"@commit"`
 	URL            string     `json:"@url,omitempty"`
 	Integration    string     `json:"@integration"`
-	DataStream     string     `json:"@data_stream,omitempty"`
+	DataStream     []string   `json:"@data_stream,omitempty"`
 	Input          []string   `json:"@input,omitempty"`
 	PolicyTemplate []string   `json:"@policy_template,omitempty"`
 	Owner          string     `json:"@owner"`
@@ -108,12 +115,6 @@ type field struct {
 	fleetpkg.Field
 }
 
-func usage() {
-	fmt.Fprintln(os.Stdout, "Usage:")
-	fmt.Fprintln(os.Stdout, "    fleetpkg-indexer [flags]")
-	flag.PrintDefaults()
-}
-
 func main() {
 	flag.Parse()
 
@@ -124,7 +125,8 @@ func main() {
 
 	integrations, err := loadFleetPackages()
 	if err != nil {
-		slog.Error("Failed to load integrations.", slog.String("error", err.Error()))
+		slog.Error("Failed to load integrations.",
+			slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 
@@ -135,6 +137,41 @@ func main() {
 
 	ts, _ := elasticIntegrationsCommitTimestamp(packagesDir, commit)
 	commitTime := jsonTime(ts)
+
+	bi, err := bulkIndexer()
+	if err != nil {
+		slog.Error("Failed to setup ES client.",
+			slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	ctx := context.Background()
+	addBulkDoc := func(doc any) {
+		data, err := json.Marshal(doc)
+		if err != nil {
+			slog.Error("Failed marshal document to JSON.",
+				slog.String("error", err.Error()))
+			os.Exit(1)
+		}
+
+		err = bi.Add(
+			ctx,
+			esutil.BulkIndexerItem{
+				Action: "index",
+				Body:   bytes.NewReader(data),
+				OnFailure: func(ctx context.Context, _ esutil.BulkIndexerItem, item esutil.BulkIndexerResponseItem, err error) {
+					slog.Warn("Failed indexing event.",
+						slog.String("event_json", string(data)),
+						slog.String("error", item.Error.Reason))
+				},
+			},
+		)
+		if err != nil {
+			slog.Error("Failed indexing document.",
+				slog.String("error", err.Error()))
+			os.Exit(1)
+		}
+	}
 
 	// WARNING: This is a mess, apologies. It was a rapid hack to answer
 	// some questions and explore the data.
@@ -152,59 +189,88 @@ func main() {
 				allPackageInputs = append(allPackageInputs, input.Type)
 			}
 		}
+		allDataStreams := maps.Keys(integ.DataStreams)
 
 		rsa2elk, err := fileContains(filepath.Join(integ.Path(), "data_stream/*/agent/stream/*.hbs"), []byte("nwparser"))
 		if err != nil {
-			slog.Warn("Failed to determine if package is rsa2elk", slog.String("integration", integ.Manifest.Name), slog.String("error", err.Error()))
+			slog.Warn("Failed to determine if package is rsa2elk",
+				slog.String("integration", integ.Manifest.Name),
+				slog.String("error", err.Error()))
 		}
 		attrs := attributes{
 			Deprecated: strings.Contains(strings.ToLower(integ.Manifest.Description), "deprecated"),
 			RSA2ELK:    rsa2elk,
 		}
 
-		var docs []any
+		makeCommonFields := func(types, policyTemplates, dataStreams, inputs []string, url string) commonFields {
+			return commonFields{
+				Timestamp:      commitTime,
+				Commit:         commit,
+				Owner:          integ.Manifest.Owner.Github,
+				Integration:    integ.Manifest.Name,
+				Attributes:     attrs,
+				Type:           types,
+				PolicyTemplate: policyTemplates,
+				DataStream:     dataStreams,
+				Input:          inputs,
+				URL:            url,
+			}
+		}
 
 		// Root-level variables
 		for _, v := range integ.Manifest.Vars {
-			docs = append(docs, variable{
-				commonFields: commonFields{
-					Timestamp:      commitTime,
-					Type:           []string{"package_variable", "variable"},
-					Commit:         commit,
-					URL:            sourceURLWithLine(commit, v.FileMetadata),
-					Integration:    integ.Manifest.Name,
-					PolicyTemplate: allPolicyTemplateNames,
-					Owner:          integ.Manifest.Owner.Github,
-					Input:          allPackageInputs,
-					Attributes:     attrs,
-				},
+			addBulkDoc(variable{
+				commonFields: makeCommonFields(
+					[]string{"package_variable", "variable"},
+					allPolicyTemplateNames,
+					allDataStreams,
+					allPackageInputs,
+					sourceURLWithLine(commit, v.FileMetadata),
+				),
 				Var: v,
 			})
 		}
 
-		// Policy template variables
+		// Build association of data streams to policy templates.
+		dataStreamToPolicyTemplates := map[string][]string{}
+		for _, ds := range maps.Keys(integ.DataStreams) {
+			var pts []string
+			for _, pt := range integ.Manifest.PolicyTemplates {
+				// An empty 'data_streams' list implies all data streams (empirically determined).
+				if len(pt.DataStreams) == 0 || slices.Contains(pt.DataStreams, ds) {
+					pts = append(pts, pt.Name)
+				}
+			}
+			dataStreamToPolicyTemplates[ds] = pts
+		}
+
+		// Policy templates
 		for _, pt := range integ.Manifest.PolicyTemplates {
+			policyTemplateDataStreams := pt.DataStreams
+			if len(policyTemplateDataStreams) == 0 {
+				policyTemplateDataStreams = allDataStreams
+			}
+
+			// Policy template input variables
 			for j, input := range pt.Inputs {
 				for _, v := range input.Vars {
-					docs = append(docs, variable{
-						commonFields: commonFields{
-							Timestamp:      commitTime,
-							Type:           []string{"input_variable", "variable"},
-							Commit:         commit,
-							URL:            sourceURLWithLine(commit, v.FileMetadata),
-							Integration:    integ.Manifest.Name,
-							Input:          []string{input.Type},
-							PolicyTemplate: []string{pt.Name},
-							Owner:          integ.Manifest.Owner.Github,
-							Attributes:     attrs,
-						},
+					addBulkDoc(variable{
+						commonFields: makeCommonFields(
+							[]string{"input_variable", "variable"},
+							[]string{pt.Name},
+							policyTemplateDataStreams,
+							[]string{input.Type},
+							sourceURLWithLine(commit, v.FileMetadata),
+						),
 						Var: v,
 					})
 				}
 
+				// Clear variables since those are being indexed as separate documents.
 				pt.Inputs[j].Vars = nil
 			}
 
+			// Determine all inputs associated with the policy template.
 			var policyTemplateInputs []string
 			if pt.Input != "" {
 				// Input packages
@@ -216,38 +282,31 @@ func main() {
 				}
 			}
 
-			// Policy template variable
+			// Policy template variables
 			for _, v := range pt.Vars {
-				docs = append(docs, variable{
-					commonFields: commonFields{
-						Timestamp:      commitTime,
-						Type:           []string{"policy_template_variable", "variable"},
-						Commit:         commit,
-						URL:            sourceURLWithLine(commit, v.FileMetadata),
-						Integration:    integ.Manifest.Name,
-						Input:          policyTemplateInputs,
-						PolicyTemplate: []string{pt.Name},
-						Owner:          integ.Manifest.Owner.Github,
-						Attributes:     attrs,
-					},
+				addBulkDoc(variable{
+					commonFields: makeCommonFields(
+						[]string{"policy_template_variable", "variable"},
+						[]string{pt.Name},
+						policyTemplateDataStreams,
+						policyTemplateInputs,
+						sourceURLWithLine(commit, v.FileMetadata),
+					),
 					Var: v,
 				})
 			}
+			// Clear variables since those are being indexed as separate documents.
 			pt.Vars = nil
 
 			// Policy template
-			docs = append(docs, policyTemplate{
-				commonFields: commonFields{
-					Timestamp:      commitTime,
-					Type:           []string{"policy_template"},
-					Commit:         commit,
-					URL:            sourceURL(commit, integ.Manifest.Path()),
-					Integration:    integ.Manifest.Name,
-					PolicyTemplate: []string{pt.Name},
-					Input:          policyTemplateInputs,
-					Owner:          integ.Manifest.Owner.Github,
-					Attributes:     attrs,
-				},
+			addBulkDoc(policyTemplate{
+				commonFields: makeCommonFields(
+					[]string{"policy_template"},
+					[]string{pt.Name},
+					policyTemplateDataStreams,
+					policyTemplateInputs,
+					sourceURL(commit, integ.Manifest.Path()),
+				),
 				PolicyTemplate: pt,
 			})
 		}
@@ -255,63 +314,49 @@ func main() {
 		// Manifest
 		integ.Manifest.Vars = nil
 		integ.Manifest.PolicyTemplates = nil
-		docs = append(docs, manifest{
-			commonFields: commonFields{
-				Timestamp:      commitTime,
-				Type:           []string{"manifest"},
-				Commit:         commit,
-				URL:            sourceURL(commit, integ.Manifest.Path()),
-				Integration:    integ.Manifest.Name,
-				PolicyTemplate: allPolicyTemplateNames,
-				Input:          allPackageInputs,
-				Owner:          integ.Manifest.Owner.Github,
-				Attributes:     attrs,
-			},
+		addBulkDoc(manifest{
+			commonFields: makeCommonFields(
+				[]string{"manifest"},
+				allPolicyTemplateNames,
+				allDataStreams,
+				allPackageInputs,
+				sourceURL(commit, integ.Manifest.Path()),
+			),
 			Manifest: integ.Manifest,
 		})
 
 		// Build Manifest
 		if integ.Build != nil {
-			docs = append(docs, buildManifest{
-				commonFields: commonFields{
-					Timestamp:      commitTime,
-					Type:           []string{"build_manifest"},
-					Commit:         commit,
-					URL:            sourceURL(commit, integ.Build.Path()),
-					Integration:    integ.Manifest.Name,
-					Input:          allPackageInputs,
-					PolicyTemplate: allPolicyTemplateNames,
-					Owner:          integ.Manifest.Owner.Github,
-					Attributes:     attrs,
-				},
+			addBulkDoc(buildManifest{
+				commonFields: makeCommonFields(
+					[]string{"build_manifest"},
+					allPolicyTemplateNames,
+					allDataStreams,
+					allPackageInputs,
+					sourceURL(commit, integ.Build.Path()),
+				),
 				BuildManifest: *integ.Build,
 			})
 		}
 
 		// Data Streams
 		for dsName, ds := range integ.DataStreams {
-			for _, stream := range ds.Manifest.Streams {
+			for i, stream := range ds.Manifest.Streams {
 				for _, streamVar := range stream.Vars {
 					// Data Stream Variable
-					docs = append(docs, variable{
-						commonFields: commonFields{
-							Timestamp:   commitTime,
-							Type:        []string{"data_stream_variable", "variable"},
-							Commit:      commit,
-							URL:         sourceURLWithLine(commit, streamVar.FileMetadata),
-							Integration: integ.Manifest.Name,
-							DataStream:  dsName,
-							Input:       []string{stream.Input},
-							Owner:       integ.Manifest.Owner.Github,
-							Attributes:  attrs,
-							// TODO: Set the associated policy_templates.
-						},
+					addBulkDoc(variable{
+						commonFields: makeCommonFields(
+							[]string{"data_stream_variable", "variable"},
+							dataStreamToPolicyTemplates[dsName],
+							[]string{dsName},
+							[]string{stream.Input},
+							sourceURLWithLine(commit, streamVar.FileMetadata),
+						),
 						Var: streamVar,
 					})
 				}
-			}
 
-			for i := range ds.Manifest.Streams {
+				// Clear variables because they are indexed separately.
 				ds.Manifest.Streams[i].Vars = nil
 			}
 
@@ -321,34 +366,27 @@ func main() {
 			}
 
 			// Data Stream Manifest
-			docs = append(docs, dataStreamManifest{
-				commonFields: commonFields{
-					Timestamp:   commitTime,
-					Type:        []string{"data_stream_manifest"},
-					Commit:      commit,
-					URL:         sourceURL(commit, ds.Manifest.Path()),
-					Integration: integ.Manifest.Name,
-					DataStream:  dsName,
-					Input:       allDataStreamInputs,
-					Owner:       integ.Manifest.Owner.Github,
-					Attributes:  attrs,
-				},
+			addBulkDoc(dataStreamManifest{
+				commonFields: makeCommonFields(
+					[]string{"data_stream_manifest"},
+					dataStreamToPolicyTemplates[dsName],
+					[]string{dsName},
+					allDataStreamInputs,
+					sourceURL(commit, ds.Manifest.Path()),
+				),
 				DataStreamManifest: ds.Manifest,
 			})
 
 			// Data Stream Sample Event
 			if ds.SampleEvent != nil {
-				docs = append(docs, sampleEvent{
-					commonFields: commonFields{
-						Timestamp:   commitTime,
-						Type:        []string{"sample_event"},
-						Commit:      commit,
-						URL:         sourceURL(commit, ds.SampleEvent.Path()),
-						Integration: integ.Manifest.Name,
-						DataStream:  dsName,
-						Owner:       integ.Manifest.Owner.Github,
-						Attributes:  attrs,
-					},
+				addBulkDoc(sampleEvent{
+					commonFields: makeCommonFields(
+						[]string{"sample_event"},
+						dataStreamToPolicyTemplates[dsName],
+						[]string{dsName},
+						allDataStreamInputs,
+						sourceURL(commit, ds.SampleEvent.Path()),
+					),
 					SampleEvent: ds.SampleEvent.Event,
 				})
 			}
@@ -358,32 +396,42 @@ func main() {
 			// Flatten the fields.
 			flatFields, err := fleetpkg.FlattenFields(ds.AllFields())
 			if err != nil {
-				slog.Warn("Failed to flatten fields for integration.", slog.String("integration", integ.Manifest.Name), slog.String("error", err.Error()))
+				slog.Warn("Failed to flatten fields for integration.",
+					slog.String("integration", integ.Manifest.Name),
+					slog.String("error", err.Error()))
 			}
 
 			for _, f := range flatFields {
-				docs = append(docs, field{
-					commonFields: commonFields{
-						Timestamp:   commitTime,
-						Type:        []string{"field"},
-						Commit:      commit,
-						URL:         sourceURLWithLine(commit, f.FileMetadata),
-						Integration: integ.Manifest.Name,
-						DataStream:  dsName,
-						Input:       allDataStreamInputs,
-						Owner:       integ.Manifest.Owner.Github,
-						Attributes:  attrs,
-					},
+				addBulkDoc(field{
+					commonFields: makeCommonFields(
+						[]string{"field"},
+						dataStreamToPolicyTemplates[dsName],
+						[]string{dsName},
+						allDataStreamInputs,
+						sourceURLWithLine(commit, f.FileMetadata),
+					),
 					Field: f,
 				})
 			}
 		}
-
-		if err := bulkWrite(context.Background(), docs); err != nil {
-			slog.Error("Failed to write data to Elasticsearch.", slog.String("integration", integ.Manifest.Name), slog.String("error", err.Error()))
-			continue
-		}
 	}
+
+	if err = bi.Close(ctx); err != nil {
+		slog.Error("Failed to write data to Elasticsearch.",
+			slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	biStats := bi.Stats()
+	if biStats.NumFailed > 0 {
+		slog.Warn("Indexed documents but there were errors.",
+			slog.Uint64("flushed", biStats.NumFlushed),
+			slog.Uint64("failed", biStats.NumFlushed))
+		os.Exit(1)
+	}
+
+	slog.Info("Successfully indexed data to ES.",
+		slog.Uint64("flushed", biStats.NumFlushed))
 }
 
 func loadFleetPackages() ([]*fleetpkg.Integration, error) {
@@ -405,7 +453,7 @@ func loadFleetPackages() ([]*fleetpkg.Integration, error) {
 	return rtn, nil
 }
 
-func bulkWrite(ctx context.Context, docs []any) error {
+func bulkIndexer() (esutil.BulkIndexer, error) {
 	es, err := elasticsearch.NewClient(elasticsearch.Config{
 		Addresses: []string{elasticsearchURL},
 		APIKey:    apiKey,
@@ -423,13 +471,13 @@ func bulkWrite(ctx context.Context, docs []any) error {
 		},
 	})
 	if err != nil {
-		return fmt.Errorf("failed to create ES client: %w", err)
+		return nil, fmt.Errorf("failed to create ES client: %w", err)
 	}
 
 	// Create index with mapping.
 	res, err := es.Indices.Exists([]string{index})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	switch res.StatusCode {
 	case http.StatusOK:
@@ -438,13 +486,13 @@ func bulkWrite(ctx context.Context, docs []any) error {
 		slog.Info("Creating new index.", slog.String("index", index))
 		res, err = es.Indices.Create(index, es.Indices.Create.WithBody(strings.NewReader(indexMapping)))
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if res.IsError() {
-			return fmt.Errorf("error creating index: %v", res)
+			return nil, fmt.Errorf("error creating index: %v", res)
 		}
 	default:
-		return fmt.Errorf("error checking if index exists: %v", res)
+		return nil, fmt.Errorf("error checking if index exists: %v", res)
 	}
 
 	bi, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
@@ -455,43 +503,10 @@ func bulkWrite(ctx context.Context, docs []any) error {
 		FlushInterval: 30 * time.Second, // The periodic flush interval
 	})
 	if err != nil {
-		return fmt.Errorf("error creating the ES indexer: %w", err)
+		return nil, fmt.Errorf("error creating the ES indexer: %w", err)
 	}
 
-	// Index docs.
-	for _, doc := range docs {
-		data, err := json.Marshal(doc)
-		if err != nil {
-			return fmt.Errorf("failed to marshall doc [%#v] to JSON: %w", doc, err)
-		}
-
-		err = bi.Add(
-			ctx,
-			esutil.BulkIndexerItem{
-				Action: "index",
-				// DocumentID: doc.(IDer).ID(),
-				Body: bytes.NewReader(data),
-				OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, item2 esutil.BulkIndexerResponseItem, err error) {
-					slog.Warn("Failed indexing event.", slog.String("event_json", string(data)), slog.String("error", item2.Error.Reason))
-				},
-			},
-		)
-		if err != nil {
-			return fmt.Errorf("failed indexing docs: %w", err)
-		}
-	}
-
-	if err := bi.Close(ctx); err != nil {
-		return fmt.Errorf("failed to close bulk indexer: %w", err)
-	}
-
-	biStats := bi.Stats()
-	if biStats.NumFailed > 0 {
-		return fmt.Errorf("indexed %d documents, but there were %d errors", int64(biStats.NumFlushed), int64(biStats.NumFailed))
-	}
-
-	log.Printf("Successfully indexed [%d] documents.", int64(biStats.NumFlushed))
-	return nil
+	return bi, nil
 }
 
 func elasticIntegrationsCommit(repoPath string) (string, error) {
