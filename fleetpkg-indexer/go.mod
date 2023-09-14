@@ -9,5 +9,6 @@ require (
 
 require (
 	github.com/elastic/elastic-transport-go/v8 v8.3.0 // indirect
+	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
