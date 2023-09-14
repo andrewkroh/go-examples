@@ -9,9 +9,9 @@ You can use the data to answer questions like this and more:
   `@type:field and @integration:1password and @data_stream:audit_events`
 - Are there fields with the same name but different data types?
 - What packages are not deprecated but are "rsa2elk"?
-  - `@attributes:"rsa2elk" and not @attributes:"deprecated" and @type:"manifest" and @owner:"elastic/security-external-integrations" `
+  - `@attributes.rsa2elk:true and @attributes.deprecated:false and @type:"manifest" and @owner:"elastic/security-external-integrations"`
 - What packages are deprecated?
-  - `@attributes:"deprecated" and @type:"manifest"`
+  - `@attributes.deprecated:true and @type:"manifest"`
 
 ### Usage Example
 
