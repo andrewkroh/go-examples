@@ -56,16 +56,21 @@ func (t jsonTime) MarshalJSON() ([]byte, error) {
 }
 
 type commonFields struct {
-	Timestamp      jsonTime `json:"@timestamp"`
-	Type           []string `json:"@type"`
-	Commit         string   `json:"@commit"`
-	URL            string   `json:"@url,omitempty"`
-	Integration    string   `json:"@integration"`
-	DataStream     string   `json:"@data_stream,omitempty"`
-	Input          []string `json:"@input,omitempty"`
-	PolicyTemplate []string `json:"@policy_template,omitempty"`
-	Owner          string   `json:"@owner"`
-	Attributes     []string `json:"@attributes,omitempty"` // Attributes holds deprecated and rsa2elk.
+	Timestamp      jsonTime   `json:"@timestamp"`
+	Type           []string   `json:"@type"`
+	Commit         string     `json:"@commit"`
+	URL            string     `json:"@url,omitempty"`
+	Integration    string     `json:"@integration"`
+	DataStream     string     `json:"@data_stream,omitempty"`
+	Input          []string   `json:"@input,omitempty"`
+	PolicyTemplate []string   `json:"@policy_template,omitempty"`
+	Owner          string     `json:"@owner"`
+	Attributes     attributes `json:"@attributes,omitempty"`
+}
+
+type attributes struct {
+	Deprecated bool `json:"deprecated"`
+	RSA2ELK    bool `json:"rsa2elk"`
 }
 
 type manifest struct {
@@ -148,17 +153,13 @@ func main() {
 			}
 		}
 
-		deprecated := strings.Contains(strings.ToLower(integ.Manifest.Description), "deprecated")
 		rsa2elk, err := fileContains(filepath.Join(integ.Path(), "data_stream/*/agent/stream/*.hbs"), []byte("nwparser"))
 		if err != nil {
 			slog.Warn("Failed to determine if package is rsa2elk", slog.String("integration", integ.Manifest.Name), slog.String("error", err.Error()))
 		}
-		var attributes []string
-		if deprecated {
-			attributes = append(attributes, "deprecated")
-		}
-		if rsa2elk {
-			attributes = append(attributes, "rsa2elk")
+		attrs := attributes{
+			Deprecated: strings.Contains(strings.ToLower(integ.Manifest.Description), "deprecated"),
+			RSA2ELK:    rsa2elk,
 		}
 
 		var docs []any
@@ -175,7 +176,7 @@ func main() {
 					PolicyTemplate: allPolicyTemplateNames,
 					Owner:          integ.Manifest.Owner.Github,
 					Input:          allPackageInputs,
-					Attributes:     attributes,
+					Attributes:     attrs,
 				},
 				Var: v,
 			})
@@ -195,7 +196,7 @@ func main() {
 							Input:          []string{input.Type},
 							PolicyTemplate: []string{pt.Name},
 							Owner:          integ.Manifest.Owner.Github,
-							Attributes:     attributes,
+							Attributes:     attrs,
 						},
 						Var: v,
 					})
@@ -227,7 +228,7 @@ func main() {
 						Input:          policyTemplateInputs,
 						PolicyTemplate: []string{pt.Name},
 						Owner:          integ.Manifest.Owner.Github,
-						Attributes:     attributes,
+						Attributes:     attrs,
 					},
 					Var: v,
 				})
@@ -245,7 +246,7 @@ func main() {
 					PolicyTemplate: []string{pt.Name},
 					Input:          policyTemplateInputs,
 					Owner:          integ.Manifest.Owner.Github,
-					Attributes:     attributes,
+					Attributes:     attrs,
 				},
 				PolicyTemplate: pt,
 			})
@@ -264,7 +265,7 @@ func main() {
 				PolicyTemplate: allPolicyTemplateNames,
 				Input:          allPackageInputs,
 				Owner:          integ.Manifest.Owner.Github,
-				Attributes:     attributes,
+				Attributes:     attrs,
 			},
 			Manifest: integ.Manifest,
 		})
@@ -281,7 +282,7 @@ func main() {
 					Input:          allPackageInputs,
 					PolicyTemplate: allPolicyTemplateNames,
 					Owner:          integ.Manifest.Owner.Github,
-					Attributes:     attributes,
+					Attributes:     attrs,
 				},
 				BuildManifest: *integ.Build,
 			})
@@ -302,7 +303,7 @@ func main() {
 							DataStream:  dsName,
 							Input:       []string{stream.Input},
 							Owner:       integ.Manifest.Owner.Github,
-							Attributes:  attributes,
+							Attributes:  attrs,
 							// TODO: Set the associated policy_templates.
 						},
 						Var: streamVar,
@@ -330,7 +331,7 @@ func main() {
 					DataStream:  dsName,
 					Input:       allDataStreamInputs,
 					Owner:       integ.Manifest.Owner.Github,
-					Attributes:  attributes,
+					Attributes:  attrs,
 				},
 				DataStreamManifest: ds.Manifest,
 			})
@@ -346,7 +347,7 @@ func main() {
 						Integration: integ.Manifest.Name,
 						DataStream:  dsName,
 						Owner:       integ.Manifest.Owner.Github,
-						Attributes:  attributes,
+						Attributes:  attrs,
 					},
 					SampleEvent: ds.SampleEvent.Event,
 				})
@@ -371,7 +372,7 @@ func main() {
 						DataStream:  dsName,
 						Input:       allDataStreamInputs,
 						Owner:       integ.Manifest.Owner.Github,
-						Attributes:  attributes,
+						Attributes:  attrs,
 					},
 					Field: f,
 				})
