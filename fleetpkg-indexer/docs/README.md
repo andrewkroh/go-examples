@@ -37,11 +37,16 @@ go run github.com/andrewkroh/go-examples/fleetpkg-indexer@main \
   -p changeme
 ```
 
-### Dashboard
+### Dashboards
 
-You can load the included dashboard by importing the saved objects into Kibana.
+You can load the included dashboards by running the aforementioned command or
+by manually importing the saved objects through the Kibana UI.
 
-![dashboard](dashboard.png)
+![dashboard](overview.png)
+
+Single Package View
+
+![dashboard](single-package.png)
 
 ### Data
 

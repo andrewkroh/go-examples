@@ -32,8 +32,13 @@ import (
 //go:embed assets/mapping.json
 var indexMapping string
 
-//go:embed assets/dashboard.ndjson
-var dashboardNDJSON []byte
+var (
+	//go:embed assets/overview.ndjson
+	overviewDashboardNDJSON []byte
+
+	//go:embed assets/single-package.ndjson
+	singlePackageDashboardNDJSON []byte
+)
 
 var (
 	packagesDir      string
@@ -130,12 +135,14 @@ func main() {
 	flag.Parse()
 
 	if dashboard {
-		if err := importSavedObject(context.Background(), dashboardNDJSON); err != nil {
-			slog.Error("Failed to install dashboard.",
-				slog.String("error", err.Error()))
-			os.Exit(1)
+		for _, dashboard := range [][]byte{overviewDashboardNDJSON, singlePackageDashboardNDJSON} {
+			if err := importSavedObject(context.Background(), dashboard); err != nil {
+				slog.Error("Failed to install dashboard.",
+					slog.String("error", err.Error()))
+				os.Exit(1)
+			}
 		}
-		slog.Info("Dashboard installed.")
+		slog.Info("Dashboards installed.")
 		return
 	}
 
