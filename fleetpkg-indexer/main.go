@@ -477,11 +477,11 @@ func main() {
 
 					if ecsField, _ := ecs.Lookup(field.Field.Name, ""); ecsField != nil {
 						field.ECSHasThisField = true
+						field.ECSDataType = ecsField.DataType
 						if field.Field.Type != ecsField.DataType {
 							// This does not account for field families.
 							field.ECSDataTypeConflict = true
 							field.ECSTextFamilyConflict = isTextTypeConflict(field.Field.Type, ecsField.DataType)
-							field.ECSDataType = ecsField.DataType
 						}
 					}
 				}
