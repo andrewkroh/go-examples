@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/andrewkroh/go-ecs"
+
 	"github.com/andrewkroh/go-fleetpkg"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
@@ -129,6 +131,18 @@ type variable struct {
 type field struct {
 	commonFields
 	fleetpkg.Field
+
+	// Field is declared as `external: ecs`, but ECS does not contain this field.
+	ECSFieldNotFound bool `json:"@extra.ecs_field_not_found"`
+
+	// ECS has a field with the same name.
+	ECSHasThisField bool `json:"@extra.ecs_has_this_field"`
+
+	// The declared type of this field conflicts with ECS.
+	ECSDataTypeConflict   bool `json:"@extra.ecs_data_type_conflict"`
+	ECSTextFamilyConflict bool `json:"@extra.ecs_text_family_conflict"`
+
+	ECSDataType string `json:"@extra.ecs_data_type,omitempty"`
 }
 
 func main() {
@@ -429,17 +443,49 @@ func main() {
 					slog.String("error", err.Error()))
 			}
 
-			for _, f := range flatFields {
-				addBulkDoc(field{
+			var ecsVersion string
+			if integ.Build != nil {
+				ecsVersion = integ.Build.Dependencies.ECS.Reference
+				ecsVersion = strings.TrimPrefix(ecsVersion, "git@")
+			}
+			for _, flatField := range flatFields {
+				field := field{
 					commonFields: makeCommonFields(
 						[]string{"field"},
 						dataStreamToPolicyTemplates[dsName],
 						[]string{dsName},
 						allDataStreamInputs,
-						sourceURLWithLine(commit, f.FileMetadata),
+						sourceURLWithLine(commit, flatField.FileMetadata),
 					),
-					Field: f,
-				})
+					Field: flatField,
+				}
+
+				if field.Field.External == "ecs" {
+					if ecsField, _ := ecs.Lookup(field.Field.Name, ecsVersion); ecsField != nil {
+						field.Field.Type = ecsField.DataType
+						field.Description = ecsField.Description
+						field.ECSHasThisField = true
+						field.ECSDataType = ecsField.DataType
+					} else {
+						field.ECSFieldNotFound = true
+					}
+				} else {
+					if field.Field.Type == "" {
+						// Default to keyword.
+						field.Field.Type = "keyword"
+					}
+
+					if ecsField, _ := ecs.Lookup(field.Field.Name, ""); ecsField != nil {
+						field.ECSHasThisField = true
+						if field.Field.Type != ecsField.DataType {
+							// This does not account for field families.
+							field.ECSDataTypeConflict = true
+							field.ECSTextFamilyConflict = isTextTypeConflict(field.Field.Type, ecsField.DataType)
+							field.ECSDataType = ecsField.DataType
+						}
+					}
+				}
+				addBulkDoc(field)
 			}
 		}
 	}
@@ -677,4 +723,15 @@ func importSavedObject(ctx context.Context, content []byte) error {
 		return fmt.Errorf("failed to install dashboard to kibana: status=%d, body=%s", resp.StatusCode, body)
 	}
 	return nil
+}
+
+func isTextTypeConflict(a, b string) bool {
+	for _, typ := range []string{a, b} {
+		switch typ {
+		case "keyword", "constant_keyword", "wildcard", "match_only_text", "text":
+		default:
+			return false
+		}
+	}
+	return true
 }
