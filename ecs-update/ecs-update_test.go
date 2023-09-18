@@ -9,6 +9,7 @@ import (
 
 	"github.com/andrewkroh/go-fleetpkg"
 	"github.com/goccy/go-yaml/parser"
+	"github.com/goccy/go-yaml/token"
 	cp "github.com/otiai10/copy"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -29,6 +30,7 @@ func TestEdit(t *testing.T) {
 	cfg.BuildManifest.ECSReference = "git@9.1.2"
 	cfg.Manifest.FormatVersion = "2.6.0"
 	cfg.Manifest.FixDottedKeys = true
+	cfg.Manifest.AddOwnerType = true
 	cfg.IngestPipeline.ECSVersion = "11.12.13"
 	cfg.IngestPipeline.NormalizeOnFailure = true
 	cfg.SampleEvent.ECSVersion = "1.2.3"
@@ -163,6 +165,71 @@ foo:
 			}
 			if tc.out == "" && changed {
 				t.Fatal("changed==true, but not changes were expected")
+			}
+
+			assert.Equal(t, strings.TrimSpace(tc.out), strings.TrimSpace(f.String()))
+		})
+	}
+}
+
+func TestYAMLEditString(t *testing.T) {
+	testCases := []struct {
+		typ token.Type
+		in  string
+		out string
+	}{
+		{
+			typ: token.StringType,
+			in: `
+owner:
+  github: team
+`,
+			out: `
+owner:
+  github: team
+  type: elastic
+`,
+		},
+		{
+			typ: token.DoubleQuoteType,
+			in: `
+owner:
+  github: team
+  other: foo
+`,
+			out: `
+owner:
+  github: team
+  other: foo
+  type: "elastic"
+`,
+		},
+		{
+			typ: token.StringType,
+			in: `
+owner:
+  github: team
+  type: elastic
+`,
+			out: `
+owner:
+  github: team
+  type: elastic
+`,
+		},
+	}
+
+	for i, tc := range testCases {
+		tc := tc
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			f, err := parser.ParseBytes([]byte(tc.in), parser.ParseComments)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			err = yamlEditString(f, "$.owner.type", "elastic", tc.typ)
+			if err != nil {
+				t.Fatal(err)
 			}
 
 			assert.Equal(t, strings.TrimSpace(tc.out), strings.TrimSpace(f.String()))

@@ -62,6 +62,7 @@ var (
 	skipChangelog      bool
 	changeType         changeTypeFlag
 	fixDottedYAMLKeys  bool
+	addOwnerType       bool
 	verbose            bool
 )
 
@@ -79,6 +80,7 @@ func init() {
 	flag.Var(&changeType, "change-type", "Type of change (bugfix, enhancement or breaking-change) for the changelog entry.")
 	flag.BoolVar(&normalizeOnFailure, "on-failure", false, "Rewrite ingest pipeline on_failure handlers to set event.kind=pipeline_error and normalize the error.message value.")
 	flag.BoolVar(&fixDottedYAMLKeys, "fix-dotted-yaml-keys", false, "Replace YAML keys containing dots.")
+	flag.BoolVar(&addOwnerType, "add-owner-type", false, "Add owner.type=elastic to manifests if the field does not exist.")
 	flag.BoolVar(&verbose, "v", false, "Verbose output")
 }
 
@@ -229,6 +231,7 @@ func updatePackage(path string, results map[string]*updateResult) error {
 		editCfg.Manifest.FormatVersion = formatVersion.String()
 	}
 	editCfg.Manifest.FixDottedKeys = fixDottedYAMLKeys
+	editCfg.Manifest.AddOwnerType = addOwnerType
 	editCfg.BuildManifest.ECSReference = ecsGitReference
 	editCfg.IngestPipeline.NormalizeOnFailure = normalizeOnFailure
 
@@ -395,6 +398,8 @@ func headline(r *EditResult) string {
 		return "removed dotted YAML keys from manifest"
 	case r.Manifest.FormatVersionChanged:
 		return fmt.Sprintf("change to format_version %v", r.Manifest.FormatVersionNew)
+	case r.Manifest.OwnerTypeAdded:
+		return "added owner.type: elastic to manifest"
 	case r.IngestPipelinesChanged():
 		for _, ipr := range r.IngestPipeline {
 			if ipr.ChangedECSVersion {
@@ -431,6 +436,12 @@ func summarize(r *EditResult) string {
 	if r.Manifest.FormatVersionChanged {
 		fmt.Fprintf(&sb, "The format_version in the package manifest changed from %v to %v. ",
 			r.Manifest.FormatVersionOld, r.Manifest.FormatVersionNew)
+	}
+	if r.Manifest.DottedYAMLRemoved {
+		sb.WriteString("Removed dotted YAML keys from package manifest. ")
+	}
+	if r.Manifest.OwnerTypeAdded {
+		sb.WriteString("Added 'owner.type: elastic' to package manifest. ")
 	}
 	if r.IngestPipelinesChanged() {
 		var newVersion string
@@ -530,6 +541,10 @@ func gitGenerate(packageName string) string {
 		sb.WriteString("-fix-dotted-yaml-keys")
 		sb.WriteString(" ")
 	}
+	if addOwnerType {
+		sb.WriteString("-add-owner-type")
+		sb.WriteString(" ")
+	}
 	if sampleEvents {
 		sb.WriteString("-sample-events")
 	}
@@ -549,7 +564,8 @@ type EditConfig struct {
 	}
 	Manifest struct {
 		FormatVersion string // Package format.
-		FixDottedKeys bool
+		AddOwnerType  bool   // Add owner.type=elastic if owner.type is missing.
+		FixDottedKeys bool   // Replace dotted keys under 'conditions.*'.
 	}
 	IngestPipeline struct {
 		ECSVersion         string // ECS version (e.g. 8.2.0).
@@ -597,6 +613,7 @@ type ManifestResult struct {
 	FormatVersionChanged bool
 	FormatVersionOld     string
 	FormatVersionNew     string
+	OwnerTypeAdded       bool
 }
 
 type SampleEventResult struct {
@@ -641,6 +658,7 @@ func Edit(pkg *fleetpkg.Integration, c EditConfig) (*EditResult, error) {
 	e.result.Changed = e.result.BuildManifest.Changed ||
 		e.result.Manifest.DottedYAMLRemoved ||
 		e.result.Manifest.FormatVersionChanged ||
+		e.result.Manifest.OwnerTypeAdded ||
 		e.result.IngestPipelinesChanged() ||
 		e.result.SampleEventsChanged()
 
@@ -713,6 +731,14 @@ func (e *packageEditor) modifyManifest() error {
 		e.result.Manifest.FormatVersionChanged = true
 		e.result.Manifest.FormatVersionOld = e.pkg.Manifest.FormatVersion
 		e.result.Manifest.FormatVersionNew = e.config.Manifest.FormatVersion
+	}
+
+	if e.config.Manifest.AddOwnerType && e.pkg.Manifest.Owner.Type == "" {
+		err = yamlEditString(f, "$.owner.type", "elastic", token.StringType)
+		if err != nil {
+			return err
+		}
+		e.result.Manifest.OwnerTypeAdded = true
 	}
 
 	return os.WriteFile(e.pkg.Manifest.Path(), []byte(f.String()), 0o644)
@@ -900,6 +926,12 @@ func yamlEditString(f *ast.File, yamlPath, value string, t token.Type) error {
 
 	n, err := p.FilterFile(f)
 	if err != nil {
+		if yaml.IsNotFoundNodeError(err) {
+			// If the key does not exist, then try to add it.
+			if idx := strings.LastIndex(yamlPath, "."); idx != -1 && len(yamlPath) > idx {
+				return yamlAddStringToMap(f, yamlPath[:idx], yamlPath[idx+1:], value, t)
+			}
+		}
 		return err
 	}
 
@@ -913,6 +945,53 @@ func yamlEditString(f *ast.File, yamlPath, value string, t token.Type) error {
 	default:
 		return fmt.Errorf("unexpected field type %T found for %q", n, yamlPath)
 	}
+}
+
+func yamlAddStringToMap(f *ast.File, yamlPath, key, value string, t token.Type) error {
+	p, err := yaml.PathString(yamlPath)
+	if err != nil {
+		return err
+	}
+
+	n, err := p.FilterFile(f)
+	if err != nil {
+		return err
+	}
+
+	// Get the original map.
+	var orig *ast.MappingNode
+	switch v := n.(type) {
+	// For maps with a single key. Relates https://github.com/goccy/go-yaml/issues/310.
+	case *ast.MappingValueNode:
+		orig = ast.Mapping(
+			token.New(":", ":", n.GetToken().Position),
+			false,
+			v)
+	// For maps with a more than one key.
+	case *ast.MappingNode:
+		orig = v
+	default:
+		return fmt.Errorf("node found at path %s is not a map (found %T)", yamlPath, n)
+	}
+
+	// Create new MappingNode node with a matching indent level.
+	newNode, err := yaml.ValueToNode(map[string]any{
+		key: value,
+	})
+	if err != nil {
+		return err
+	}
+	newNode.AddColumn(n.GetToken().Position.IndentNum)
+
+	// Honor the string token type.
+	mappingValue := newNode.(*ast.MappingNode).Values[0]
+	mappingValue.Value.GetToken().Type = t
+
+	// Add the new mapping value to the original map.
+	orig.Values = append(orig.Values, mappingValue)
+
+	// Replace the existing owner with a MappingNode.
+	return p.ReplaceWithNode(f, orig)
 }
 
 func yamlDeleteStringNodeFromMap(f *ast.File, yamlPath string) error {
@@ -1042,7 +1121,7 @@ func fixDottedMapKeys(f *ast.File, mapPath string) (bool, error) {
 
 	var changed bool
 	switch v := node.(type) {
-	// For maps with a single key.
+	// For maps with a single key. Relates https://github.com/goccy/go-yaml/issues/310.
 	case *ast.MappingValueNode:
 		return fixDottedMapNode(v)
 	// For maps with a more than one key.
