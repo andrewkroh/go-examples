@@ -266,7 +266,7 @@ func updatePackage(path string, results map[string]*updateResult) error {
 		}
 		pr = "https://github.com/elastic/integrations/pull/" + pr
 
-		ver, err := addChangelogEntry(pkg, changeType, pr, title(headline(result))+".")
+		ver, err := addChangelogEntry(pkg, changeType, pr, summarize(result))
 		if err != nil {
 			return err
 		}
