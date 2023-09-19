@@ -8,8 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/andrewkroh/go-examples/fields-yml-gen/ecs"
-	"github.com/andrewkroh/go-examples/fields-yml/fieldsyml"
+	"github.com/andrewkroh/go-ecs"
+	"github.com/andrewkroh/go-fleetpkg"
 )
 
 var usage = `
@@ -34,15 +34,8 @@ func init() {
 		flag.PrintDefaults()
 	}
 
-	flag.StringVar(&format, "f", "json", "Output format (list or json). Defaults to list.")
+	flag.StringVar(&format, "f", "list", "Output format (list or json). Defaults to list.")
 	flag.BoolVar(&warn, "w", true, "Warn on invalid external ECS field references.")
-}
-
-func outputJSON(v interface{}) error {
-	enc := json.NewEncoder(os.Stdout)
-	enc.SetIndent("", "  ")
-	enc.SetEscapeHTML(false)
-	return enc.Encode(v)
 }
 
 type Recommendation struct {
@@ -61,31 +54,29 @@ func main() {
 		log.Fatal("Must pass a list of fields.yml files.")
 	}
 
-	fields, err := fieldsyml.ReadFieldsYAML(flag.Args()...)
+	fields, err := fleetpkg.ReadFields(flag.Args()...)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	flat, err := fieldsyml.FlattenFields(fields)
+	flat, err := fleetpkg.FlattenFields(fields)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	var recommendations []Recommendation
-
-	// ECS fields that could be used.
 	for _, f := range flat {
-		if f.External != "" {
-			// Only analyze non-external fields.
+		if f.External == "ecs" {
+			// Only analyze non-ECS fields.
 			continue
 		}
 
-		if ecsField := ecs.GetField(f.Name); ecsField != nil {
+		if ecsField, _ := ecs.Lookup(f.Name, ""); ecsField != nil {
 			recommendations = append(recommendations, Recommendation{
 				Name:  f.Name,
 				Types: f.Type,
-				File:  f.Source,
-				Line:  f.SourceLine,
+				File:  f.Path(),
+				Line:  f.Line(),
 				Notes: []string{"Use 'external: ecs' to import the ECS definition."},
 			})
 		}
@@ -93,8 +84,9 @@ func main() {
 
 	// Duplicates definitions by name.
 	{
-		fieldSet := map[string][]fieldsyml.FlatField{}
-		for _, f := range flat {
+		fieldSet := map[string][]*fleetpkg.Field{}
+		for i := range flat {
+			f := &flat[i]
 			list := fieldSet[f.Name]
 			list = append(list, f)
 			fieldSet[f.Name] = list
@@ -106,8 +98,8 @@ func main() {
 					recommendations = append(recommendations, Recommendation{
 						Name:  f.Name,
 						Types: f.Type,
-						File:  f.Source,
-						Line:  f.SourceLine,
+						File:  f.Path(),
+						Line:  f.Line(),
 						Notes: []string{
 							fmt.Sprintf("Duplicate field (%d times).", len(fields)),
 						},
@@ -136,4 +128,11 @@ func main() {
 	default:
 		log.Fatalf("Unknown output format: %q", format)
 	}
+}
+
+func outputJSON(v interface{}) error {
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	enc.SetEscapeHTML(false)
+	return enc.Encode(v)
 }
