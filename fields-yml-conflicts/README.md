@@ -1,6 +1,11 @@
 # fields-yml-conflicts
 
-Detect field type conflicts between Elastic Fleet integrations.
+Detect field type conflicts between Elastic Fleet integrations. It detects
+two classes of conflicts:
+
+- same field declared with different types (by default text-family conflicts
+are ignored)
+- scalar field type where there are child fields declared
 
 ## Install
 
@@ -10,7 +15,5 @@ Detect field type conflicts between Elastic Fleet integrations.
 
 ```
 cd elastic/integrations
-fields-yml-conflicts packages/*/data_stream/*/fields/*yml > conflicts.json
+fields-yml-conflicts packages/*/data_stream/*/fields/*yml
 ```
-
-Example output: https://gist.github.com/andrewkroh/4db68e7edd97a8316bada0877c3da13b
