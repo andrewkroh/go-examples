@@ -11,6 +11,7 @@ import (
 	"github.com/goccy/go-yaml/parser"
 	"github.com/goccy/go-yaml/token"
 	cp "github.com/otiai10/copy"
+	"github.com/pmezard/go-difflib/difflib"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -103,6 +104,49 @@ foo:
 `
 
 	assert.Equal(t, expected, indent(in, 2))
+}
+
+func TestModifyIngestPipelineSetECSVersionViaFindReplace(t *testing.T) {
+	dir := t.TempDir()
+	if err := cp.Copy("testdata/my_package", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	pkg, err := fleetpkg.Read(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	e := &packageEditor{}
+	e.config.IngestPipeline.ECSVersion = "11.12.13"
+
+	var r IngestPipelineResult
+	pipeline := pkg.DataStreams["item_usages"].Pipelines["default.yml"]
+	err = e.modifyIngestPipeline(&pipeline, &r)
+	require.NoError(t, err)
+
+	before, err := os.ReadFile("testdata/my_package/data_stream/item_usages/elasticsearch/ingest_pipeline/default.yml")
+	require.NoError(t, err)
+	after, err := os.ReadFile(pipeline.Path())
+	require.NoError(t, err)
+
+	// Only a single one should be changed!
+	expectedChange := `
+***************
+*** 18 ****
+!       value: "8.2.0"
+--- 18 ----
+!       value: "11.12.13"
+`[1:]
+
+	diff, err := difflib.GetContextDiffString(difflib.ContextDiff{
+		A: difflib.SplitLines(string(before)),
+		B: difflib.SplitLines(string(after)),
+	})
+	require.NoError(t, err)
+	if diff != expectedChange {
+		t.Errorf("unexpected changes found in %s", filepath.Base(pipeline.Path()))
+	}
 }
 
 func TestFixDottedMapKeys(t *testing.T) {
