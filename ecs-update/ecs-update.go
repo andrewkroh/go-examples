@@ -281,7 +281,7 @@ func updatePackage(path string, results map[string]*updateResult) error {
 		}
 		pr = "https://github.com/elastic/integrations/pull/" + pr
 
-		ver, err := addChangelogEntry(pkg, changeType, pr, summarize(result))
+		ver, err := addChangelogEntry(pkg, changeType, pr, changelogMessage(result))
 		if err != nil {
 			return err
 		}
@@ -433,6 +433,33 @@ func headline(r *EditResult) string {
 	default:
 		return "no changes"
 	}
+}
+
+// changelogMessage generates a message for the end-user. It is less verbose than
+// the git commit message.
+func changelogMessage(r *EditResult) string {
+	var sb strings.Builder
+
+	if r.BuildManifest.Changed || r.SampleEventsChanged() || r.IngestPipelinesECSVersionChanged() {
+		fmt.Fprintf(&sb, "ECS version updated to %s. ", ecsVersion)
+	}
+	if r.Manifest.FormatVersionChanged {
+		fmt.Fprintf(&sb, "Update the package format_version to %v. ", r.Manifest.FormatVersionNew)
+	}
+	if r.IngestPipelinesOnFailureChanged() {
+		sb.WriteString("The ingest node pipeline 'on_failure' processors were changed " +
+			"for consistency with other integrations. ")
+	}
+
+	// These are only included as a last resort if there were no other more important changes.
+	if sb.Len() == 0 && r.Manifest.DottedYAMLRemoved {
+		sb.WriteString("Removed dotted YAML keys from package manifest. ")
+	}
+	if sb.Len() == 0 && r.Manifest.OwnerTypeAdded {
+		sb.WriteString("Added 'owner.type: elastic' to package manifest. ")
+	}
+
+	return strings.TrimSpace(sb.String())
 }
 
 func summarize(r *EditResult) string {
@@ -596,6 +623,24 @@ type EditResult struct {
 func (r EditResult) IngestPipelinesChanged() bool {
 	for _, ipr := range r.IngestPipeline {
 		if ipr.ChangedECSVersion || ipr.ChangedOnFailure {
+			return true
+		}
+	}
+	return false
+}
+
+func (r EditResult) IngestPipelinesECSVersionChanged() bool {
+	for _, ipr := range r.IngestPipeline {
+		if ipr.ChangedECSVersion {
+			return true
+		}
+	}
+	return false
+}
+
+func (r EditResult) IngestPipelinesOnFailureChanged() bool {
+	for _, ipr := range r.IngestPipeline {
+		if ipr.ChangedOnFailure {
 			return true
 		}
 	}
