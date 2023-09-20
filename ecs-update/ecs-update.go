@@ -292,12 +292,6 @@ func updatePackage(path string, results map[string]*updateResult) error {
 	return nil
 }
 
-func title(s string) string {
-	first := string(s[0])
-	remainder := s[1:]
-	return strings.ToUpper(first) + remainder
-}
-
 func BuildAndUpdate(path string) (stdout, stderr string, err error) {
 	if sampleEvents {
 		return ExecutePlan(path, []string{
