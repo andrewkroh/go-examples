@@ -19,6 +19,7 @@ import (
 	"text/template"
 	"unicode"
 
+	"github.com/cheggaaa/pb"
 	"github.com/coreos/go-semver/semver"
 	"github.com/goccy/go-yaml"
 	"github.com/goccy/go-yaml/ast"
@@ -64,6 +65,7 @@ var (
 	fixDottedYAMLKeys  bool
 	addOwnerType       bool
 	verbose            bool
+	noProgress         bool
 )
 
 var semverZero = semver.Version{}
@@ -82,6 +84,7 @@ func init() {
 	flag.BoolVar(&fixDottedYAMLKeys, "fix-dotted-yaml-keys", false, "Replace YAML keys containing dots.")
 	flag.BoolVar(&addOwnerType, "add-owner-type", false, "Add owner.type=elastic to manifests if the field does not exist.")
 	flag.BoolVar(&verbose, "v", false, "Verbose output")
+	flag.BoolVar(&noProgress, "no-progress", false, "Disable the progress bar.")
 }
 
 var _ flag.Value = (*changeTypeFlag)(nil)
@@ -153,6 +156,11 @@ func main() {
 
 	var hasError bool
 	results := map[string]*updateResult{}
+	var bar *pb.ProgressBar
+	if noProgress || !verbose {
+		bar = pb.StartNew(len(flag.Args()))
+		bar.Output = os.Stdout
+	}
 	for _, p := range flag.Args() {
 		if ctx.Err() != nil {
 			break
@@ -162,6 +170,13 @@ func main() {
 			hasError = true
 			log.Printf("%s: Failed: %v", filepath.Base(p), err)
 		}
+
+		if bar != nil {
+			bar.Increment()
+		}
+	}
+	if bar != nil {
+		bar.Finish()
 	}
 
 	f, err := os.Create(filepath.Join(os.TempDir(), "ecs-update-result.json"))

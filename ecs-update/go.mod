@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	github.com/andrewkroh/go-fleetpkg v0.0.8
+	github.com/cheggaaa/pb v1.0.29
 	github.com/coreos/go-semver v0.3.1
 	github.com/goccy/go-yaml v1.11.2
 	github.com/mitchellh/go-wordwrap v1.0.1
@@ -18,6 +19,7 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-runewidth v0.0.4 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/sys v0.12.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
