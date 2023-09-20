@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/ecs-update
 
-go 1.19
+go 1.21
 
 require (
 	github.com/andrewkroh/go-fleetpkg v0.0.8
