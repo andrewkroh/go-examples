@@ -18,7 +18,6 @@ linters:
     - errorlint
     - gofumpt
     - goimports
-    - godox
     - misspell
     - unconvert
     - unused
