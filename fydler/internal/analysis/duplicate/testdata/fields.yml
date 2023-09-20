@@ -1,0 +1,5 @@
+---
+- name: message
+  type: keyword
+- name: message
+  type: keyword

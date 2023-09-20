@@ -1,0 +1,5 @@
+---
+- name: abstract
+  type: text
+- name: abstract
+  type: match_only_text
