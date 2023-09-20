@@ -779,7 +779,7 @@ func (e *packageEditor) modifySampleEvents() error {
 func (e *packageEditor) modifySampleEvent(s *fleetpkg.SampleEvent, r *SampleEventResult) error {
 	ecs, ok := s.Event["ecs"].(map[string]any)
 	if !ok {
-		log.Printf("WARN: %s: ecs not found or is not a string.", s.Path())
+		log.Printf("WARN: %s: ecs not found or is not an object.", s.Path())
 		return nil
 	}
 	oldECSVersion, ok := ecs["version"].(string)
@@ -838,6 +838,16 @@ func (e *packageEditor) modifyIngestPipeline(p *fleetpkg.IngestPipeline, r *Inge
 		return fmt.Errorf("failed parsing %v: got %d docs expected 1", p.Path(), len(f.Docs))
 	}
 
+	// NOTE: This is a workaround or optimization to avoid unnecessary YAML
+	// changes (like loss of white-space). If we only need to change the ECS
+	// version, then we will use a find/replace instead of marshaling the
+	// modified pipeline data as YAML.
+	if e.config.IngestPipeline.ECSVersion != "" &&
+		!e.config.IngestPipeline.NormalizeOnFailure &&
+		filepath.Base(p.Path()) == "default.yml" {
+		return e.modifyIngestPipelineSetECSVersionViaFindReplace(f, p, r)
+	}
+
 	// The set ecs.version processor should only be in the default.yml pipeline.
 	if e.config.IngestPipeline.ECSVersion != "" &&
 		filepath.Base(p.Path()) == "default.yml" {
@@ -858,6 +868,40 @@ func (e *packageEditor) modifyIngestPipeline(p *fleetpkg.IngestPipeline, r *Inge
 		d = append(d, '\n')
 		return os.WriteFile(p.Path(), d, 0o644)
 	}
+	return nil
+}
+
+// modifyIngestPipelineSetECSVersionViaFindReplace sets the ecs.version by doing
+// a find/replace on the specific line holding the 'set' processor 'value'. This
+// avoids unnecessary YAML changes introduced by round-tripping the YAML through
+// Go yaml libraries.
+func (e *packageEditor) modifyIngestPipelineSetECSVersionViaFindReplace(f *ast.File, p *fleetpkg.IngestPipeline, r *IngestPipelineResult) error {
+	idx, oldECSVersion := findSetECSVersion(p)
+	if idx < 0 {
+		log.Printf("WARN: %s: No set ecs.version processor found in pipeline.", p.Path())
+		return nil
+	}
+	if e.config.IngestPipeline.ECSVersion == oldECSVersion {
+		return nil
+	}
+
+	path, err := yaml.PathString(fmt.Sprintf("$.processors[%d].set.value", idx))
+	if err != nil {
+		return err
+	}
+	node, err := path.FilterFile(f)
+	if err != nil {
+		return err
+	}
+	line := node.GetToken().Position.Line
+
+	if err = modifyFile(p.Path(), findReplace{line, oldECSVersion, e.config.IngestPipeline.ECSVersion}); err != nil {
+		return err
+	}
+
+	r.ChangedECSVersion = true
+	r.ECSVersionOld = oldECSVersion
+	r.ECSVersionNew = e.config.IngestPipeline.ECSVersion
 	return nil
 }
 
@@ -1489,4 +1533,34 @@ func setManifestVersion(manifestPath, version string) error {
 	}
 
 	return os.WriteFile(manifestPath, []byte(f.String()), 0o644)
+}
+
+type findReplace struct {
+	line    int
+	find    string
+	replace string
+}
+
+func modifyFile(path string, edits ...findReplace) error {
+	info, err := os.Stat(path)
+	if err != nil {
+		return err
+	}
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	for _, e := range edits {
+		content = modifyLine(content, e.line, e.find, e.replace)
+	}
+
+	return os.WriteFile(path, content, info.Mode())
+}
+
+func modifyLine(content []byte, lineNumber int, old, new string) []byte {
+	lineIndex := lineNumber - 1
+	parts := bytes.SplitN(content, []byte("\n"), lineIndex+1)
+	parts[lineIndex] = bytes.Replace(parts[lineIndex], []byte(old), []byte(new), 1)
+	return bytes.Join(parts, []byte("\n"))
 }
