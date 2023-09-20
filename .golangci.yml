@@ -20,7 +20,6 @@ linters:
     - goimports
     - godox
     - misspell
-    - prealloc
     - unconvert
     - unused
     - revive
