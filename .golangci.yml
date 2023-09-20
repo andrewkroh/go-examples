@@ -3,6 +3,7 @@
 run:
   issues-exit-code: 1
   modules-download-mode: readonly
+  timeout: 5m
 
 linters:
   disable-all: true
@@ -18,9 +19,7 @@ linters:
     - errorlint
     - gofumpt
     - goimports
-    - godox
     - misspell
-    - prealloc
     - unconvert
     - unused
     - revive

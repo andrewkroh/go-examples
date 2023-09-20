@@ -23,6 +23,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: "${{ steps.goversion.outputs.version }}"
+          cache-dependency-path: "*/*.sum"
 
       - name: Install golangci-lint
         run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
@@ -30,7 +31,7 @@ jobs:
       - name: Run golangci-lint
         run: >
           go run .github/each-module.go -cmd
-          'golangci-lint run --new-from-rev="HEAD~1" --out-format=github-actions --path-prefix=$PATH_PREFIX ./...'
+          'golangci-lint run --new-from-rev="HEAD~1" --out-format=line-number,github-actions --path-prefix=$PATH_PREFIX ./...'
 
   go-mod-tidy:
     name: go-mod-tidy
@@ -45,6 +46,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: "${{ steps.goversion.outputs.version }}"
+          cache-dependency-path: "*/*.sum"
 
       - name: Run go mod tidy
         run: >
