@@ -1,0 +1,5 @@
+---
+- name: number
+  type: long
+- name: number
+  type: short

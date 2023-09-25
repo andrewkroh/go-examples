@@ -1,0 +1,4 @@
+---
+- name: message
+  typo: match_only_text
+
