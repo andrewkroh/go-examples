@@ -6,15 +6,17 @@ import (
 	"github.com/andrewkroh/go-examples/fydler/internal/analysis/missingtype"
 	"github.com/andrewkroh/go-examples/fydler/internal/analysis/nesting"
 	"github.com/andrewkroh/go-examples/fydler/internal/analysis/unknownattribute"
+	"github.com/andrewkroh/go-examples/fydler/internal/analysis/useecs"
 	"github.com/andrewkroh/go-examples/fydler/internal/fydler"
 )
 
 func main() {
 	fydler.Main(
+		conflict.Analyzer,
 		duplicate.Analyzer,
 		missingtype.Analyzer,
-		unknownattribute.Analyzer,
-		conflict.Analyzer,
 		nesting.Analyzer,
+		unknownattribute.Analyzer,
+		useecs.Analyzer,
 	)
 }
