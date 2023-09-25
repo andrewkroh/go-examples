@@ -21,7 +21,7 @@ func Test(t *testing.T) {
 				{
 					Pos:      analysis.Pos{File: "testdata/group_description.yml", Line: 2, Col: 3},
 					Category: "invalidattribute",
-					Message:  "cloud field group contains a 'description', but this is unused by Fleet and can be removed.",
+					Message:  "cloud field group contains a 'description', but this is unused by Fleet and can be removed",
 				},
 			},
 		},
@@ -31,7 +31,7 @@ func Test(t *testing.T) {
 				{
 					Pos:      analysis.Pos{File: "testdata/type_with_external.yml", Line: 2, Col: 3},
 					Category: "invalidattribute",
-					Message:  "message use 'external: ecs', therefore 'type' should not be specified.",
+					Message:  "message use 'external: ecs', therefore 'type' should not be specified",
 				},
 			},
 		},

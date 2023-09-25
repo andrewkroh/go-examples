@@ -42,7 +42,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 		message := fmt.Sprintf("%s exists in ECS, but the definition is not using 'external: ecs'.", f.Name)
 		if f.Type != "" && ecsField.DataType != f.Type {
-			message += fmt.Sprintf(" The ECS type is %s, but this uses %s.", ecsField.DataType, f.Type)
+			message += fmt.Sprintf(" The ECS type is %s, but this uses %s", ecsField.DataType, f.Type)
 		}
 
 		pass.Report(analysis.Diagnostic{

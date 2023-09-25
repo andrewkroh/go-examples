@@ -19,7 +19,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			pass.Report(analysis.Diagnostic{
 				Pos:      analysis.NewPos(f.FileMetadata),
 				Category: pass.Analyzer.Name,
-				Message:  fmt.Sprintf("%s field group contains a 'description', but this is unused by Fleet and can be removed.", f.Name),
+				Message:  fmt.Sprintf("%s field group contains a 'description', but this is unused by Fleet and can be removed", f.Name),
 			})
 		}
 
@@ -28,7 +28,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			pass.Report(analysis.Diagnostic{
 				Pos:      analysis.NewPos(f.FileMetadata),
 				Category: pass.Analyzer.Name,
-				Message:  fmt.Sprintf("%s use 'external: %s', therefore 'type' should not be specified.", f.Name, f.External),
+				Message:  fmt.Sprintf("%s use 'external: %s', therefore 'type' should not be specified", f.Name, f.External),
 			})
 		}
 	}

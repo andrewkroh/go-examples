@@ -2,10 +2,12 @@ package conflict
 
 import (
 	"cmp"
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
 
+	"github.com/andrewkroh/go-ecs"
 	"github.com/andrewkroh/go-fleetpkg"
 	"golang.org/x/exp/maps"
 
@@ -36,6 +38,47 @@ func init() {
 }
 
 func run(pass *analysis.Pass) (interface{}, error) {
+	if err := nonExternalConflicts(pass); err != nil {
+		return nil, err
+	}
+
+	if err := externalECSConflicts(pass); err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+func makeDiag(conflicts []*fleetpkg.Field, dataTypes []string) *analysis.Diagnostic {
+	if ignoreTextFamilyConflicts && isTextTypeFamilyConflict(dataTypes...) {
+		return nil
+	}
+	if ignoreKeywordFamilyConflicts && isKeywordTypeFamilyConflict(dataTypes...) {
+		return nil
+	}
+
+	// For determinism.
+	slices.Sort(dataTypes)
+
+	f := conflicts[0]
+	diag := &analysis.Diagnostic{
+		Pos:      analysis.NewPos(f.FileMetadata),
+		Category: "conflict",
+		Message:  fmt.Sprintf("%s has multiple data types (%s)", f.Name, strings.Join(dataTypes, ", ")),
+		Related:  make([]analysis.RelatedInformation, 0, len(conflicts)),
+	}
+	for _, f := range conflicts {
+		diag.Related = append(diag.Related, analysis.RelatedInformation{
+			Pos:     analysis.NewPos(f.FileMetadata),
+			Message: f.Type,
+		})
+	}
+	return diag
+}
+
+// nonExternalConflicts reports conflicts between non-externally defined fields with
+// the same name, but different data types.
+func nonExternalConflicts(pass *analysis.Pass) error {
 	ecsDefinitionFact := pass.ResultOf[ecsdefinitionfact.Analyzer].(*ecsdefinitionfact.Fact)
 
 	// Sort by name and type.
@@ -65,9 +108,9 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		if f.Type == "" {
 			continue
 		}
+
 		// Ignore externally defined fields. We'll assume that if a field is using
-		// ECS that it cannot be in conflict. Other analyzers like 'useecs' will
-		// report issues with fields that are in conflict with ECS types.
+		// ECS that it cannot be in conflict.
 		if f.External == "ecs" {
 			continue
 		}
@@ -81,37 +124,52 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	}
 	flush()
 
-	return nil, nil
+	return nil
 }
 
-func makeDiag(conflicts []*fleetpkg.Field, dataTypes []string) *analysis.Diagnostic {
-	if ignoreTextFamilyConflicts && isTextTypeFamilyConflict(dataTypes) {
-		return nil
-	}
-	if ignoreKeywordFamilyConflicts && isKeywordTypeFamilyConflict(dataTypes) {
-		return nil
-	}
+// externalECSConflicts reports conflicts between a field's data type and the ECS
+// data type if that field exists in ECS.
+func externalECSConflicts(pass *analysis.Pass) error {
+	// Find conflicts with ECS.
+	for _, f := range pass.Flat {
+		// The field must have a type to be considered in conflict with an external source.
+		if f.Type == "" {
+			continue
+		}
 
-	// For determinism.
-	slices.Sort(dataTypes)
+		// Skip fields that are already referencing ECS.
+		if f.External == "ecs" {
+			continue
+		}
 
-	f := conflicts[0]
-	diag := &analysis.Diagnostic{
-		Pos:      analysis.NewPos(f.FileMetadata),
-		Category: "conflict",
-		Message:  fmt.Sprintf("%s has multiple data types (%s)", f.Name, strings.Join(dataTypes, ", ")),
-		Related:  make([]analysis.RelatedInformation, 0, len(conflicts)),
-	}
-	for _, f := range conflicts {
-		diag.Related = append(diag.Related, analysis.RelatedInformation{
-			Pos:     analysis.NewPos(f.FileMetadata),
-			Message: f.Type,
+		ecsField, err := ecs.Lookup(f.Name, "")
+		if err != nil {
+			if errors.Is(err, ecs.ErrFieldNotFound) {
+				continue
+			}
+			return err
+		}
+
+		if f.Type == ecsField.DataType {
+			continue
+		}
+		if ignoreTextFamilyConflicts && isTextTypeFamilyConflict(f.Type, ecsField.DataType) {
+			continue
+		}
+		if ignoreKeywordFamilyConflicts && isKeywordTypeFamilyConflict(f.Type, ecsField.DataType) {
+			continue
+		}
+		pass.Report(analysis.Diagnostic{
+			Pos:      analysis.NewPos(f.FileMetadata),
+			Category: pass.Analyzer.Name,
+			Message:  fmt.Sprintf("%s field declared as type %s conflicts with the ECS data type %s", f.Name, f.Type, ecsField.DataType),
 		})
 	}
-	return diag
+
+	return nil
 }
 
-func isTextTypeFamilyConflict(dataTypes []string) bool {
+func isTextTypeFamilyConflict(dataTypes ...string) bool {
 	for _, typ := range dataTypes {
 		switch typ {
 		case "match_only_text", "text":
@@ -122,7 +180,7 @@ func isTextTypeFamilyConflict(dataTypes []string) bool {
 	return true
 }
 
-func isKeywordTypeFamilyConflict(dataTypes []string) bool {
+func isKeywordTypeFamilyConflict(dataTypes ...string) bool {
 	for _, typ := range dataTypes {
 		switch typ {
 		case "keyword", "constant_keyword", "wildcard":

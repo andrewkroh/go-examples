@@ -22,7 +22,7 @@ func Test(t *testing.T) {
 				{
 					Pos:      analysis.Pos{File: "testdata/fields.yml", Line: 2, Col: 3},
 					Category: "useecs",
-					Message:  "event.dataset exists in ECS, but the definition is not using 'external: ecs'. The ECS type is keyword, but this uses constant_keyword.",
+					Message:  "event.dataset exists in ECS, but the definition is not using 'external: ecs'. The ECS type is keyword, but this uses constant_keyword",
 				},
 			},
 		},

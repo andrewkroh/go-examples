@@ -48,7 +48,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 				pass.Report(analysis.Diagnostic{
 					Pos:      analysis.NewPos(f.FileMetadata),
 					Category: pass.Analyzer.Name,
-					Message:  fmt.Sprintf("%s is declared with 'external: ecs' but this field does not exist in ECS version %q.", f.Name, ecsVersion),
+					Message:  fmt.Sprintf("%s is declared with 'external: ecs' but this field does not exist in ECS version %q", f.Name, ecsVersion),
 				})
 			case errors.Is(err, ecs.ErrVersionNotFound):
 				if _, found := unknownECSVersion[dir]; !found {
@@ -56,7 +56,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 					pass.Report(analysis.Diagnostic{
 						Pos:      analysis.NewPos(f.FileMetadata),
 						Category: pass.Analyzer.Name,
-						Message:  fmt.Sprintf("%s is declared with 'external: ecs' using ECS version %q, but this version is unknown this tool.", f.Name, ecsVersion),
+						Message:  fmt.Sprintf("%s is declared with 'external: ecs' using ECS version %q, but this version is unknown this tool", f.Name, ecsVersion),
 					})
 				}
 			case errors.Is(err, ecs.ErrInvalidVersion):
@@ -65,7 +65,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 					pass.Report(analysis.Diagnostic{
 						Pos:      analysis.NewPos(f.FileMetadata),
 						Category: pass.Analyzer.Name,
-						Message:  fmt.Sprintf("%s is declared with 'external: ecs' using ECS version %q, but that is an invalid version (%s).", f.Name, ecsVersion, err),
+						Message:  fmt.Sprintf("%s is declared with 'external: ecs' using ECS version %q, but that is an invalid version (%s)", f.Name, ecsVersion, err),
 					})
 				}
 			default:

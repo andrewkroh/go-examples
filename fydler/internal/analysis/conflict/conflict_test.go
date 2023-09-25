@@ -68,6 +68,20 @@ func Test(t *testing.T) {
 			Path:          "testdata/text_conflict.yml",
 			IgnoreTextFam: true,
 		},
+		{
+			Path: "testdata/ecs_conflict.yml",
+			Diags: []analysis.Diagnostic{
+				{
+					Pos:      analysis.Pos{File: "testdata/ecs_conflict.yml", Line: 2, Col: 3},
+					Category: "conflict",
+					Message:  "message field declared as type text conflicts with the ECS data type match_only_text",
+				},
+			},
+		},
+		{
+			Path:          "testdata/ecs_conflict.yml",
+			IgnoreTextFam: true,
+		},
 	}
 
 	for _, tc := range testCases {
