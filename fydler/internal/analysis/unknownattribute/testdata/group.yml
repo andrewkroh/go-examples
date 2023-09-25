@@ -1,0 +1,10 @@
+---
+- name: cloud
+  title: Cloud
+  group: 2
+  description: Fields related to the cloud or infrastructure the events are coming from.
+  footnote: "Examples: If Metricbeat is..."
+  type: group
+  fields:
+    - name: account.id
+      external: ecs

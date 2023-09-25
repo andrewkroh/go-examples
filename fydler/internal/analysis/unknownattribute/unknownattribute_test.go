@@ -25,6 +25,41 @@ func Test(t *testing.T) {
 				},
 			},
 		},
+		{
+			Path: "testdata/group.yml",
+			Diags: []analysis.Diagnostic{
+				{
+					Pos: analysis.Pos{
+						File: string("testdata/group.yml"),
+						Line: int(2),
+						Col:  int(3),
+					},
+					Category: string("unknownattribute"),
+					Message:  string("cloud contains an unknown attribute \"title\""),
+					Related:  []analysis.RelatedInformation(nil),
+				},
+				{
+					Pos: analysis.Pos{
+						File: string("testdata/group.yml"),
+						Line: int(2),
+						Col:  int(3),
+					},
+					Category: string("unknownattribute"),
+					Message:  string("cloud contains an unknown attribute \"group\""),
+					Related:  []analysis.RelatedInformation(nil),
+				},
+				{
+					Pos: analysis.Pos{
+						File: string("testdata/group.yml"),
+						Line: int(2),
+						Col:  int(3),
+					},
+					Category: string("unknownattribute"),
+					Message:  string("cloud contains an unknown attribute \"footnote\""),
+					Related:  []analysis.RelatedInformation(nil),
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {
