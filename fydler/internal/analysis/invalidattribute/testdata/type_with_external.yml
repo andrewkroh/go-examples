@@ -1,0 +1,5 @@
+---
+- name: message
+  external: ecs
+  type: match_only_text
+
