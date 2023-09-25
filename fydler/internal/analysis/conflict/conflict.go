@@ -61,7 +61,14 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	}
 
 	for _, f := range ecsDefinitionFact.EnrichedFlat {
+		// The field must have a type to be considered in conflict with another field.
 		if f.Type == "" {
+			continue
+		}
+		// Ignore externally defined fields. We'll assume that if a field is using
+		// ECS that it cannot be in conflict. Other analyzers like 'useecs' will
+		// report issues with fields that are in conflict with ECS types.
+		if f.External == "ecs" {
 			continue
 		}
 
