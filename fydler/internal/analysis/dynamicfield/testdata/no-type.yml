@@ -1,0 +1,20 @@
+---
+# As of v8.10.2 the index template for this field looks like:
+#     "hashicorp_vault": {
+#      "properties": {
+#        "metrics": {
+#          "properties": {
+#            "*": {
+#              "properties": {
+#                "*": {
+#                  "dynamic": true,
+#                  "type": "object"
+#                }
+#              }
+#            }
+#          }
+#        }
+#      }
+#    }
+- name: hashicorp_vault.metrics.*.value
+  dynamic: true

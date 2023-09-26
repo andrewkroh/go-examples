@@ -1,0 +1,6 @@
+---
+- name: aws
+  type: group
+  fields:
+    - name: '*.metrics.*.*'
+      type: object
