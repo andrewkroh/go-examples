@@ -1,4 +1,0 @@
----
-- name: cloud
-  description: Fields related to the cloud or infrastructure the events are coming from.
-  type: group

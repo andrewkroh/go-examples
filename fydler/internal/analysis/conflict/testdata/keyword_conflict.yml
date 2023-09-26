@@ -1,7 +1,0 @@
----
-- name: id
-  type: keyword
-- name: id
-  type: constant_keyword
-- name: id
-  type: wildcard

@@ -1,7 +1,0 @@
----
-- name: book
-  type: keyword
-- name: message
-  external: ecs
-- name: labels
-  external: ecs

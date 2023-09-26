@@ -1,4 +1,0 @@
-dependencies:
-  ecs:
-    reference:
-      foo: bar
