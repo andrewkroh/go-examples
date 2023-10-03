@@ -63,6 +63,7 @@ var (
 	owner                    string
 	sampleEvents             bool
 	skipChangelog            bool
+	skipFormat               bool
 	changeType               changeTypeFlag
 	fixDottedYAMLKeys        bool
 	addOwnerType             bool
@@ -83,6 +84,7 @@ func init() {
 	flag.StringVar(&owner, "owner", "", "Only modify packages owned by this team.")
 	flag.BoolVar(&sampleEvents, "sample-events", false, "Generate new sample events (slow).")
 	flag.BoolVar(&skipChangelog, "skip-changelog", false, "Skip adding a changelog entry.")
+	flag.BoolVar(&skipFormat, "skip-format", false, "Skip calling 'elastic-package format'.")
 	flag.Var(&changeType, "change-type", "Type of change (bugfix, enhancement or breaking-change) for the changelog entry.")
 	flag.BoolVar(&normalizeOnFailure, "on-failure", false, "Rewrite ingest pipeline on_failure handlers to set event.kind=pipeline_error and normalize the error.message value.")
 	flag.BoolVar(&fixDottedYAMLKeys, "fix-dotted-yaml-keys", false, "Replace YAML keys containing dots.")
@@ -317,9 +319,13 @@ func updatePackage(path string, results map[string]*updateResult) error {
 
 func BuildAndUpdate(path string) (stdout, stderr string, err error) {
 	if sampleEvents {
-		return ExecutePlan(path, []string{
+		commands := []string{
 			"elastic-package clean",
-			"elastic-package format",
+		}
+		if !skipFormat {
+			commands = append(commands, "elastic-package format")
+		}
+		commands = append(commands,
 			"elastic-package build",
 			"elastic-package stack up -d --services package-registry",
 			"elastic-package test system -g",
@@ -327,13 +333,19 @@ func BuildAndUpdate(path string) (stdout, stderr string, err error) {
 			"elastic-package clean",
 			"elastic-package format",
 			"elastic-package build",
-		})
+		)
+		return ExecutePlan(path, commands)
 	}
-	return ExecutePlan(path, []string{
-		"elastic-package format",
+
+	var commands []string
+	if !skipFormat {
+		commands = append(commands, "elastic-package format")
+	}
+	commands = append(commands,
 		`elastic-package build`,
 		`elastic-package test pipeline -g --report-format xUnit`,
-	})
+	)
+	return ExecutePlan(path, commands)
 }
 
 func Commit(path, message string) error {
