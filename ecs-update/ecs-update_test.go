@@ -309,3 +309,73 @@ func TestAddChangelog(t *testing.T) {
 
 	assert.Contains(t, string(data), description)
 }
+
+func TestReplaceECSFields(t *testing.T) {
+	dir := t.TempDir()
+	if err := cp.Copy("testdata/my_package", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	pkg, err := fleetpkg.Read(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fieldsFile := pkg.DataStreams["item_usages"].Fields["base-fields.yml"]
+
+	before, err := os.ReadFile(fieldsFile.Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f, err := parser.ParseFile(fieldsFile.Path(), parser.ParseComments)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	changed, err := fieldsYMLUseExternalECS(f, fieldsFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, changed, "expected changes")
+
+	changed, err = fieldsYMLRemoveUnknownOrInvalidAttributes(f, fieldsFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, changed, "expected changes")
+
+	expectedChange := `
+@@ -4,3 +3,0 @@
+-  title: Input type.
+-  group: 1
+-  level: extended
+@@ -8,2 +5 @@
+-  type: constant_keyword
+-  description: Data stream type.
++  external: ecs
+@@ -11,2 +7 @@
+-  type: constant_keyword
+-  description: Data stream dataset.
++  external: ecs
+@@ -14,2 +9 @@
+-  type: constant_keyword
+-  description: Data stream namespace.
++  external: ecs
+@@ -24,3 +18,2 @@
+-- name: '@timestamp'
+-  type: date
+-  description: Event timestamp.
++- name: "@timestamp"
++  external: ecs
+`[1:]
+
+	diff, err := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
+		A: difflib.SplitLines(string(before)),
+		B: difflib.SplitLines(f.String()),
+	})
+	require.NoError(t, err)
+	if diff != expectedChange {
+		t.Errorf("unexpected changes found in %s", filepath.Base(fieldsFile.Path()))
+	}
+}

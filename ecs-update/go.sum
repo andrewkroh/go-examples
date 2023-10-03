@@ -1,5 +1,7 @@
-github.com/andrewkroh/go-fleetpkg v0.0.8 h1:vKmmGcMPeMIQ+/sS1DHU0jTcERZBpznaNmaq1JbkLME=
-github.com/andrewkroh/go-fleetpkg v0.0.8/go.mod h1:FCFWIeEw6pg5dNFtIQ3f7vNA7iqTtLbiKQUyzjh477s=
+github.com/andrewkroh/go-ecs v0.0.0-20230916014552-bb661ed278a6 h1:UXS7ZhcyFa1q3/P9pmIbEFjFLYOyu7UwbrUnZvudLeo=
+github.com/andrewkroh/go-ecs v0.0.0-20230916014552-bb661ed278a6/go.mod h1:mDhN1WOZsbKaV+wECV+ioF0Lgg4KxMTplkPHTqsj2gQ=
+github.com/andrewkroh/go-fleetpkg v0.0.9 h1:e6fkxfwQNEihK0ep/fb+I4SnE9bp1dLNpop/34cG5UE=
+github.com/andrewkroh/go-fleetpkg v0.0.9/go.mod h1:FCFWIeEw6pg5dNFtIQ3f7vNA7iqTtLbiKQUyzjh477s=
 github.com/cheggaaa/pb v1.0.29 h1:FckUN5ngEk2LpvuG0fw1GEFx6LtyY2pWI/Z2QgCnEYo=
 github.com/cheggaaa/pb v1.0.29/go.mod h1:W40334L7FMC5JKWldsTWbdGjLo0RxUKK73K+TuPxX30=
 github.com/coreos/go-semver v0.3.1 h1:yi21YpKnrx1gt5R+la8n5WgS0kCrsPp33dmEyHReZr4=
