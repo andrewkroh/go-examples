@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime/debug"
+	"strconv"
 	"strings"
 	"text/template"
 	"unicode"
@@ -29,6 +30,7 @@ import (
 	"github.com/mitchellh/go-wordwrap"
 	"golang.org/x/exp/maps"
 
+	"github.com/andrewkroh/go-ecs"
 	"github.com/andrewkroh/go-fleetpkg"
 )
 
@@ -53,19 +55,21 @@ following operations:
 
 // Flags
 var (
-	ecsVersion         semver.Version
-	formatVersion      semver.Version
-	ecsGitReference    string
-	normalizeOnFailure bool
-	pullRequestNumber  string
-	owner              string
-	sampleEvents       bool
-	skipChangelog      bool
-	changeType         changeTypeFlag
-	fixDottedYAMLKeys  bool
-	addOwnerType       bool
-	verbose            bool
-	noProgress         bool
+	ecsVersion               semver.Version
+	formatVersion            semver.Version
+	ecsGitReference          string
+	normalizeOnFailure       bool
+	pullRequestNumber        string
+	owner                    string
+	sampleEvents             bool
+	skipChangelog            bool
+	changeType               changeTypeFlag
+	fixDottedYAMLKeys        bool
+	addOwnerType             bool
+	verbose                  bool
+	noProgress               bool
+	fieldsYMLUseECS          bool
+	fieldsYMLCleanAttributes bool
 )
 
 var semverZero = semver.Version{}
@@ -85,6 +89,8 @@ func init() {
 	flag.BoolVar(&addOwnerType, "add-owner-type", false, "Add owner.type=elastic to manifests if the field does not exist.")
 	flag.BoolVar(&verbose, "v", false, "Verbose output")
 	flag.BoolVar(&noProgress, "no-progress", false, "Disable the progress bar.")
+	flag.BoolVar(&fieldsYMLUseECS, "fields-yml-use-ecs", false, "Update fields to with 'external: ecs' where possible.")
+	flag.BoolVar(&fieldsYMLCleanAttributes, "fields-yml-cleanup-attrs", false, "Remove unused or invalid field attributes.")
 }
 
 var _ flag.Value = (*changeTypeFlag)(nil)
@@ -249,6 +255,8 @@ func updatePackage(path string, results map[string]*updateResult) error {
 	editCfg.Manifest.AddOwnerType = addOwnerType
 	editCfg.BuildManifest.ECSReference = ecsGitReference
 	editCfg.IngestPipeline.NormalizeOnFailure = normalizeOnFailure
+	editCfg.FieldsYML.FixInvalidAttributes = fieldsYMLCleanAttributes
+	editCfg.FieldsYML.UseECS = fieldsYMLUseECS
 
 	result, err := Edit(pkg, editCfg)
 	if err != nil {
@@ -403,6 +411,10 @@ func headline(r *EditResult) string {
 	switch {
 	case r.BuildManifest.Changed:
 		return fmt.Sprintf("change to ECS version %v", r.BuildManifest.ECSReferenceNew)
+	case r.FieldsYMLChanged && fieldsYMLUseECS:
+		return "Modified field definitions to use ECS"
+	case r.FieldsYMLChanged && fieldsYMLCleanAttributes:
+		return "Removed invalid attributes from fields definitions"
 	case r.Manifest.DottedYAMLRemoved:
 		return "removed dotted YAML keys from manifest"
 	case r.Manifest.FormatVersionChanged:
@@ -449,6 +461,19 @@ func changelogMessage(r *EditResult) string {
 	if r.IngestPipelinesOnFailureChanged() {
 		sb.WriteString("The ingest node pipeline 'on_failure' processors were changed " +
 			"for consistency with other integrations. ")
+	}
+	if r.FieldsYMLChanged {
+		sb.WriteString("Modified the field definitions to")
+		if fieldsYMLUseECS {
+			sb.WriteString(" reference ECS where possible")
+		}
+		if fieldsYMLUseECS && fieldsYMLCleanAttributes {
+			sb.WriteString(" and")
+		}
+		if fieldsYMLCleanAttributes {
+			sb.WriteString(" remove invalid field attributes")
+		}
+		sb.WriteString(". ")
 	}
 
 	// These are only included as a last resort if there were no other more important changes.
@@ -506,6 +531,19 @@ func summarize(r *EditResult) string {
 				"error.message format. ",
 				onFailureChanges, len(r.IngestPipeline))
 		}
+	}
+	if r.FieldsYMLChanged {
+		sb.WriteString("Modified the field definitions to")
+		if fieldsYMLUseECS {
+			sb.WriteString(" reference ECS where possible")
+		}
+		if fieldsYMLUseECS && fieldsYMLCleanAttributes {
+			sb.WriteString(" and")
+		}
+		if fieldsYMLCleanAttributes {
+			sb.WriteString(" remove invalid field attributes")
+		}
+		sb.WriteString(". ")
 	}
 	if r.SampleEventsChanged() {
 		var newVersion string
@@ -610,14 +648,19 @@ type EditConfig struct {
 	SampleEvent struct {
 		ECSVersion string // ECS version (e.g. 8.2.0).
 	}
+	FieldsYML struct {
+		UseECS               bool // Update fields with 'external: ecs' where possible.
+		FixInvalidAttributes bool // Remove unknown or invalid field attributes.
+	}
 }
 
 type EditResult struct {
-	Changed        bool
-	BuildManifest  BuildManifestResult
-	Manifest       ManifestResult
-	IngestPipeline map[string]*IngestPipelineResult
-	SampleEvent    map[string]*SampleEventResult
+	Changed          bool
+	BuildManifest    BuildManifestResult
+	Manifest         ManifestResult
+	IngestPipeline   map[string]*IngestPipelineResult
+	SampleEvent      map[string]*SampleEventResult
+	FieldsYMLChanged bool
 }
 
 func (r EditResult) IngestPipelinesChanged() bool {
@@ -704,6 +747,7 @@ func Edit(pkg *fleetpkg.Integration, c EditConfig) (*EditResult, error) {
 		e.modifyManifest(),
 		e.modifyIngestPipelines(),
 		e.modifySampleEvents(),
+		e.modifyFieldsYML(),
 	)
 	if err != nil {
 		return nil, err
@@ -714,7 +758,8 @@ func Edit(pkg *fleetpkg.Integration, c EditConfig) (*EditResult, error) {
 		e.result.Manifest.FormatVersionChanged ||
 		e.result.Manifest.OwnerTypeAdded ||
 		e.result.IngestPipelinesChanged() ||
-		e.result.SampleEventsChanged()
+		e.result.SampleEventsChanged() ||
+		e.result.FieldsYMLChanged
 
 	return e.result, nil
 }
@@ -1012,6 +1057,48 @@ func (*packageEditor) modifyIngestPipelineOnFailure(f *ast.File, p *fleetpkg.Ing
 	return nil
 }
 
+func (e *packageEditor) modifyFieldsYML() error {
+	for _, ds := range e.pkg.DataStreams {
+		for _, fieldsFile := range ds.Fields {
+			var modifiedFile bool
+
+			f, err := parser.ParseFile(fieldsFile.Path(), parser.ParseComments)
+			if err != nil {
+				return err
+			}
+
+			if e.config.FieldsYML.FixInvalidAttributes {
+				changed, err := fieldsYMLRemoveUnknownOrInvalidAttributes(f, fieldsFile)
+				if err != nil {
+					return err
+				}
+				if changed {
+					modifiedFile = true
+					e.result.FieldsYMLChanged = true
+				}
+			}
+
+			if e.config.FieldsYML.UseECS {
+				changed, err := fieldsYMLUseExternalECS(f, fieldsFile)
+				if err != nil {
+					return err
+				}
+				if changed {
+					modifiedFile = true
+					e.result.FieldsYMLChanged = true
+				}
+			}
+
+			if modifiedFile {
+				if err = os.WriteFile(fieldsFile.Path(), []byte(f.String()), 0o644); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
 //
 // Package editor helper functions.
 //
@@ -1092,7 +1179,7 @@ func yamlAddStringToMap(f *ast.File, yamlPath, key, value string, t token.Type) 
 	return p.ReplaceWithNode(f, orig)
 }
 
-func yamlDeleteStringNodeFromMap(f *ast.File, yamlPath string) error {
+func yamlDeleteNodeFromMap(f *ast.File, yamlPath string) error {
 	path, err := yaml.PathString(yamlPath)
 	if err != nil {
 		return fmt.Errorf("failed to create yaml path: %w", err)
@@ -1106,37 +1193,32 @@ func yamlDeleteStringNodeFromMap(f *ast.File, yamlPath string) error {
 		return fmt.Errorf("failed to get node: %w", err)
 	}
 
-	switch n := n.(type) {
-	case *ast.StringNode:
-		for _, d := range f.Docs {
-			m := ast.Parent(d, n)
-			if m == nil {
-				continue
-			}
-			switch p := ast.Parent(d, m).(type) {
-			case *ast.MappingNode:
-				for i, e := range p.Values {
-					if e == m {
-						p.Values = append(p.Values[:i], p.Values[i+1:]...)
-						break
-					}
-				}
-			default:
-				return fmt.Errorf("failed to get parent node: %w", err)
-			}
+	for _, d := range f.Docs {
+		m := ast.Parent(d, n)
+		if m == nil {
+			continue
 		}
-	default:
-		return fmt.Errorf("unexpected license field type: %T", n)
+		switch p := ast.Parent(d, m).(type) {
+		case *ast.MappingNode:
+			for i, e := range p.Values {
+				if e == m {
+					p.Values = append(p.Values[:i], p.Values[i+1:]...)
+					break
+				}
+			}
+		default:
+			return fmt.Errorf("failed to get parent node: %w", err)
+		}
 	}
 	return nil
 }
 
 func removeLicenseField(file *ast.File) error {
-	return yamlDeleteStringNodeFromMap(file, "$.license")
+	return yamlDeleteNodeFromMap(file, "$.license")
 }
 
 func removeReleaseField(file *ast.File) error {
-	return yamlDeleteStringNodeFromMap(file, "$.release")
+	return yamlDeleteNodeFromMap(file, "$.release")
 }
 
 func findSetECSVersion(pipeline *fleetpkg.IngestPipeline) (index int, version string) {
@@ -1608,4 +1690,122 @@ func modifyLine(content []byte, lineNumber int, old, new string) []byte {
 	parts := bytes.SplitN(content, []byte("\n"), lineIndex+1)
 	parts[lineIndex] = bytes.Replace(parts[lineIndex], []byte(old), []byte(new), 1)
 	return bytes.Join(parts, []byte("\n"))
+}
+
+// visitFields can be used to iterate over non-flat fields. Use this when you
+// need to analyze attributes of non-leaf fields.
+func visitFields(fields []fleetpkg.Field, visit func(*fleetpkg.Field) error) error {
+	for i := range fields {
+		if err := visitField(&fields[i], visit); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func visitField(f *fleetpkg.Field, visit func(*fleetpkg.Field) error) error {
+	if err := visit(f); err != nil {
+		return err
+	}
+	for _, child := range f.Fields {
+		if err := visitField(&child, visit); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func quoteKey(key string) string {
+	if strings.ContainsAny(key, ` :{}[],&*#?|-<>=!%@\`+"\t\n") {
+		return strconv.Quote(key)
+	}
+	return key
+}
+
+// fieldsYMLUseExternalECS will find fields that can use 'external: ecs' and update
+// their definitions. It will use the latest version of ECS to determine if the field
+// exists in ECS.
+func fieldsYMLUseExternalECS(f *ast.File, ff fleetpkg.FieldsFile) (changed bool, err error) {
+	// Use the flat representation so that we have access to the complete field name.
+	flatFields, err := fleetpkg.FlattenFields(ff.Fields)
+	if err != nil {
+		return false, err
+	}
+
+	for _, field := range flatFields {
+		if field.External != "" {
+			continue
+		}
+
+		// Does the field exist in ECS?
+		ecsField, _ := ecs.Lookup(field.Name, "")
+		if ecsField == nil {
+			continue
+		}
+
+		// The type must be the same in order to do the replacement.
+		if field.Type != ecsField.DataType || (field.Type == "constant_keyword" && field.Value != "") {
+			continue
+		}
+
+		// Get the old node.
+		p, err := yaml.PathString(field.YAMLPath)
+		if err != nil {
+			return false, fmt.Errorf("failed to build YAML path from %q: %w", field.YAMLPath, err)
+		}
+
+		n, err := p.FilterFile(f)
+		if err != nil {
+			return false, fmt.Errorf("failed to get YAML node %q: %w", field.YAMLPath, err)
+		}
+
+		var origField fleetpkg.Field
+		if err = yaml.NodeToValue(n, &origField); err != nil {
+			return false, fmt.Errorf("failed to read original node: %w", err)
+		}
+
+		// Alternatively, we could use yaml.ValueToNode() to convert a map to a
+		// node, but then we would want to sort the keys so that 'name' came first.
+		replacement := newNode(fmt.Sprintf("name: %s\nexternal: ecs", quoteKey(origField.Name)))
+
+		if err = p.ReplaceWithNode(f, replacement); err != nil {
+			return false, fmt.Errorf("faield to replace node: %w", err)
+		}
+		changed = true
+	}
+	return changed, nil
+}
+
+// fieldsYMLKeyCleanup is a list of field names that should be removed
+// from fields.yml files.
+var fieldsYMLKeyCleanup = []string{
+	"default_field",
+	"footnote",
+	"format",
+	"group",
+	"level",
+	"norms",
+	"title",
+}
+
+func fieldsYMLRemoveUnknownOrInvalidAttributes(f *ast.File, ff fleetpkg.FieldsFile) (changed bool, err error) {
+	return changed, visitFields(ff.Fields, func(field *fleetpkg.Field) error {
+		for _, k := range fieldsYMLKeyCleanup {
+			if _, found := field.AdditionalAttributes[k]; !found {
+				continue
+			}
+			if err := yamlDeleteNodeFromMap(f, field.YAMLPath+"."+k); err != nil {
+				return err
+			}
+			changed = true
+		}
+
+		if field.Type == "group" && field.Description != "" {
+			if err := yamlDeleteNodeFromMap(f, field.YAMLPath+".description"); err != nil {
+				return err
+			}
+			changed = true
+		}
+		return nil
+	})
 }

@@ -46,7 +46,18 @@ ecs-update \
   -format-version=3.0.0 \
   -fix-dotted-yaml-keys \
   -add-owner-type \
-  -owner elastic/security-external-integrations
+  -owner elastic/security-external-integrations \
+  packages/*
+```
+
+-----
+
+Update fields.yml files to use `external: ecs` where the field exists
+in the latest version of ECS. And remove [invalid](https://github.com/elastic/package-spec/blob/6be417f6528f5fdd53b31e7ccd42d7039740978e/spec/integration/data_stream/fields/fields.spec.yml#L35-L41)
+attributes from fields.yml definitions (like `footnote`).
+
+```sh
+ecs-update -fields-yml-use-ecs -fields-yml-cleanup-attrs packages/1password
 ```
 
 ## Result report

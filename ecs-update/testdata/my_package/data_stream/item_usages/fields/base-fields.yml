@@ -1,6 +1,9 @@
 - name: input.type
   type: keyword
   description: Input type
+  title: Input type.
+  group: 1
+  level: extended
 - name: data_stream.type
   type: constant_keyword
   description: Data stream type.
