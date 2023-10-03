@@ -614,6 +614,10 @@ func gitGenerate(packageName string) string {
 		sb.WriteString("-skip-changelog")
 		sb.WriteString(" ")
 	}
+	if skipFormat {
+		sb.WriteString("-skip-format")
+		sb.WriteString(" ")
+	}
 	if changeType > 0 {
 		sb.WriteString("-change-type=")
 		sb.WriteString(changeType.String())
@@ -625,6 +629,14 @@ func gitGenerate(packageName string) string {
 	}
 	if fixDottedYAMLKeys {
 		sb.WriteString("-fix-dotted-yaml-keys")
+		sb.WriteString(" ")
+	}
+	if fieldsYMLUseECS {
+		sb.WriteString("-fields-yml-use-ecs")
+		sb.WriteString(" ")
+	}
+	if fieldsYMLCleanAttributes {
+		sb.WriteString("-fields-yml-cleanup-attrs")
 		sb.WriteString(" ")
 	}
 	if addOwnerType {
