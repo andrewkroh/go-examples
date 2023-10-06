@@ -39,7 +39,9 @@ func main() {
 	c.OnHTML("div.navfooter span.next a", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
 		if strings.Contains(link, "processor.html") || link == "attachment.html" {
-			e.Request.Visit(link)
+			if err := e.Request.Visit(link); err != nil {
+				log.Fatalf("Failed to visit link: %v", err)
+			}
 		}
 	})
 
@@ -93,7 +95,7 @@ func main() {
 				}
 			})
 
-			params, _ := processors[processorTitle]
+			params := processors[processorTitle]
 			params = append(params, p)
 			processors[processorTitle] = params
 		})
@@ -108,6 +110,8 @@ func main() {
 		enc := json.NewEncoder(os.Stdout)
 		enc.SetIndent("", "  ")
 
-		enc.Encode(processors)
+		if err = enc.Encode(processors); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
