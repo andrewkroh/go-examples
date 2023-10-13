@@ -52,6 +52,9 @@ func testGoldenFile(t *testing.T, goldenFile string, format formatter) {
 			t.Fatal(err)
 		}
 
+		// Round-trip to normalize whitespace.
+		ar = txtar.Parse(txtar.Format(ar))
+
 		if diff := cmp.Diff(goldenAr.Files, ar.Files); diff != "" {
 			t.Errorf("golden data mismatch (-want +got):\n%s", diff)
 		}
