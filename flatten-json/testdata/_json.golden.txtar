@@ -1,0 +1,132 @@
+TestGoldenFiles/json
+-- testdata/array-objects.json --
+{
+  ".[0].foo.list[0]": "one",
+  ".[0].foo.list[1]": "two",
+  ".[0].foo.list[2]": "3",
+  ".[0].foo.list[3]": "4",
+  ".[0].foo.list[4]": "5",
+  ".[0].foo.list[5]": "6",
+  ".[0].foo.list[6]": "seven",
+  ".[0].foo.list[7]": "eight",
+  ".[0].foo.list[8]": "nine",
+  ".[0].foo.list[9]": "10",
+  ".[0].foo.list[10]": "11",
+  ".[0].foo.list[11]": "twelve",
+  ".[1].bar.list[0]": "three",
+  ".[1].bar.list[1]": "four"
+}
+-- testdata/complex.json --
+{
+  ".@timestamp": "2022-03-18T15:13:24.000Z",
+  ".agent.ephemeral_id": "3eed18c0-fdd6-4bd2-8122-cedd926f73a2",
+  ".agent.hostname": "692bc2a32631",
+  ".agent.id": "814bb722-1e0c-4fd0-a661-8e7cb3087445",
+  ".agent.name": "compute01.hc.foo.local.example.com",
+  ".agent.type": "filebeat",
+  ".agent.version": "7.16.2",
+  ".data_stream.dataset": "netflow.log",
+  ".data_stream.type": "logs",
+  ".destination.domain": "smarthings-hub.iot.foo.local.example.com",
+  ".destination.ip": "10.100.18.2",
+  ".destination.locality": "internal",
+  ".destination.mac": "04:18:d6:f1:2c:20",
+  ".destination.port": 39960,
+  ".ecs.version": "1.12.0",
+  ".event.action": "netflow_flow",
+  ".event.agent_id_status": "auth_metadata_missing",
+  ".event.category[0]": "network_traffic",
+  ".event.category[1]": "network",
+  ".event.created": "2022-03-18T15:13:24.080Z",
+  ".event.duration": 69452000000,
+  ".event.end": "2022-03-18T15:13:19.687Z",
+  ".event.ingested": "2022-03-18T15:13:24Z",
+  ".event.kind": "event",
+  ".event.start": "2022-03-18T15:12:10.235Z",
+  ".event.type[0]": "connection",
+  ".flow.id": "13l__e8srZI",
+  ".flow.locality": "external",
+  ".input.type": "netflow",
+  ".netflow.delta_flow_count": 0,
+  ".netflow.destination_ipv4_address": "10.100.18.2",
+  ".netflow.destination_mac_address": "04:18:d6:f1:2c:20",
+  ".netflow.destination_transport_port": 39960,
+  ".netflow.egress_interface": 3,
+  ".netflow.exporter.address": "10.100.30.6:47408",
+  ".netflow.exporter.source_id": 0,
+  ".netflow.exporter.timestamp": "2022-03-18T15:13:24.000Z",
+  ".netflow.exporter.uptime_millis": 2397846583,
+  ".netflow.exporter.version": 9,
+  ".netflow.flow_direction": 0,
+  ".netflow.flow_end_sys_up_time": 2397842270,
+  ".netflow.flow_start_sys_up_time": 2397772818,
+  ".netflow.ingress_interface": 2,
+  ".netflow.ip_class_of_service": 0,
+  ".netflow.ip_version": 4,
+  ".netflow.mpls_label_stack_length": 2,
+  ".netflow.octet_delta_count": 513,
+  ".netflow.packet_delta_count": 7,
+  ".netflow.protocol_identifier": 6,
+  ".netflow.source_ipv4_address": "13.59.192.161",
+  ".netflow.source_mac_address": "e8:6f:f2:31:21:e0",
+  ".netflow.source_transport_port": 443,
+  ".netflow.tcp_control_bits": 24,
+  ".netflow.type": "netflow_flow",
+  ".netflow.vlan_id": 0,
+  ".network.bytes": 513,
+  ".network.community_id": "1:uQKAlB8cUbkc/+W1pEuU0C+TLVE=",
+  ".network.direction": "inbound",
+  ".network.iana_number": "6",
+  ".network.name[0]": "foo-iot",
+  ".network.packets": 7,
+  ".network.transport": "tcp",
+  ".observer.geo.name": "foo",
+  ".observer.hostname": "compute01.hc.foo.local.example.com",
+  ".observer.ip[0]": "10.100.16.34",
+  ".observer.name": "compute01-hc-foo-local-example-com",
+  ".observer.product": "Filebeat",
+  ".observer.vendor": "Elastic",
+  ".related.ip[0]": "13.59.192.161",
+  ".related.ip[1]": "10.100.18.2",
+  ".source.as.number": 16509,
+  ".source.as.organization.name": "Amazon.com, Inc.",
+  ".source.bytes": 513,
+  ".source.geo.city_name": "Columbus",
+  ".source.geo.continent_name": "North America",
+  ".source.geo.country_iso_code": "US",
+  ".source.geo.country_name": "United States",
+  ".source.geo.location.lat": 39.9653,
+  ".source.geo.location.lon": -83.0235,
+  ".source.geo.region_iso_code": "US-OH",
+  ".source.geo.region_name": "Ohio",
+  ".source.ip": "13.59.192.161",
+  ".source.locality": "external",
+  ".source.mac": "e8:6f:f2:31:21:e0",
+  ".source.packets": 7,
+  ".source.port": 443,
+  ".tags[0]": "foo",
+  ".tags[1]": "forwarded",
+  ".tags[2]": "netflow",
+  ".tags[3]": "udp_7104"
+}
+-- testdata/multiple-objects.json --
+{
+  ".foo.list[0]": "one",
+  ".foo.list[1]": "two"
+}{
+  ".bar.list[0]": "three",
+  ".bar.list[1]": "four"
+}
+-- testdata/object.json --
+{
+  ".foo.list[0]": "one",
+  ".foo.list[1]": "two"
+}
+-- testdata/objects.ndjson --
+{
+  ".foo.list[0]": "one",
+  ".foo.list[1]": "two"
+}{
+  ".bar.list[0]": "three",
+  ".bar.list[1]": "four"
+}
