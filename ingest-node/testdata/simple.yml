@@ -1,0 +1,26 @@
+---
+processors:
+  - rename:
+      field: json.ip
+      target_field: source.address
+  - lowercase:
+      field: source.address
+  - set:
+      field: event.kind
+      value: event
+  - set:
+      if: ctx.source.address != null && ctx.source.address.isLowerCase()
+      field: destination.address
+      value: '{{{json.dst_ip}}}'
+  - set:
+      if: ctx.event?.kind == "event"
+      field: event.category
+      value: [process]
+  - convert:
+      field: source.address
+      target_field: source.ip
+      type: ip
+
+on_failure:
+  - set:
+      field: error.message
