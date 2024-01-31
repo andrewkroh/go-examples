@@ -1617,6 +1617,11 @@ func newChangelogReleaseNode(version string, changes []fleetpkg.Change) (ast.Nod
 	changesNode, _ := changesPath.FilterNode(node)
 	changesNode.AddColumn(2)
 
+	// Always quote version numbers.
+	versionPath, _ := yaml.PathString("$.version")
+	versionNode, _ := versionPath.FilterNode(node)
+	versionNode.GetToken().Type = token.DoubleQuoteType
+
 	return node, err
 }
 

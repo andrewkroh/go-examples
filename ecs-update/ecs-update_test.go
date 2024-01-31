@@ -308,6 +308,7 @@ func TestAddChangelog(t *testing.T) {
 	}
 
 	assert.Contains(t, string(data), description)
+	assert.Contains(t, string(data), `version: "1.5.0"`, "version must be quoted")
 }
 
 func TestReplaceECSFields(t *testing.T) {
