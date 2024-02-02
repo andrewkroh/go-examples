@@ -223,6 +223,7 @@ func generateSampleData(from, to time.Time, limit int) (events []any, offset str
 		}
 		if limit > 0 && len(events) >= limit {
 			limited = true
+			break
 		}
 		events = append(events, newEvent(t))
 		offset = strconv.FormatInt(t.Unix(), 10)
