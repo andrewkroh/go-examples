@@ -39,11 +39,15 @@ import (
 // newDataInterval controls how often new events happen in the simulator.
 const newDataInterval = 5 * time.Minute
 
+//go:embed assets/banner.txt
+var banner string
+
 var (
-	addr         string // Listen address
-	accessToken  string
-	clientSecret string
-	clientToken  string
+	addr          string // Listen address
+	accessToken   string
+	clientSecret  string
+	clientToken   string
+	eventJSONFile string
 )
 
 func init() {
@@ -51,6 +55,7 @@ func init() {
 	flag.StringVar(&accessToken, "access-token", "", "access token (required)")
 	flag.StringVar(&clientSecret, "client-secret", "", "client secret (required)")
 	flag.StringVar(&clientToken, "client-token", "", "client token (required)")
+	flag.StringVar(&eventJSONFile, "event-file", "", "file containing a JSON event (optional). ")
 }
 
 func main() {
@@ -59,6 +64,18 @@ func main() {
 	if accessToken == "" || clientSecret == "" || clientToken == "" {
 		flag.Usage()
 		os.Exit(1)
+	}
+
+	if eventJSONFile != "" {
+		f, err := os.Open(eventJSONFile)
+		if err != nil {
+			log.Fatalf("ERROR %s", err)
+		}
+		eventJSON, err = io.ReadAll(f)
+		if err != nil {
+			log.Fatalf("ERROR %s", err)
+		}
+		newEvent(time.Now())
 	}
 
 	r := mux.NewRouter()
@@ -72,6 +89,7 @@ func main() {
 		log.Fatal(http.ListenAndServe(addr, h))
 	}()
 
+	fmt.Println(banner)
 	log.Printf("Listening on http://%s/siem/v1/configs/{configId}", addr)
 	<-done
 }
