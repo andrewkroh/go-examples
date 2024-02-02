@@ -1,4 +1,4 @@
-module github.com/andrewkroh/go-examples/akamai-siem-simulator
+module github.com/andrewkroh/go-examples/akamai-siem-emulator
 
 go 1.21
 

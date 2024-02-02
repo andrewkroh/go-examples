@@ -66,16 +66,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	if eventJSONFile != "" {
-		f, err := os.Open(eventJSONFile)
-		if err != nil {
-			log.Fatalf("ERROR %s", err)
-		}
-		eventJSON, err = io.ReadAll(f)
-		if err != nil {
-			log.Fatalf("ERROR %s", err)
-		}
-		newEvent(time.Now())
+	if err := initEvent(); err != nil {
+		log.Fatal(err)
 	}
 
 	r := mux.NewRouter()
@@ -89,8 +81,11 @@ func main() {
 		log.Fatal(http.ListenAndServe(addr, h))
 	}()
 
-	fmt.Println(banner)
+	log.Println(banner)
 	log.Printf("Listening on http://%s/siem/v1/configs/{configId}", addr)
+	log.Println()
+	log.Println("Access Token:", accessToken)
+	log.Println("Client Token:", clientToken)
 	<-done
 }
 
@@ -198,7 +193,7 @@ func (*signatureEventsHandler) ServeHTTP(w http.ResponseWriter, req *http.Reques
 
 	for _, e := range events {
 		if err = writeJSON(e, w); err != nil {
-			log.Printf("WARN: failed writing response to client: %v", err)
+			log.Printf("WARN failed writing response to client: %v", err)
 		}
 	}
 	oc := offsetContext{
@@ -209,7 +204,7 @@ func (*signatureEventsHandler) ServeHTTP(w http.ResponseWriter, req *http.Reques
 		oc.Limit = limit
 	}
 	if err = writeJSON(oc, w); err != nil {
-		log.Printf("WARN: failed writing response to client: %v", err)
+		log.Printf("WARN failed writing response to client: %v", err)
 	}
 	log.Printf("DEBUG Return offset context of %#v", oc)
 }
@@ -260,14 +255,38 @@ func generateSampleDataFromOffset(offset string, limit int) (events []any, newOf
 	return generateSampleData(from, to, limit)
 }
 
-//go:embed assets/event.json
-var eventJSON []byte
+var (
+	//go:embed assets/event.json
+	embeddedEvent []byte
+
+	eventJSON json.RawMessage
+)
+
+func initEvent() error {
+	data := embeddedEvent
+
+	if eventJSONFile != "" {
+		f, err := os.Open(eventJSONFile)
+		if err != nil {
+			return fmt.Errorf("failed to open event-json file: %w", err)
+		}
+		data, err = io.ReadAll(f)
+		if err != nil {
+			return fmt.Errorf("failed to read event-json file: %w", err)
+		}
+	}
+
+	if err := json.Unmarshal(data, &eventJSON); err != nil {
+		return fmt.Errorf("failed to unmarshal the sample event: %w", err)
+	}
+	return nil
+}
 
 // newEvent returns a new event where the httpMessage.start
 // time is set to the given timestamp.
 func newEvent(timestamp time.Time) any {
 	var e map[string]any
-	if err := json.Unmarshal(eventJSON, &e); err != nil {
+	if err := json.Unmarshal(embeddedEvent, &e); err != nil {
 		panic(err)
 	}
 
