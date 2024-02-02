@@ -253,6 +253,7 @@ func newEvent(timestamp time.Time) any {
 	}
 
 	e["httpMessage"].(map[string]any)["start"] = timestamp.Unix()
+	e["httpMessage"].(map[string]any)["requestId"] = strconv.FormatInt(timestamp.UnixNano(), 16)
 	return e
 }
 
