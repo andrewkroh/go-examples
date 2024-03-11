@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/andrewkroh/go-ecs v0.0.0-20240213025458-42459d0ef898 // indirect
 	github.com/davecgh/go-spew v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 )

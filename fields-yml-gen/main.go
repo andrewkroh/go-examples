@@ -11,9 +11,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/andrewkroh/go-ecs"
 	"gopkg.in/yaml.v3"
-
-	"github.com/andrewkroh/go-examples/fields-yml-gen/ecs"
 )
 
 var inputFile string
@@ -54,12 +53,12 @@ func main() {
 	var out []Field
 	var nonECS []Field
 	for _, f := range list {
-		ecsField := ecs.GetField(f)
-		if ecsField == nil {
+		ecsField, err := ecs.Lookup(f, "")
+		if err != nil {
 			nonECS = append(nonECS, Field{Name: f, Type: "keyword", Description: "TODO"})
 			continue
 		}
-		out = append(out, Field{Name: ecsField.FlatName, External: "ecs"})
+		out = append(out, Field{Name: ecsField.Name, External: "ecs"})
 	}
 
 	sort.Slice(out, func(i, j int) bool {
@@ -87,10 +86,7 @@ func main() {
 	enc.Close()
 }
 
-var (
-	elasticPackageUndefinedFieldRegex = regexp.MustCompile(`(?m)\[\d+\] field "(.*)" is undefined`)
-	fieldNameListRegex                = regexp.MustCompile(`(?m)^["']?([^"']+)["']?$`)
-)
+var elasticPackageUndefinedFieldRegex = regexp.MustCompile(`(?m)\[\d+\] field "(.*)" is undefined`)
 
 func readFields(r io.Reader) ([]string, error) {
 	data, err := io.ReadAll(r)

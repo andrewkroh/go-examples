@@ -1,3 +1,5 @@
+github.com/andrewkroh/go-ecs v0.0.0-20240213025458-42459d0ef898 h1:JDpqBtfL7zjspj5Z+fK2edla8mJ69+FBP7/fCy4undo=
+github.com/andrewkroh/go-ecs v0.0.0-20240213025458-42459d0ef898/go.mod h1:mDhN1WOZsbKaV+wECV+ioF0Lgg4KxMTplkPHTqsj2gQ=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
