@@ -7,8 +7,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/andrewkroh/go-examples/fields-yml-gen/ecs"
-	"github.com/andrewkroh/go-examples/fields-yml/fieldsyml"
+	"github.com/andrewkroh/go-ecs"
+	"github.com/andrewkroh/go-fleetpkg"
 )
 
 // Flags
@@ -22,6 +22,15 @@ func init() {
 	flag.BoolVar(&warn, "w", true, "Warn on invalid external ECS field references.")
 }
 
+type fieldWithPath struct {
+	fleetpkg.Field
+	Source struct {
+		Path   string `json:"path"`
+		Line   int    `json:"line"`
+		Column int    `json:"column"`
+	} `json:"source"`
+}
+
 func main() {
 	log.SetFlags(0)
 	flag.Parse()
@@ -30,21 +39,43 @@ func main() {
 		log.Fatal("Must pass a list of fields.yml files.")
 	}
 
-	fields, err := fieldsyml.ReadFieldsYAML(flag.Args()...)
+	fields, err := fleetpkg.ReadFields(flag.Args()...)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	flat, err := fieldsyml.FlattenFields(fields)
+	flat, err := fleetpkg.FlattenFields(fields)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	flat, unresolved := fieldsyml.ResolveECSReferences(flat)
-	if len(unresolved) > 0 && warn {
-		for _, f := range unresolved {
-			log.Printf("WARN: %q in %s:%d does not exist is ECS %v or is not a leaf field.", f.Name, f.Source, f.SourceLine, ecs.Version)
+	// Convert to a struct that exports the source metadata.
+	fieldsWithSource := make([]fieldWithPath, len(flat))
+	for i := range flat {
+		fieldsWithSource[i].Field = flat[i]
+		fieldsWithSource[i].Source.Path = flat[i].FileMetadata.Path()
+		fieldsWithSource[i].Source.Line = flat[i].FileMetadata.Line()
+		fieldsWithSource[i].Source.Column = flat[i].FileMetadata.Column()
+	}
+
+	// Resolve ECS fields.
+	for i, f := range fieldsWithSource {
+		if f.External != "ecs" {
+			continue
 		}
+
+		// Lookup definition in the latest ECS version from go-ecs.
+		ecsField, err := ecs.Lookup(f.Name, "")
+		if err != nil {
+			if warn {
+				log.Printf("WARN: %q in %s:%d does not exist is ECS or is not a leaf field.", f.Name, f.FileMetadata.Path(), f.FileMetadata.Line())
+			}
+			continue
+		}
+
+		fieldsWithSource[i].Type = ecsField.DataType
+		fieldsWithSource[i].Description = ecsField.Description
+		fieldsWithSource[i].Pattern = ecsField.Pattern
 	}
 
 	switch format {
@@ -52,12 +83,12 @@ func main() {
 		enc := json.NewEncoder(os.Stdout)
 		enc.SetIndent("", "  ")
 		enc.SetEscapeHTML(false)
-		if err = enc.Encode(flat); err != nil {
+		if err = enc.Encode(fieldsWithSource); err != nil {
 			log.Fatal(err)
 		}
 		return
 	case "list":
-		for _, f := range flat {
+		for _, f := range fieldsWithSource {
 			fmt.Println(f.Name)
 		}
 	default:
