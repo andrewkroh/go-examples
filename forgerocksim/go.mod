@@ -3,7 +3,7 @@ module github.com/andrewkroh/go-examples/forgerocksim
 go 1.19
 
 require (
-	github.com/gorilla/handlers v1.5.1
+	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.0
 	github.com/stretchr/testify v1.8.1
 )
