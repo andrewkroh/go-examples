@@ -9,7 +9,6 @@ require (
 )
 
 require (
-	github.com/alecthomas/repr v0.1.1 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
 )
