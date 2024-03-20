@@ -20,7 +20,7 @@ jobs:
         id: goversion
         run: echo "version=$(cat .go-version)" >> $GITHUB_OUTPUT
 
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: "${{ steps.goversion.outputs.version }}"
           cache-dependency-path: "*/*.sum"
@@ -43,7 +43,7 @@ jobs:
         id: goversion
         run: echo "version=$(cat .go-version)" >> $GITHUB_OUTPUT
 
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: "${{ steps.goversion.outputs.version }}"
           cache-dependency-path: "*/*.sum"
