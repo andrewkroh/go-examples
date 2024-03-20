@@ -7,7 +7,7 @@ require (
 	github.com/andrewkroh/go-fleetpkg v0.0.9
 	github.com/cheggaaa/pb v1.0.29
 	github.com/coreos/go-semver v0.3.1
-	github.com/goccy/go-yaml v1.11.2
+	github.com/goccy/go-yaml v1.11.3
 	github.com/mitchellh/go-wordwrap v1.0.1
 	github.com/otiai10/copy v1.11.0
 	github.com/pmezard/go-difflib v1.0.0
