@@ -3,7 +3,7 @@ module github.com/andrewkroh/go-examples/yaml-remove-key
 go 1.19
 
 require (
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
