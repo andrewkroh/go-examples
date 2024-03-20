@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/andrewkroh/go-ecs v0.0.0-20240213025458-42459d0ef898
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
