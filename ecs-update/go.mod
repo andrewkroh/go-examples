@@ -9,7 +9,7 @@ require (
 	github.com/coreos/go-semver v0.3.1
 	github.com/goccy/go-yaml v1.11.2
 	github.com/mitchellh/go-wordwrap v1.0.1
-	github.com/otiai10/copy v1.11.0
+	github.com/otiai10/copy v1.14.0
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
