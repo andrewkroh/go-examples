@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/akamai-siem-emulator
 
-go 1.21
+go 1.22
 
 require (
 	github.com/gorilla/handlers v1.5.2

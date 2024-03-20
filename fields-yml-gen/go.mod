@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/fields-yml-gen
 
-go 1.19
+go 1.22
 
 require (
 	github.com/andrewkroh/go-ecs v0.0.0-20240213025458-42459d0ef898

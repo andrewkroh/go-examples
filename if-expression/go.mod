@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/if-expression
 
-go 1.19
+go 1.22
 
 require (
 	github.com/alecthomas/participle/v2 v2.1.1

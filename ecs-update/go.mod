@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/ecs-update
 
-go 1.21
+go 1.22
 
 require (
 	github.com/andrewkroh/go-ecs v0.0.0-20230916014552-bb661ed278a6

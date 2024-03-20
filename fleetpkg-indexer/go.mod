@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/fleetpkg-indexer
 
-go 1.21
+go 1.22
 
 require (
 	github.com/andrewkroh/go-ecs v0.0.0-20240213025458-42459d0ef898

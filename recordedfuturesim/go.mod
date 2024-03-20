@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/recordedfuturesim
 
-go 1.19
+go 1.22
 
 require (
 	github.com/gorilla/handlers v1.5.2
