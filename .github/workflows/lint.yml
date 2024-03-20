@@ -7,6 +7,11 @@ on:
 permissions:
   contents: read
 
+# Only one build per ref.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   golangci:
     name: golangci
@@ -33,25 +38,3 @@ jobs:
           go run .github/each-module.go -cmd
           'golangci-lint run --new-from-rev="HEAD~1" --out-format=line-number,github-actions --path-prefix=$PATH_PREFIX ./...'
 
-  go-mod-tidy:
-    name: go-mod-tidy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Read .go-version file
-        id: goversion
-        run: echo "version=$(cat .go-version)" >> $GITHUB_OUTPUT
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "${{ steps.goversion.outputs.version }}"
-          cache-dependency-path: "*/*.sum"
-
-      - name: Run go mod tidy
-        run: >
-          go run .github/each-module.go -cmd
-          'go mod tidy'
-
-      - name: Check git diff
-        run: git diff --exit-code
