@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/google/go-github v17.0.0+incompatible
-	golang.org/x/oauth2 v0.7.0
+	golang.org/x/oauth2 v0.18.0
 	golang.org/x/sys v0.7.0
 )
 
