@@ -1,3 +1,3 @@
 module github.com/andrewkroh/go-examples/rtsp
 
-go 1.19
+go 1.22

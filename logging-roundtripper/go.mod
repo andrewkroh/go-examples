@@ -1,10 +1,10 @@
 module github.com/andrewkroh/go-examples/logging-roundtripper
 
-go 1.19
+go 1.22
 
 require (
-	go.uber.org/atomic v1.10.0
-	go.uber.org/zap v1.24.0
+	go.uber.org/atomic v1.11.0
+	go.uber.org/zap v1.27.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
