@@ -126,13 +126,6 @@ func (*exportActivityHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 		truncationLimit int
 	)
 
-	// Currently unused parameters.
-	_ = userAction
-	_ = actionDetails
-	_ = username
-	_ = userRole
-	_ = outputFormat
-
 	var err error
 	for query, values := range req.URL.Query() {
 		if len(values) == 0 {
@@ -180,6 +173,13 @@ func (*exportActivityHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 			return
 		}
 	}
+
+	// Currently unused parameters.
+	_ = userAction
+	_ = actionDetails
+	_ = username
+	_ = userRole
+	_ = outputFormat
 
 	w.Header().Set("Content-Type", "text/csv")
 
