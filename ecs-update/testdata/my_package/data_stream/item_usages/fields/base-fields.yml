@@ -24,3 +24,5 @@
 - name: '@timestamp'
   type: date
   description: Event timestamp.
+- external: ecs
+  name: tags

@@ -380,3 +380,148 @@ func TestReplaceECSFields(t *testing.T) {
 		t.Errorf("unexpected changes found in %s", filepath.Base(fieldsFile.Path()))
 	}
 }
+
+func TestRemoveECSFields(t *testing.T) {
+	dir := t.TempDir()
+	if err := cp.Copy("testdata/my_package", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	pkg, err := fleetpkg.Read(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fieldsFile := pkg.DataStreams["item_usages"].Fields["base-fields.yml"]
+
+	before, err := os.ReadFile(fieldsFile.Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f, err := parser.ParseFile(fieldsFile.Path(), parser.ParseComments)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	changed, err := fieldsYMLDropExternalECS(f, fieldsFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, changed, "expected changes")
+
+	expectedChange := `
+@@ -7,9 +6,0 @@
+-- name: data_stream.type
+-  type: constant_keyword
+-  description: Data stream type.
+-- name: data_stream.dataset
+-  type: constant_keyword
+-  description: Data stream dataset.
+-- name: data_stream.namespace
+-  type: constant_keyword
+-  description: Data stream namespace.
+@@ -24,5 +14,0 @@
+-- name: '@timestamp'
+-  type: date
+-  description: Event timestamp.
+-- external: ecs
+-  name: tags
+`[1:]
+
+	diff, err := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
+		A: difflib.SplitLines(string(before)),
+		B: difflib.SplitLines(f.String()),
+	})
+	require.NoError(t, err)
+	if diff != expectedChange {
+		t.Errorf("unexpected changes found in %s\n%s", filepath.Base(fieldsFile.Path()), diff)
+	}
+}
+
+func TestCompleteRemoveECSFields(t *testing.T) {
+	dir := t.TempDir()
+	if err := cp.Copy("testdata/my_package", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	pkg, err := fleetpkg.Read(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fieldsFile := pkg.DataStreams["item_usages"].Fields["ecs.yml"]
+
+	before, err := os.ReadFile(fieldsFile.Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f, err := parser.ParseFile(fieldsFile.Path(), parser.ParseComments)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	changed, err := fieldsYMLDropExternalECS(f, fieldsFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, changed, "expected changes")
+	assert.True(t, completeRemoval(f), "expected file deletion")
+
+	expectedChange := `
+@@ -1,42 +1 @@
+-- external: ecs
+-  name: ecs.version
+-- external: ecs
+-  name: related.user
+-- external: ecs
+-  name: related.ip
+-- external: ecs
+-  name: event.kind
+-- external: ecs
+-  name: event.category
+-- external: ecs
+-  name: event.type
+-- external: ecs
+-  name: event.created
+-- external: ecs
+-  name: event.action
+-- external: ecs
+-  name: user.id
+-- external: ecs
+-  name: user.full_name
+-- external: ecs
+-  name: user.email
+-- external: ecs
+-  name: source.as.number
+-- external: ecs
+-  name: source.as.organization.name
+-- external: ecs
+-  name: source.geo.city_name
+-- external: ecs
+-  name: source.geo.continent_name
+-- external: ecs
+-  name: source.geo.country_iso_code
+-- external: ecs
+-  name: source.geo.country_name
+-- external: ecs
+-  name: source.geo.location
+-- external: ecs
+-  name: source.geo.region_iso_code
+-- external: ecs
+-  name: source.geo.region_name
+-- external: ecs
+-  name: source.ip
++[]
+`[1:]
+
+	diff, err := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
+		A: difflib.SplitLines(string(before)),
+		B: difflib.SplitLines(f.String()),
+	})
+	require.NoError(t, err)
+	if diff != expectedChange {
+		t.Errorf("unexpected changes found in %s\n%s", filepath.Base(fieldsFile.Path()), diff)
+	}
+}
