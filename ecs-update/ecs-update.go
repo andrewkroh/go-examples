@@ -462,6 +462,8 @@ func headline(r *EditResult) string {
 		return "removed dotted YAML keys from manifest"
 	case r.Manifest.FormatVersionChanged:
 		return fmt.Sprintf("change to format_version %v", r.Manifest.FormatVersionNew)
+	case r.Manifest.KibanaVersionChanged:
+		return fmt.Sprintf("change to kibana constraint to %v", r.Manifest.KibanaVersionNew)
 	case r.Manifest.OwnerTypeAdded:
 		return "added owner.type: elastic to manifest"
 	case r.IngestPipelinesChanged():
@@ -500,6 +502,9 @@ func changelogMessage(r *EditResult) string {
 	}
 	if r.Manifest.FormatVersionChanged {
 		fmt.Fprintf(&sb, "Update the package format_version to %v. ", r.Manifest.FormatVersionNew)
+	}
+	if r.Manifest.KibanaVersionChanged {
+		fmt.Fprintf(&sb, "Update the kibana constraint to %v. ", r.Manifest.KibanaVersionNew)
 	}
 	if r.IngestPipelinesOnFailureChanged() {
 		sb.WriteString("The ingest node pipeline 'on_failure' processors were changed " +
@@ -543,6 +548,10 @@ func summarize(r *EditResult) string {
 	if r.Manifest.FormatVersionChanged {
 		fmt.Fprintf(&sb, "The format_version in the package manifest changed from %v to %v. ",
 			r.Manifest.FormatVersionOld, r.Manifest.FormatVersionNew)
+	}
+	if r.Manifest.KibanaVersionChanged {
+		fmt.Fprintf(&sb, "The conditions.kibana.version in the package manifest changed from %v to %v. ",
+			r.Manifest.KibanaVersionOld, r.Manifest.KibanaVersionNew)
 	}
 	if r.Manifest.DottedYAMLRemoved {
 		sb.WriteString("Removed dotted YAML keys from package manifest. ")
@@ -838,6 +847,7 @@ func Edit(pkg *fleetpkg.Integration, c EditConfig) (*EditResult, error) {
 	e.result.Changed = e.result.BuildManifest.Changed ||
 		e.result.Manifest.DottedYAMLRemoved ||
 		e.result.Manifest.FormatVersionChanged ||
+		e.result.Manifest.KibanaVersionChanged ||
 		e.result.Manifest.OwnerTypeAdded ||
 		e.result.IngestPipelinesChanged() ||
 		e.result.SampleEventsChanged() ||
