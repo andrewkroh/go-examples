@@ -913,7 +913,7 @@ func (e *packageEditor) modifyBuildManifest() error {
 		}
 	}
 
-	return os.WriteFile(e.pkg.Build.Path(), []byte(f.String()+"\n"), 0o644)
+	return os.WriteFile(e.pkg.Build.Path(), []byte(f.String()), 0o644)
 }
 
 func (e *packageEditor) modifyManifest() error {
