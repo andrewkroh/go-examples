@@ -16,6 +16,7 @@ import (
 	"reflect"
 	"runtime/debug"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 	"text/template"
@@ -145,20 +146,24 @@ func (ct *changeTypeFlag) Set(value string) error {
 }
 
 type versionConstraint struct {
-	semver.Version
-	Prefix string
+	constraints *semmver.Constraints
 }
 
 func (v *versionConstraint) Set(version string) error {
-	idx := strings.IndexFunc(version, func(r rune) bool { return '0' <= r && r <= '9' })
-	if idx > 0 {
-		v.Prefix = version[:idx]
-		version = version[idx:]
+	c, err := semmver.NewConstraint(version)
+	if err != nil {
+		return err
 	}
-	return v.Version.Set(version)
+	v.constraints = c
+	return nil
 }
 
-func (v *versionConstraint) String() string { return v.Prefix + v.Version.String() }
+func (v *versionConstraint) String() string {
+	if v.constraints == nil {
+		return "^0.0.0"
+	}
+	return v.constraints.String()
+}
 
 func getVersion() string {
 	info, ok := debug.ReadBuildInfo()
@@ -277,7 +282,7 @@ func updatePackage(path string, results map[string]*updateResult) error {
 	if formatVersion != semverZero {
 		editCfg.Manifest.FormatVersion = formatVersion.String()
 	}
-	if kibanaVersion.Version != semverZero {
+	if kibanaVersion.constraints != nil {
 		editCfg.Manifest.KibanaVersion = kibanaVersion.String()
 	}
 	editCfg.Manifest.FixDottedKeys = fixDottedYAMLKeys
@@ -662,7 +667,7 @@ func gitGenerate(packageName string) string {
 		sb.WriteString(formatVersion.String())
 		sb.WriteString(" ")
 	}
-	if kibanaVersion.Version != (semver.Version{}) {
+	if kibanaVersion.constraints != nil {
 		sb.WriteString("-kibana-version=")
 		sb.WriteString(kibanaVersion.String())
 		sb.WriteString(" ")
@@ -957,14 +962,18 @@ func (e *packageEditor) modifyManifest() error {
 		if err != nil {
 			return fmt.Errorf("failed to parse existing version: %w", err)
 		}
-		wantStack, err := semmver.NewVersion(e.config.Manifest.KibanaVersion)
+		wantStack, err := semmver.NewConstraint(e.config.Manifest.KibanaVersion)
 		if err != nil {
 			return fmt.Errorf("failed to parse wanted version: %w", err)
 		}
 
-		if !haveStack.Check(wantStack) {
+		newConstraint, changed, err := updateConstraints(haveStack, wantStack)
+		if err != nil {
+			return fmt.Errorf("failed to update version constraints: %w", err)
+		}
+		if changed {
 			err = yamlEditString(f, "$.conditions.kibana.version",
-				e.config.Manifest.KibanaVersion, token.DoubleQuoteType)
+				newConstraint.String(), token.DoubleQuoteType)
 			if err != nil {
 				return err
 			}
@@ -984,6 +993,55 @@ func (e *packageEditor) modifyManifest() error {
 	}
 
 	return os.WriteFile(e.pkg.Manifest.Path(), []byte(f.String()), 0o644)
+}
+
+func updateConstraints(constraints, highwater *semmver.Constraints) (_ *semmver.Constraints, changed bool, _ error) {
+	hs := highwater.String()
+	hc := make(map[uint64]*semmver.Constraints)
+	need := make(map[uint64]bool)
+	for _, s := range strings.Split(hs, " || ") { // From code inspection. ¯\_(ツ)_/¯
+		v, err := semmver.NewVersion(strings.TrimLeftFunc(s, func(r rune) bool { return r < '0' || '9' < r }))
+		if err != nil {
+			return nil, false, err
+		}
+		c, err := semmver.NewConstraint(s)
+		if err != nil {
+			return nil, false, err
+		}
+		need[v.Major()] = true
+		hc[v.Major()] = c
+	}
+	var new []string
+	added := make(map[string]bool)
+	cs := constraints.String()
+	for _, s := range strings.Split(cs, " || ") {
+		v, err := semmver.NewVersion(strings.TrimLeftFunc(s, func(r rune) bool { return r < '0' || '9' < r }))
+		if err != nil {
+			return nil, false, err
+		}
+		delete(need, v.Major())
+		h, ok := hc[v.Major()]
+		if !ok {
+			continue
+		}
+		if !added[s] && h.Check(v) {
+			added[s] = true
+			c, err := semmver.NewConstraint(s)
+			if err != nil {
+				return nil, false, err
+			}
+			new = append(new, c.String())
+		} else if ns := h.String(); !added[ns] {
+			added[ns] = true
+			new = append(new, ns)
+		}
+	}
+	for n := range need {
+		new = append(new, hc[n].String())
+	}
+	sort.Strings(new)
+	ns, err := semmver.NewConstraint(strings.Join(new, " || "))
+	return ns, cs != ns.String() && err == nil, err
 }
 
 func (e *packageEditor) modifySampleEvents() error {
