@@ -460,6 +460,8 @@ func headline(r *EditResult) string {
 	switch {
 	case r.BuildManifest.ECSReferenceChanged:
 		return fmt.Sprintf("change to ECS version %v", r.BuildManifest.ECSReferenceNew)
+	case r.BuildManifest.ECSImportMappingsChanged:
+		return "removed ecs import_mappings"
 	case r.FieldsYMLChanged && fieldsYMLUseECS:
 		return "Modified field definitions to use ECS"
 	case r.FieldsYMLChanged && fieldsYMLCleanAttributes:
