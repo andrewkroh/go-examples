@@ -44,7 +44,7 @@ func TestEdit(t *testing.T) {
 	// Results
 	assert.True(t, result.Changed, "result/changed")
 
-	assert.True(t, result.BuildManifest.Changed, "result/build_manifest/changed")
+	assert.True(t, result.BuildManifest.ECSReferenceChanged, "result/build_manifest/changed")
 	assert.Equal(t, "git@8.2", result.BuildManifest.ECSReferenceOld, "result/build_manifest/ecs_old")
 	assert.Equal(t, cfg.BuildManifest.ECSReference, result.BuildManifest.ECSReferenceNew, "result/build_manifest/ecs_new")
 
