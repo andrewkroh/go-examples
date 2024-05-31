@@ -878,16 +878,14 @@ func (e *packageEditor) modifyBuildManifest() error {
 		log.Printf("WARN: %s: No build manifest in package.", e.pkg.Manifest.Name)
 		return nil
 	}
-	if e.config.BuildManifest.ECSReference == e.pkg.Build.Dependencies.ECS.Reference {
-		return nil
-	}
 
 	f, err := parser.ParseFile(e.pkg.Build.Path(), parser.ParseComments)
 	if err != nil {
 		return err
 	}
 
-	if e.config.BuildManifest.ECSReference != "" {
+	if e.config.BuildManifest.ECSReference != "" &&
+		e.config.BuildManifest.ECSReference != e.pkg.Build.Dependencies.ECS.Reference {
 		err = yamlEditString(f, "$.dependencies.ecs.reference",
 			e.config.BuildManifest.ECSReference, token.DoubleQuoteType)
 		if err != nil {
