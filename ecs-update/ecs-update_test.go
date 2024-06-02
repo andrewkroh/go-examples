@@ -411,9 +411,17 @@ func TestRemoveECSFields(t *testing.T) {
 	assert.True(t, changed, "expected changes")
 
 	expectedChange := `
-@@ -27,2 +26,0 @@
+@@ -27,10 +26,0 @@
 -- external: ecs
 -  name: tags
+-- name: process
+-  type: group
+-  fields:
+-    - name: io
+-      type: group
+-      fields:
+-        - name: bytes_skipped.length
+-          external: ecs
 `[1:]
 
 	diff, err := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{

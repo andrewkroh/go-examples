@@ -2054,20 +2054,31 @@ func fieldsYMLDropExternalECS(f *ast.File, ff fleetpkg.FieldsFile) (changed bool
 			continue
 		}
 
-		// Get the old node.
-		p, err := yaml.PathString(field.YAMLPath)
-		if err != nil {
-			return false, fmt.Errorf("failed to build YAML path from %q: %w", field.YAMLPath, err)
-		}
-
 		// Mark for removal.
-		if err = p.ReplaceWithNode(f, newNode("remove: true")); err != nil {
-			return false, fmt.Errorf("failed to replace node: %w", err)
+		err = mark(f, field.YAMLPath, newNode("remove: true"))
+		if err != nil {
+			return false, err
 		}
 		changed = true
 	}
-	for _, doc := range f.Docs {
-		ast.Walk(sweeper{}, doc)
+
+	// goccy/go-yaml offers no sensible way to remove nodes.
+	// Remove nodes that have been marked or are empty in the
+	// context of field definitions and then repeat this until
+	// no more YAML nodes have been removed. There are other
+	// ways to do this, none is less awful.
+	for {
+		didChange := false
+		for _, doc := range f.Docs {
+			v := sweeper{file: f, root: doc}
+			ast.Walk(&v, doc)
+			if v.changed {
+				didChange = true
+			}
+		}
+		if !didChange {
+			break
+		}
 	}
 	return changed, nil
 }
@@ -2096,14 +2107,19 @@ var requiredFields = map[string]bool{
 	"data_stream.type":      true,
 }
 
-type sweeper struct{}
+type sweeper struct {
+	file    *ast.File
+	root    ast.Node
+	changed bool
+}
 
-func (v sweeper) Visit(n ast.Node) ast.Visitor {
+func (v *sweeper) Visit(n ast.Node) ast.Visitor {
 	switch n := n.(type) {
 	case *ast.MappingNode:
 		for i := 0; i < len(n.Values); {
 			if canRemove(n.Values[i]) {
 				n.Values = slices.Delete(n.Values, i, i+1)
+				v.changed = true
 			} else {
 				i++
 			}
@@ -2112,8 +2128,24 @@ func (v sweeper) Visit(n ast.Node) ast.Visitor {
 		for i := 0; i < len(n.Values); {
 			if canRemove(n.Values[i]) {
 				n.Values = slices.Delete(n.Values, i, i+1)
+				v.changed = true
 			} else {
 				i++
+			}
+		}
+		if len(n.Values) == 0 {
+			switch m := up(2, v.root, n).(type) {
+			case nil:
+			case *ast.MappingNode:
+				switch s := up(1, v.root, m).(type) {
+				case nil:
+				case *ast.SequenceNode:
+					s.Values = slices.DeleteFunc(s.Values, func(e ast.Node) bool {
+						return e == m
+					})
+					v.changed = true
+				default:
+				}
 			}
 		}
 	}
@@ -2126,6 +2158,29 @@ func canRemove(n ast.Node) bool {
 		return false
 	}
 	return m.Key.GetToken().Value == "remove" && m.Value.GetToken().Value == "true"
+}
+
+// up returns the n-parent of child if it exists in the AST, or nil otherwise.
+func up(n int, root, child ast.Node) ast.Node {
+	for i := 0; i < n; i++ {
+		prev := child
+		child = ast.Parent(root, child)
+		if child == prev {
+			return nil
+		}
+	}
+	return child
+}
+
+func mark(f *ast.File, path string, n ast.Node) error {
+	p, err := yaml.PathString(path)
+	if err != nil {
+		return fmt.Errorf("failed to build YAML path from %q: %w", path, err)
+	}
+	if err = p.ReplaceWithNode(f, n); err != nil {
+		return fmt.Errorf("failed to replace node: %w", err)
+	}
+	return nil
 }
 
 // fieldsYMLKeyCleanup is a list of field names that should be removed
