@@ -2050,7 +2050,7 @@ func fieldsYMLDropExternalECS(f *ast.File, ff fleetpkg.FieldsFile) (changed bool
 			continue
 		}
 
-		if !couldBeECS(field, ecsField) {
+		if requiredFields[field.Name] || !couldBeECS(field, ecsField) {
 			continue
 		}
 
@@ -2086,6 +2086,14 @@ func couldBeECS(query fleetpkg.Field, ecs *ecs.Field) bool {
 		query.Enabled == nil &&
 		// Unit must remain.
 		query.Unit == ""
+}
+
+// Apparently these must always be present.
+var requiredFields = map[string]bool{
+	"@timestamp":            true,
+	"data_stream.dataset":   true,
+	"data_stream.namespace": true,
+	"data_stream.type":      true,
 }
 
 type sweeper struct{}

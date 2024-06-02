@@ -411,20 +411,7 @@ func TestRemoveECSFields(t *testing.T) {
 	assert.True(t, changed, "expected changes")
 
 	expectedChange := `
-@@ -7,9 +6,0 @@
--- name: data_stream.type
--  type: constant_keyword
--  description: Data stream type.
--- name: data_stream.dataset
--  type: constant_keyword
--  description: Data stream dataset.
--- name: data_stream.namespace
--  type: constant_keyword
--  description: Data stream namespace.
-@@ -24,5 +14,0 @@
--- name: '@timestamp'
--  type: date
--  description: Event timestamp.
+@@ -27,2 +26,0 @@
 -- external: ecs
 -  name: tags
 `[1:]
