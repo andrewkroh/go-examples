@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	semmver "github.com/Masterminds/semver/v3" // Masterminds
 	"github.com/andrewkroh/go-fleetpkg"
 	"github.com/goccy/go-yaml/parser"
 	"github.com/goccy/go-yaml/token"
@@ -518,5 +519,88 @@ func TestCompleteRemoveECSFields(t *testing.T) {
 	require.NoError(t, err)
 	if diff != expectedChange {
 		t.Errorf("unexpected changes found in %s\n%s", filepath.Base(fieldsFile.Path()), diff)
+	}
+}
+
+var updateConstraintsTests = []struct {
+	name        string
+	current     string
+	update      string
+	want        string
+	wantChanged bool
+}{
+	{
+		name:        "zero",
+		current:     "0",
+		update:      "0",
+		want:        "0",
+		wantChanged: false,
+	},
+	{
+		name:        "normal_updated",
+		current:     "^8.11.0",
+		update:      "^8.12.0",
+		want:        "^8.12.0",
+		wantChanged: true,
+	},
+	{
+		name:        "normal_not_updated",
+		current:     "^8.11.0",
+		update:      "^8.10.0",
+		want:        "^8.11.0",
+		wantChanged: false,
+	},
+	{
+		name:        "multi_one_updated",
+		current:     "^7.17.0 || ^8.11.0",
+		update:      "^7.17.0 || ^8.12.0",
+		want:        "^7.17.0 || ^8.12.0",
+		wantChanged: true,
+	},
+	{
+		name:        "multi_both_updated",
+		current:     "^7.17.0 || ^8.11.0",
+		update:      "^7.17.1 || ^8.12.0",
+		want:        "^7.17.1 || ^8.12.0",
+		wantChanged: true,
+	},
+	{
+		name:        "multi_not_updated",
+		current:     "^7.17.0 || ^8.11.0",
+		update:      "^7.17.0 || ^8.10.0",
+		want:        "^7.17.0 || ^8.11.0",
+		wantChanged: false,
+	},
+	{
+		name:        "multi_drop_updated",
+		current:     "^7.17.0 || ^8.11.0",
+		update:      "^8.12.0",
+		want:        "^8.12.0",
+		wantChanged: true,
+	},
+}
+
+func TestUpdateConstraints(t *testing.T) {
+	for _, test := range updateConstraintsTests {
+		t.Run(test.name, func(t *testing.T) {
+			c, err := semmver.NewConstraint(test.current)
+			if err != nil {
+				t.Fatalf("failed to parse current constraint: %v", err)
+			}
+			u, err := semmver.NewConstraint(test.update)
+			if err != nil {
+				t.Fatalf("failed to parse update constraint: %v", err)
+			}
+			got, changed, err := updateConstraints(c, u)
+			if err != nil {
+				t.Fatalf("unexpected error from updateConstraints(%s, %s): %v", test.current, test.update, err)
+			}
+			if got.String() != test.want {
+				t.Errorf("unexpected constraint from updateConstraints(%s, %s): got=%s want=%s", test.current, test.update, got, test.want)
+			}
+			if changed != test.wantChanged {
+				t.Errorf("unexpected constraint from updateConstraints(%s, %s): got=%t want=%t", test.current, test.update, changed, test.wantChanged)
+			}
+		})
 	}
 }
