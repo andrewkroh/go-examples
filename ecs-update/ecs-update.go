@@ -61,6 +61,7 @@ var (
 	ecsVersion               semver.Version
 	formatVersion            semver.Version
 	kibanaVersion            versionConstraint
+	kibanaVersionSingle      bool
 	ecsGitReference          string
 	dropImportMappings       bool
 	normalizeOnFailure       bool
@@ -84,7 +85,8 @@ var semverZero = semver.Version{}
 func init() {
 	flag.Var(&ecsVersion, "ecs-version", "ECS version (e.g. 8.3.0)")
 	flag.Var(&formatVersion, "format-version", "Fleet package format version (empty or x.y.z)")
-	flag.Var(&kibanaVersion, "kibana-version", "Stack version (empty or x.y.z)")
+	flag.Var(&kibanaVersion, "kibana-version", "Stack version (empty or version constraint syntax)")
+	flag.BoolVar(&kibanaVersionSingle, "single-kibana-version", false, "Allow non-range kibana version constraint (required if any version constraint is a single version)")
 	flag.StringVar(&ecsGitReference, "ecs-git-ref", "", "Git reference of ECS repo. Git tags are recommended. "+
 		"Defaults to release branch of the ecs-version (e.g. uses 8.3 for 8.3.0).")
 	flag.BoolVar(&dropImportMappings, "drop-import-mappings", false, "Remove dependencies.ecs.import_mappings.")
@@ -185,6 +187,16 @@ func main() {
 			ecsGitReference = fmt.Sprintf("git@%d.%d", ecsVersion.Major, ecsVersion.Minor)
 		} else if !strings.HasPrefix(ecsGitReference, "git@") {
 			ecsGitReference = "git@" + ecsGitReference
+		}
+	}
+	if !kibanaVersionSingle {
+		for _, v := range strings.Split(kibanaVersion.String(), " || ") {
+			_, err := semmver.NewVersion(v)
+			if err == nil {
+				flag.Usage()
+				fmt.Fprintf(flag.CommandLine.Output(), "\nsingle-version constraint used without -single-kibana-version: %q\n", &kibanaVersion)
+				os.Exit(1)
+			}
 		}
 	}
 
@@ -603,7 +615,7 @@ func summarize(r *EditResult) string {
 	}
 	if r.FieldsYMLChanged {
 		sb.WriteString("Modified the field definitions to")
-		if fieldsYMLUseECS && !fieldsYMLDropECS {
+		if fieldsYMLDropECS {
 			sb.WriteString(" remove ECS fields where possible")
 		}
 		if fieldsYMLUseECS {
