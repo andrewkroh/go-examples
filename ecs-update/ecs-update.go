@@ -15,11 +15,14 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime/debug"
+	"slices"
+	"sort"
 	"strconv"
 	"strings"
 	"text/template"
 	"unicode"
 
+	semmver "github.com/Masterminds/semver/v3" // Masterminds
 	"github.com/cheggaaa/pb"
 	"github.com/coreos/go-semver/semver"
 	"github.com/goccy/go-yaml"
@@ -57,7 +60,10 @@ following operations:
 var (
 	ecsVersion               semver.Version
 	formatVersion            semver.Version
+	kibanaVersion            versionConstraint
+	kibanaVersionSingle      bool
 	ecsGitReference          string
+	dropImportMappings       bool
 	normalizeOnFailure       bool
 	pullRequestNumber        string
 	owner                    string
@@ -70,6 +76,7 @@ var (
 	verbose                  bool
 	noProgress               bool
 	fieldsYMLUseECS          bool
+	fieldsYMLDropECS         bool
 	fieldsYMLCleanAttributes bool
 )
 
@@ -78,8 +85,11 @@ var semverZero = semver.Version{}
 func init() {
 	flag.Var(&ecsVersion, "ecs-version", "ECS version (e.g. 8.3.0)")
 	flag.Var(&formatVersion, "format-version", "Fleet package format version (empty or x.y.z)")
+	flag.Var(&kibanaVersion, "kibana-version", "Stack version (empty or version constraint syntax)")
+	flag.BoolVar(&kibanaVersionSingle, "single-kibana-version", false, "Allow non-range kibana version constraint (required if any version constraint is a single version)")
 	flag.StringVar(&ecsGitReference, "ecs-git-ref", "", "Git reference of ECS repo. Git tags are recommended. "+
 		"Defaults to release branch of the ecs-version (e.g. uses 8.3 for 8.3.0).")
+	flag.BoolVar(&dropImportMappings, "drop-import-mappings", false, "Remove dependencies.ecs.import_mappings.")
 	flag.StringVar(&pullRequestNumber, "pr", "", "Pull request number")
 	flag.StringVar(&owner, "owner", "", "Only modify packages owned by this team.")
 	flag.BoolVar(&sampleEvents, "sample-events", false, "Generate new sample events (slow).")
@@ -92,6 +102,7 @@ func init() {
 	flag.BoolVar(&verbose, "v", false, "Verbose output")
 	flag.BoolVar(&noProgress, "no-progress", false, "Disable the progress bar.")
 	flag.BoolVar(&fieldsYMLUseECS, "fields-yml-use-ecs", false, "Update fields to with 'external: ecs' where possible.")
+	flag.BoolVar(&fieldsYMLDropECS, "fields-yml-drop-ecs", false, "Remove fields that could be 'external: ecs'.")
 	flag.BoolVar(&fieldsYMLCleanAttributes, "fields-yml-cleanup-attrs", false, "Remove unused or invalid field attributes.")
 }
 
@@ -136,6 +147,26 @@ func (ct *changeTypeFlag) Set(value string) error {
 	}
 }
 
+type versionConstraint struct {
+	constraints *semmver.Constraints
+}
+
+func (v *versionConstraint) Set(version string) error {
+	c, err := semmver.NewConstraint(version)
+	if err != nil {
+		return err
+	}
+	v.constraints = c
+	return nil
+}
+
+func (v *versionConstraint) String() string {
+	if v.constraints == nil {
+		return "^0.0.0"
+	}
+	return v.constraints.String()
+}
+
 func getVersion() string {
 	info, ok := debug.ReadBuildInfo()
 	if !ok || info.Main.Version == "(devel)" {
@@ -156,6 +187,16 @@ func main() {
 			ecsGitReference = fmt.Sprintf("git@%d.%d", ecsVersion.Major, ecsVersion.Minor)
 		} else if !strings.HasPrefix(ecsGitReference, "git@") {
 			ecsGitReference = "git@" + ecsGitReference
+		}
+	}
+	if !kibanaVersionSingle {
+		for _, v := range strings.Split(kibanaVersion.String(), " || ") {
+			_, err := semmver.NewVersion(v)
+			if err == nil {
+				flag.Usage()
+				fmt.Fprintf(flag.CommandLine.Output(), "\nsingle-version constraint used without -single-kibana-version: %q\n", &kibanaVersion)
+				os.Exit(1)
+			}
 		}
 	}
 
@@ -253,12 +294,20 @@ func updatePackage(path string, results map[string]*updateResult) error {
 	if formatVersion != semverZero {
 		editCfg.Manifest.FormatVersion = formatVersion.String()
 	}
+	if kibanaVersion.constraints != nil {
+		editCfg.Manifest.KibanaVersion = kibanaVersion.String()
+	}
 	editCfg.Manifest.FixDottedKeys = fixDottedYAMLKeys
 	editCfg.Manifest.AddOwnerType = addOwnerType
 	editCfg.BuildManifest.ECSReference = ecsGitReference
+	if dropImportMappings {
+		importMappings := false
+		editCfg.BuildManifest.ECSImportMappings = &importMappings
+	}
 	editCfg.IngestPipeline.NormalizeOnFailure = normalizeOnFailure
 	editCfg.FieldsYML.FixInvalidAttributes = fieldsYMLCleanAttributes
 	editCfg.FieldsYML.UseECS = fieldsYMLUseECS
+	editCfg.FieldsYML.DropECS = fieldsYMLDropECS
 
 	result, err := Edit(pkg, editCfg)
 	if err != nil {
@@ -421,8 +470,10 @@ func (m CommitMessage) Build() (string, error) {
 
 func headline(r *EditResult) string {
 	switch {
-	case r.BuildManifest.Changed:
+	case r.BuildManifest.ECSReferenceChanged:
 		return fmt.Sprintf("change to ECS version %v", r.BuildManifest.ECSReferenceNew)
+	case r.BuildManifest.ECSImportMappingsChanged:
+		return "removed ecs import_mappings"
 	case r.FieldsYMLChanged && fieldsYMLUseECS:
 		return "Modified field definitions to use ECS"
 	case r.FieldsYMLChanged && fieldsYMLCleanAttributes:
@@ -431,6 +482,8 @@ func headline(r *EditResult) string {
 		return "removed dotted YAML keys from manifest"
 	case r.Manifest.FormatVersionChanged:
 		return fmt.Sprintf("change to format_version %v", r.Manifest.FormatVersionNew)
+	case r.Manifest.KibanaVersionChanged:
+		return fmt.Sprintf("change to kibana constraint to %v", r.Manifest.KibanaVersionNew)
 	case r.Manifest.OwnerTypeAdded:
 		return "added owner.type: elastic to manifest"
 	case r.IngestPipelinesChanged():
@@ -464,11 +517,17 @@ func headline(r *EditResult) string {
 func changelogMessage(r *EditResult) string {
 	var sb strings.Builder
 
-	if r.BuildManifest.Changed || r.SampleEventsChanged() || r.IngestPipelinesECSVersionChanged() {
+	if r.BuildManifest.ECSReferenceChanged || r.SampleEventsChanged() || r.IngestPipelinesECSVersionChanged() {
 		fmt.Fprintf(&sb, "ECS version updated to %s. ", ecsVersion)
+	}
+	if r.BuildManifest.ECSImportMappingsChanged {
+		fmt.Fprint(&sb, "Removed import_mappings. ")
 	}
 	if r.Manifest.FormatVersionChanged {
 		fmt.Fprintf(&sb, "Update the package format_version to %v. ", r.Manifest.FormatVersionNew)
+	}
+	if r.Manifest.KibanaVersionChanged {
+		fmt.Fprintf(&sb, "Update the kibana constraint to %v. ", r.Manifest.KibanaVersionNew)
 	}
 	if r.IngestPipelinesOnFailureChanged() {
 		sb.WriteString("The ingest node pipeline 'on_failure' processors were changed " +
@@ -476,10 +535,13 @@ func changelogMessage(r *EditResult) string {
 	}
 	if r.FieldsYMLChanged {
 		sb.WriteString("Modified the field definitions to")
-		if fieldsYMLUseECS {
+		if fieldsYMLUseECS && !fieldsYMLDropECS {
 			sb.WriteString(" reference ECS where possible")
 		}
-		if fieldsYMLUseECS && fieldsYMLCleanAttributes {
+		if fieldsYMLDropECS {
+			sb.WriteString(" remove ECS fields where possible")
+		}
+		if (fieldsYMLUseECS || fieldsYMLDropECS) && fieldsYMLCleanAttributes {
 			sb.WriteString(" and")
 		}
 		if fieldsYMLCleanAttributes {
@@ -502,13 +564,20 @@ func changelogMessage(r *EditResult) string {
 func summarize(r *EditResult) string {
 	var sb strings.Builder
 
-	if r.BuildManifest.Changed {
+	if r.BuildManifest.ECSReferenceChanged {
 		fmt.Fprintf(&sb, "ECS version in build manifest changed from %v to %v. ",
 			r.BuildManifest.ECSReferenceOld, r.BuildManifest.ECSReferenceNew)
+	}
+	if r.BuildManifest.ECSImportMappingsChanged {
+		fmt.Fprintf(&sb, "Removed import_mappings. ")
 	}
 	if r.Manifest.FormatVersionChanged {
 		fmt.Fprintf(&sb, "The format_version in the package manifest changed from %v to %v. ",
 			r.Manifest.FormatVersionOld, r.Manifest.FormatVersionNew)
+	}
+	if r.Manifest.KibanaVersionChanged {
+		fmt.Fprintf(&sb, "The conditions.kibana.version in the package manifest changed from %v to %v. ",
+			r.Manifest.KibanaVersionOld, r.Manifest.KibanaVersionNew)
 	}
 	if r.Manifest.DottedYAMLRemoved {
 		sb.WriteString("Removed dotted YAML keys from package manifest. ")
@@ -546,10 +615,13 @@ func summarize(r *EditResult) string {
 	}
 	if r.FieldsYMLChanged {
 		sb.WriteString("Modified the field definitions to")
+		if fieldsYMLDropECS {
+			sb.WriteString(" remove ECS fields where possible")
+		}
 		if fieldsYMLUseECS {
 			sb.WriteString(" reference ECS where possible")
 		}
-		if fieldsYMLUseECS && fieldsYMLCleanAttributes {
+		if (fieldsYMLUseECS || fieldsYMLDropECS) && fieldsYMLCleanAttributes {
 			sb.WriteString(" and")
 		}
 		if fieldsYMLCleanAttributes {
@@ -600,9 +672,18 @@ func gitGenerate(packageName string) string {
 		sb.WriteString(ecsGitReference)
 		sb.WriteString(" ")
 	}
+	if dropImportMappings {
+		sb.WriteString("-drop-import-mappings")
+		sb.WriteString(" ")
+	}
 	if formatVersion != (semver.Version{}) {
 		sb.WriteString("-format-version=")
 		sb.WriteString(formatVersion.String())
+		sb.WriteString(" ")
+	}
+	if kibanaVersion.constraints != nil {
+		sb.WriteString("-kibana-version=")
+		sb.WriteString(kibanaVersion.String())
 		sb.WriteString(" ")
 	}
 	if pullRequestNumber != "" {
@@ -635,6 +716,10 @@ func gitGenerate(packageName string) string {
 		sb.WriteString("-fields-yml-use-ecs")
 		sb.WriteString(" ")
 	}
+	if fieldsYMLDropECS {
+		sb.WriteString("-fields-yml-drop-ecs")
+		sb.WriteString(" ")
+	}
 	if fieldsYMLCleanAttributes {
 		sb.WriteString("-fields-yml-cleanup-attrs")
 		sb.WriteString(" ")
@@ -658,10 +743,12 @@ func gitGenerate(packageName string) string {
 
 type EditConfig struct {
 	BuildManifest struct {
-		ECSReference string // Git reference to an ECS version.
+		ECSReference      string // Git reference to an ECS version.
+		ECSImportMappings *bool  // Whether ECS import_mappings are used.
 	}
 	Manifest struct {
 		FormatVersion string // Package format.
+		KibanaVersion string // Stack version.
 		AddOwnerType  bool   // Add owner.type=elastic if owner.type is missing.
 		FixDottedKeys bool   // Replace dotted keys under 'conditions.*'.
 	}
@@ -674,6 +761,7 @@ type EditConfig struct {
 	}
 	FieldsYML struct {
 		UseECS               bool // Update fields with 'external: ecs' where possible.
+		DropECS              bool // Remove fields that are or could be 'external: ecs'.
 		FixInvalidAttributes bool // Remove unknown or invalid field attributes.
 	}
 }
@@ -724,9 +812,12 @@ func (r EditResult) SampleEventsChanged() bool {
 }
 
 type BuildManifestResult struct {
-	Changed         bool
-	ECSReferenceOld string
-	ECSReferenceNew string
+	ECSReferenceChanged      bool
+	ECSReferenceOld          string
+	ECSReferenceNew          string
+	ECSImportMappingsChanged bool
+	ECSImportMappingsOld     *bool
+	ECSImportMappingsNew     *bool
 }
 
 type ManifestResult struct {
@@ -734,6 +825,9 @@ type ManifestResult struct {
 	FormatVersionChanged bool
 	FormatVersionOld     string
 	FormatVersionNew     string
+	KibanaVersionChanged bool
+	KibanaVersionOld     string
+	KibanaVersionNew     string
 	OwnerTypeAdded       bool
 }
 
@@ -777,9 +871,11 @@ func Edit(pkg *fleetpkg.Integration, c EditConfig) (*EditResult, error) {
 		return nil, err
 	}
 
-	e.result.Changed = e.result.BuildManifest.Changed ||
+	e.result.Changed = e.result.BuildManifest.ECSReferenceChanged ||
+		e.result.BuildManifest.ECSImportMappingsChanged ||
 		e.result.Manifest.DottedYAMLRemoved ||
 		e.result.Manifest.FormatVersionChanged ||
+		e.result.Manifest.KibanaVersionChanged ||
 		e.result.Manifest.OwnerTypeAdded ||
 		e.result.IngestPipelinesChanged() ||
 		e.result.SampleEventsChanged() ||
@@ -789,14 +885,11 @@ func Edit(pkg *fleetpkg.Integration, c EditConfig) (*EditResult, error) {
 }
 
 func (e *packageEditor) modifyBuildManifest() error {
-	if e.config.BuildManifest.ECSReference == "" {
+	if e.config.BuildManifest.ECSReference == "" && e.config.BuildManifest.ECSImportMappings == nil {
 		return nil
 	}
 	if e.pkg.Build == nil {
 		log.Printf("WARN: %s: No build manifest in package.", e.pkg.Manifest.Name)
-		return nil
-	}
-	if e.config.BuildManifest.ECSReference == e.pkg.Build.Dependencies.ECS.Reference {
 		return nil
 	}
 
@@ -804,17 +897,37 @@ func (e *packageEditor) modifyBuildManifest() error {
 	if err != nil {
 		return err
 	}
-	err = yamlEditString(f, "$.dependencies.ecs.reference",
-		e.config.BuildManifest.ECSReference, token.DoubleQuoteType)
-	if err != nil {
-		return err
+
+	if e.config.BuildManifest.ECSReference != "" &&
+		e.config.BuildManifest.ECSReference != e.pkg.Build.Dependencies.ECS.Reference {
+		err = yamlEditString(f, "$.dependencies.ecs.reference",
+			e.config.BuildManifest.ECSReference, token.DoubleQuoteType)
+		if err != nil {
+			return err
+		}
+		e.result.BuildManifest.ECSReferenceChanged = true
+		e.result.BuildManifest.ECSReferenceOld = e.pkg.Build.Dependencies.ECS.Reference
+		e.result.BuildManifest.ECSReferenceNew = e.config.BuildManifest.ECSReference
 	}
 
-	e.result.BuildManifest.Changed = true
-	e.result.BuildManifest.ECSReferenceOld = e.pkg.Build.Dependencies.ECS.Reference
-	e.result.BuildManifest.ECSReferenceNew = e.config.BuildManifest.ECSReference
+	if e.config.BuildManifest.ECSImportMappings != nil && !*e.config.BuildManifest.ECSImportMappings {
+		const importMappings = "$.dependencies.ecs.import_mappings"
+		ok, err := yamlHasNode(f, importMappings)
+		if err != nil {
+			return err
+		}
+		if ok {
+			err = yamlDeleteNodeFromMap(f, importMappings)
+			if err != nil {
+				return err
+			}
+			e.result.BuildManifest.ECSImportMappingsChanged = true
+			e.result.BuildManifest.ECSImportMappingsOld = e.pkg.Build.Dependencies.ECS.ImportMappings
+			e.result.BuildManifest.ECSImportMappingsNew = e.config.BuildManifest.ECSImportMappings
+		}
+	}
 
-	return os.WriteFile(e.pkg.Build.Path(), []byte(f.String()+"\n"), 0o644)
+	return os.WriteFile(e.pkg.Build.Path(), []byte(f.String()), 0o644)
 }
 
 func (e *packageEditor) modifyManifest() error {
@@ -856,6 +969,33 @@ func (e *packageEditor) modifyManifest() error {
 		e.result.Manifest.FormatVersionNew = e.config.Manifest.FormatVersion
 	}
 
+	if e.config.Manifest.KibanaVersion != "" && e.config.Manifest.KibanaVersion != e.pkg.Manifest.Conditions.Kibana.Version {
+		haveStack, err := semmver.NewConstraint(e.pkg.Manifest.Conditions.Kibana.Version)
+		if err != nil {
+			return fmt.Errorf("failed to parse existing version: %w", err)
+		}
+		wantStack, err := semmver.NewConstraint(e.config.Manifest.KibanaVersion)
+		if err != nil {
+			return fmt.Errorf("failed to parse wanted version: %w", err)
+		}
+
+		newConstraint, changed, err := updateConstraints(haveStack, wantStack)
+		if err != nil {
+			return fmt.Errorf("failed to update version constraints: %w", err)
+		}
+		if changed {
+			err = yamlEditString(f, "$.conditions.kibana.version",
+				newConstraint.String(), token.DoubleQuoteType)
+			if err != nil {
+				return err
+			}
+
+			e.result.Manifest.KibanaVersionChanged = true
+			e.result.Manifest.KibanaVersionOld = e.pkg.Manifest.Conditions.Kibana.Version
+			e.result.Manifest.KibanaVersionNew = e.config.Manifest.KibanaVersion
+		}
+	}
+
 	if e.config.Manifest.AddOwnerType && e.pkg.Manifest.Owner.Type == "" {
 		err = yamlEditString(f, "$.owner.type", "elastic", token.StringType)
 		if err != nil {
@@ -865,6 +1005,55 @@ func (e *packageEditor) modifyManifest() error {
 	}
 
 	return os.WriteFile(e.pkg.Manifest.Path(), []byte(f.String()), 0o644)
+}
+
+func updateConstraints(constraints, highwater *semmver.Constraints) (_ *semmver.Constraints, changed bool, _ error) {
+	hs := highwater.String()
+	hc := make(map[uint64]*semmver.Constraints)
+	need := make(map[uint64]bool)
+	for _, s := range strings.Split(hs, " || ") { // From code inspection. ¯\_(ツ)_/¯
+		v, err := semmver.NewVersion(strings.TrimLeftFunc(s, func(r rune) bool { return r < '0' || '9' < r }))
+		if err != nil {
+			return nil, false, err
+		}
+		c, err := semmver.NewConstraint(s)
+		if err != nil {
+			return nil, false, err
+		}
+		need[v.Major()] = true
+		hc[v.Major()] = c
+	}
+	var new []string
+	added := make(map[string]bool)
+	cs := constraints.String()
+	for _, s := range strings.Split(cs, " || ") {
+		v, err := semmver.NewVersion(strings.TrimLeftFunc(s, func(r rune) bool { return r < '0' || '9' < r }))
+		if err != nil {
+			return nil, false, err
+		}
+		delete(need, v.Major())
+		h, ok := hc[v.Major()]
+		if !ok {
+			continue
+		}
+		if !added[s] && h.Check(v) {
+			added[s] = true
+			c, err := semmver.NewConstraint(s)
+			if err != nil {
+				return nil, false, err
+			}
+			new = append(new, c.String())
+		} else if ns := h.String(); !added[ns] {
+			added[ns] = true
+			new = append(new, ns)
+		}
+	}
+	for n := range need {
+		new = append(new, hc[n].String())
+	}
+	sort.Strings(new)
+	ns, err := semmver.NewConstraint(strings.Join(new, " || "))
+	return ns, cs != ns.String() && err == nil, err
 }
 
 func (e *packageEditor) modifySampleEvents() error {
@@ -1102,7 +1291,7 @@ func (e *packageEditor) modifyFieldsYML() error {
 				}
 			}
 
-			if e.config.FieldsYML.UseECS {
+			if e.config.FieldsYML.UseECS && !e.config.FieldsYML.DropECS {
 				changed, err := fieldsYMLUseExternalECS(f, fieldsFile)
 				if err != nil {
 					return err
@@ -1113,7 +1302,23 @@ func (e *packageEditor) modifyFieldsYML() error {
 				}
 			}
 
-			if modifiedFile {
+			if e.config.FieldsYML.DropECS {
+				changed, err := fieldsYMLDropExternalECS(f, fieldsFile)
+				if err != nil {
+					return err
+				}
+				if changed {
+					modifiedFile = true
+					e.result.FieldsYMLChanged = true
+				}
+			}
+
+			if completeRemoval(f) {
+				err = os.Remove(f.Name)
+				if err != nil {
+					return err
+				}
+			} else if modifiedFile {
 				if err = os.WriteFile(fieldsFile.Path(), []byte(f.String()), 0o644); err != nil {
 					return err
 				}
@@ -1123,9 +1328,43 @@ func (e *packageEditor) modifyFieldsYML() error {
 	return nil
 }
 
+func completeRemoval(f *ast.File) bool {
+	var fields int
+	for _, doc := range f.Docs {
+		fields += size(doc.Body)
+	}
+	return fields == 0
+}
+
+func size(n ast.Node) int {
+	switch n := n.(type) {
+	case *ast.SequenceNode:
+		return len(n.Values)
+	case *ast.MappingNode:
+		return len(n.Values)
+	default:
+		panic(fmt.Sprintf("unexpected type: %T", n))
+	}
+}
+
 //
 // Package editor helper functions.
 //
+
+func yamlHasNode(f *ast.File, yamlPath string) (ok bool, _ error) {
+	path, err := yaml.PathString(yamlPath)
+	if err != nil {
+		return false, fmt.Errorf("failed to create yaml path: %w", err)
+	}
+	_, err = path.FilterFile(f)
+	if err != nil {
+		if yaml.IsNotFoundNodeError(err) {
+			return false, nil
+		}
+		return false, fmt.Errorf("failed to get node: %w", err)
+	}
+	return true, nil
+}
 
 func yamlEditString(f *ast.File, yamlPath, value string, t token.Type) error {
 	p, err := yaml.PathString(yamlPath)
@@ -1772,8 +2011,9 @@ func fieldsYMLUseExternalECS(f *ast.File, ff fleetpkg.FieldsFile) (changed bool,
 			continue
 		}
 
-		// The type must be the same in order to do the replacement.
-		if field.Type != ecsField.DataType || (field.Type == "constant_keyword" && field.Value != "") {
+		// couldBeECS allows fields that are already ECS,
+		// but these have been dropped above.
+		if !couldBeECS(field, ecsField) {
 			continue
 		}
 
@@ -1798,11 +2038,161 @@ func fieldsYMLUseExternalECS(f *ast.File, ff fleetpkg.FieldsFile) (changed bool,
 		replacement := newNode(fmt.Sprintf("name: %s\nexternal: ecs", quoteKey(origField.Name)))
 
 		if err = p.ReplaceWithNode(f, replacement); err != nil {
-			return false, fmt.Errorf("faield to replace node: %w", err)
+			return false, fmt.Errorf("failed to replace node: %w", err)
 		}
 		changed = true
 	}
 	return changed, nil
+}
+
+// fieldsYMLDropExternalECS will find fields that can use 'external: ecs' and remove
+// their definitions. It will use the latest version of ECS to determine if the field
+// exists in ECS.
+func fieldsYMLDropExternalECS(f *ast.File, ff fleetpkg.FieldsFile) (changed bool, err error) {
+	// Use the flat representation so that we have access to the complete field name.
+	flatFields, err := fleetpkg.FlattenFields(ff.Fields)
+	if err != nil {
+		return false, err
+	}
+
+	for _, field := range flatFields {
+		// Does the field exist in ECS?
+		ecsField, _ := ecs.Lookup(field.Name, "")
+		if ecsField == nil {
+			continue
+		}
+
+		if requiredFields[field.Name] || !couldBeECS(field, ecsField) {
+			continue
+		}
+
+		// Mark for removal.
+		err = mark(f, field.YAMLPath, newNode("remove: true"))
+		if err != nil {
+			return false, err
+		}
+		changed = true
+	}
+
+	// goccy/go-yaml offers no sensible way to remove nodes.
+	// Remove nodes that have been marked or are empty in the
+	// context of field definitions and then repeat this until
+	// no more YAML nodes have been removed. There are other
+	// ways to do this, none is less awful.
+	for {
+		didChange := false
+		for _, doc := range f.Docs {
+			v := sweeper{file: f, root: doc}
+			ast.Walk(&v, doc)
+			if v.changed {
+				didChange = true
+			}
+		}
+		if !didChange {
+			break
+		}
+	}
+	return changed, nil
+}
+
+func couldBeECS(query fleetpkg.Field, ecs *ecs.Field) bool {
+	// The type must be the same in order to do the replacement,
+	// or the field is already an ECS-defined field.
+	return (query.External == "ecs" || query.Type == ecs.DataType) &&
+		// Constant keywords must remain.
+		(query.Type != "constant_keyword" || query.Value == "") &&
+		// Attributes for TSDS must remain.
+		query.MetricType == "" &&
+		query.Dimension == nil &&
+		query.DocValues == nil &&
+		query.CopyTo == "" &&
+		query.Enabled == nil &&
+		// Unit must remain.
+		query.Unit == ""
+}
+
+// Apparently these must always be present.
+var requiredFields = map[string]bool{
+	"@timestamp":            true,
+	"data_stream.dataset":   true,
+	"data_stream.namespace": true,
+	"data_stream.type":      true,
+}
+
+type sweeper struct {
+	file    *ast.File
+	root    ast.Node
+	changed bool
+}
+
+func (v *sweeper) Visit(n ast.Node) ast.Visitor {
+	switch n := n.(type) {
+	case *ast.MappingNode:
+		for i := 0; i < len(n.Values); {
+			if canRemove(n.Values[i]) {
+				n.Values = slices.Delete(n.Values, i, i+1)
+				v.changed = true
+			} else {
+				i++
+			}
+		}
+	case *ast.SequenceNode:
+		for i := 0; i < len(n.Values); {
+			if canRemove(n.Values[i]) {
+				n.Values = slices.Delete(n.Values, i, i+1)
+				v.changed = true
+			} else {
+				i++
+			}
+		}
+		if len(n.Values) == 0 {
+			switch m := up(2, v.root, n).(type) {
+			case nil:
+			case *ast.MappingNode:
+				switch s := up(1, v.root, m).(type) {
+				case nil:
+				case *ast.SequenceNode:
+					s.Values = slices.DeleteFunc(s.Values, func(e ast.Node) bool {
+						return e == m
+					})
+					v.changed = true
+				default:
+				}
+			}
+		}
+	}
+	return v
+}
+
+func canRemove(n ast.Node) bool {
+	m, ok := n.(*ast.MappingValueNode)
+	if !ok {
+		return false
+	}
+	return m.Key.GetToken().Value == "remove" && m.Value.GetToken().Value == "true"
+}
+
+// up returns the n-parent of child if it exists in the AST, or nil otherwise.
+func up(n int, root, child ast.Node) ast.Node {
+	for i := 0; i < n; i++ {
+		prev := child
+		child = ast.Parent(root, child)
+		if child == prev {
+			return nil
+		}
+	}
+	return child
+}
+
+func mark(f *ast.File, path string, n ast.Node) error {
+	p, err := yaml.PathString(path)
+	if err != nil {
+		return fmt.Errorf("failed to build YAML path from %q: %w", path, err)
+	}
+	if err = p.ReplaceWithNode(f, n); err != nil {
+		return fmt.Errorf("failed to replace node: %w", err)
+	}
+	return nil
 }
 
 // fieldsYMLKeyCleanup is a list of field names that should be removed

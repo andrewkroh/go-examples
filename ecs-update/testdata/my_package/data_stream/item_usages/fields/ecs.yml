@@ -21,10 +21,6 @@
 - external: ecs
   name: user.email
 - external: ecs
-  name: os.name
-- external: ecs
-  name: os.version
-- external: ecs
   name: source.as.number
 - external: ecs
   name: source.as.organization.name
@@ -44,5 +40,3 @@
   name: source.geo.region_name
 - external: ecs
   name: source.ip
-- external: ecs
-  name: tags
