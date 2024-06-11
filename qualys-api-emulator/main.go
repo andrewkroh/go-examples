@@ -8,7 +8,8 @@
 //
 // References
 //
-//	https://docs.qualys.com/en/vm/api/users/activity/export_activity.htm
+//		https://docs.qualys.com/en/vm/api/users/activity/export_activity.htm
+//	 https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf
 package main
 
 import (
@@ -125,6 +126,11 @@ func (*exportActivityHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 		outputFormat    string
 		truncationLimit int
 	)
+
+	if h := req.Header.Get("X-Requested-With"); h == "" {
+		http.Error(w, "Missing X-Requested-With", http.StatusBadRequest)
+		return
+	}
 
 	var err error
 	for query, values := range req.URL.Query() {
