@@ -474,10 +474,14 @@ func headline(r *EditResult) string {
 		return fmt.Sprintf("change to ECS version %v", r.BuildManifest.ECSReferenceNew)
 	case r.BuildManifest.ECSImportMappingsChanged:
 		return "removed ecs import_mappings"
+	case r.FieldsYMLChanged && fieldsYMLUseECS && fieldsYMLCleanAttributes:
+		return "Modified field definitions to use ECS and remove invalid attributes"
 	case r.FieldsYMLChanged && fieldsYMLUseECS:
 		return "Modified field definitions to use ECS"
 	case r.FieldsYMLChanged && fieldsYMLCleanAttributes:
 		return "Removed invalid attributes from fields definitions"
+	case r.FieldsYMLChanged:
+		return "Updated fields definitions"
 	case r.Manifest.DottedYAMLRemoved:
 		return "removed dotted YAML keys from manifest"
 	case r.Manifest.FormatVersionChanged:
