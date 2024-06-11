@@ -1,11 +1,15 @@
 package main
 
 import (
+	"errors"
+	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	semmver "github.com/Masterminds/semver/v3" // Masterminds
 	"github.com/andrewkroh/go-fleetpkg"
@@ -603,4 +607,109 @@ func TestUpdateConstraints(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestAllElasticIntegrations is a smoke test that executes an edit on every
+// package in the main branch of the elastic/integrations repo.
+func TestAllElasticIntegrations(t *testing.T) {
+	repoDir := cloneIntegrations(t, mirrorElasticIntegrations(t))
+
+	allPackages, err := filepath.Glob(filepath.Join(repoDir, "packages/*"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, pkgDir := range allPackages {
+		t.Run(filepath.Base(pkgDir), func(t *testing.T) {
+			pkg, err := fleetpkg.Read(pkgDir)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			var cfg EditConfig
+			cfg.Manifest.FixDottedKeys = true
+			noImportMappings := false
+			cfg.BuildManifest.ECSImportMappings = &noImportMappings
+			cfg.BuildManifest.ECSReference = "git@v8.11.0"
+			cfg.IngestPipeline.ECSVersion = "8.11.0"
+			cfg.FieldsYML.DropECS = true
+
+			_, err = Edit(pkg, cfg)
+			if err != nil {
+				// Handle known issues.
+				if pkg.Manifest.Name == "salesforce" {
+					if strings.Contains(err.Error(), "failed modifying ingest pipeline at data_stream/logout_rest/elasticsearch/ingest_pipeline/default.yml") {
+						t.Skip("goccy fails at modifying the salesforce pipeline")
+					}
+				}
+
+				t.Fatal(pkgDir, err)
+			}
+		})
+	}
+}
+
+// mirrorElasticIntegrations creates a local mirror of the elastic/integrations
+// repo inside the temp dir. If it already exists, then it will perform an update.
+func mirrorElasticIntegrations(t *testing.T) string {
+	t.Helper()
+
+	const cloneURL = `https://github.com/elastic/integrations.git`
+	clonePath := filepath.Join(os.TempDir(), "ecs-update-test/elastic-integrations")
+	t.Log("Local elastic/integrations git mirror path:", clonePath)
+
+	switch _, err := os.Stat(clonePath); {
+	case errors.Is(err, fs.ErrNotExist):
+		start := time.Now()
+		cmd := exec.Command("git", "clone", "-q", "--bare", "--depth=1", cloneURL, clonePath)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			t.Fatal(err)
+		}
+		t.Log(time.Since(start))
+	case err == nil:
+		info, _ := os.Stat(filepath.Join(clonePath, "FETCH_HEAD"))
+		if info != nil && info.ModTime().After(time.Now().Add(-1*time.Hour)) {
+			t.Log("Skipping 'git remote update' because it was updated in the last hour.")
+			break
+		}
+
+		cmd := exec.Command("git", "remote", "update")
+		cmd.Dir = clonePath
+		if err := cmd.Run(); err != nil {
+			t.Fatal(err)
+		}
+	default:
+		t.Fatal(err)
+	}
+
+	return clonePath
+}
+
+// cloneIntegrations clones the elastic/integrations repo into a test-local
+// temporary directory.
+func cloneIntegrations(t *testing.T, remote string) string {
+	t.Helper()
+
+	repoPath := filepath.Join(t.TempDir(), "ecs-update-test/elastic-integrations")
+	update := exec.Command("git", "clone", "-q", remote, repoPath)
+	update.Stdout = os.Stdout
+	update.Stderr = os.Stderr
+	if err := update.Run(); err != nil {
+		t.Fatal(err)
+	}
+
+	if testing.Verbose() {
+		cmd := exec.Command("git", "rev-parse", "HEAD")
+		cmd.Dir = repoPath
+		cmd.Stderr = os.Stderr
+		out, err := cmd.Output()
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf("Testing with elastic/integrations@%v", string(out))
+	}
+
+	return repoPath
 }

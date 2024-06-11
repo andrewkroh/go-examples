@@ -1377,10 +1377,13 @@ func yamlEditString(f *ast.File, yamlPath, value string, t token.Type) error {
 		if yaml.IsNotFoundNodeError(err) {
 			// If the key does not exist, then try to add it.
 			if idx := strings.LastIndex(yamlPath, "."); idx != -1 && len(yamlPath) > idx {
-				return yamlAddStringToMap(f, yamlPath[:idx], yamlPath[idx+1:], value, t)
+				if err = yamlAddStringToMap(f, yamlPath[:idx], yamlPath[idx+1:], value, t); err != nil {
+					return fmt.Errorf("yamlEditString failed adding new node for path %s: %w", yamlPath, err)
+				}
+				return nil
 			}
 		}
-		return err
+		return fmt.Errorf("yamlEditString failed for path %s: %w", yamlPath, err)
 	}
 
 	switch n := n.(type) {
@@ -1391,7 +1394,7 @@ func yamlEditString(f *ast.File, yamlPath, value string, t token.Type) error {
 		}
 		return nil
 	default:
-		return fmt.Errorf("unexpected field type %T found for %q", n, yamlPath)
+		return fmt.Errorf("yamlEditString unexpected field type %T found for %q", n, yamlPath)
 	}
 }
 
