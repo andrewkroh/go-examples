@@ -991,7 +991,7 @@ func (e *packageEditor) modifyManifest() error {
 			err = yamlEditString(f, "$.conditions.kibana.version",
 				newConstraint.String(), token.DoubleQuoteType)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to update kibana.version: %w", err)
 			}
 
 			e.result.Manifest.KibanaVersionChanged = true
@@ -1003,7 +1003,7 @@ func (e *packageEditor) modifyManifest() error {
 	if e.config.Manifest.AddOwnerType && e.pkg.Manifest.Owner.Type == "" {
 		err = yamlEditString(f, "$.owner.type", "elastic", token.StringType)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to update owner.type: %w", err)
 		}
 		e.result.Manifest.OwnerTypeAdded = true
 	}
