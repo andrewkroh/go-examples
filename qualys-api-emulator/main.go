@@ -8,8 +8,8 @@
 //
 // References
 //
-//		https://docs.qualys.com/en/vm/api/users/activity/export_activity.htm
-//	 https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf
+//   - https://docs.qualys.com/en/vm/api/users/activity/export_activity.htm
+//   - https://cdn2.qualys.com/docs/qualys-api-vmpc-user-guide.pdf
 package main
 
 import (
