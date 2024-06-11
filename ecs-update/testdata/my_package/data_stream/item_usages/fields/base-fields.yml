@@ -24,3 +24,13 @@
 - name: '@timestamp'
   type: date
   description: Event timestamp.
+- external: ecs
+  name: tags
+- name: process
+  type: group
+  fields:
+    - name: io
+      type: group
+      fields:
+        - name: bytes_skipped.length
+          external: ecs

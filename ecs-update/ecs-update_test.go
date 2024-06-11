@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	semmver "github.com/Masterminds/semver/v3" // Masterminds
 	"github.com/andrewkroh/go-fleetpkg"
 	"github.com/goccy/go-yaml/parser"
 	"github.com/goccy/go-yaml/token"
@@ -44,7 +45,7 @@ func TestEdit(t *testing.T) {
 	// Results
 	assert.True(t, result.Changed, "result/changed")
 
-	assert.True(t, result.BuildManifest.Changed, "result/build_manifest/changed")
+	assert.True(t, result.BuildManifest.ECSReferenceChanged, "result/build_manifest/changed")
 	assert.Equal(t, "git@8.2", result.BuildManifest.ECSReferenceOld, "result/build_manifest/ecs_old")
 	assert.Equal(t, cfg.BuildManifest.ECSReference, result.BuildManifest.ECSReferenceNew, "result/build_manifest/ecs_new")
 
@@ -378,5 +379,228 @@ func TestReplaceECSFields(t *testing.T) {
 	require.NoError(t, err)
 	if diff != expectedChange {
 		t.Errorf("unexpected changes found in %s", filepath.Base(fieldsFile.Path()))
+	}
+}
+
+func TestRemoveECSFields(t *testing.T) {
+	dir := t.TempDir()
+	if err := cp.Copy("testdata/my_package", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	pkg, err := fleetpkg.Read(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fieldsFile := pkg.DataStreams["item_usages"].Fields["base-fields.yml"]
+
+	before, err := os.ReadFile(fieldsFile.Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f, err := parser.ParseFile(fieldsFile.Path(), parser.ParseComments)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	changed, err := fieldsYMLDropExternalECS(f, fieldsFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, changed, "expected changes")
+
+	expectedChange := `
+@@ -27,10 +26,0 @@
+-- external: ecs
+-  name: tags
+-- name: process
+-  type: group
+-  fields:
+-    - name: io
+-      type: group
+-      fields:
+-        - name: bytes_skipped.length
+-          external: ecs
+`[1:]
+
+	diff, err := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
+		A: difflib.SplitLines(string(before)),
+		B: difflib.SplitLines(f.String()),
+	})
+	require.NoError(t, err)
+	if diff != expectedChange {
+		t.Errorf("unexpected changes found in %s\n%s", filepath.Base(fieldsFile.Path()), diff)
+	}
+}
+
+func TestCompleteRemoveECSFields(t *testing.T) {
+	dir := t.TempDir()
+	if err := cp.Copy("testdata/my_package", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	pkg, err := fleetpkg.Read(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fieldsFile := pkg.DataStreams["item_usages"].Fields["ecs.yml"]
+
+	before, err := os.ReadFile(fieldsFile.Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f, err := parser.ParseFile(fieldsFile.Path(), parser.ParseComments)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	changed, err := fieldsYMLDropExternalECS(f, fieldsFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.True(t, changed, "expected changes")
+	assert.True(t, completeRemoval(f), "expected file deletion")
+
+	expectedChange := `
+@@ -1,42 +1 @@
+-- external: ecs
+-  name: ecs.version
+-- external: ecs
+-  name: related.user
+-- external: ecs
+-  name: related.ip
+-- external: ecs
+-  name: event.kind
+-- external: ecs
+-  name: event.category
+-- external: ecs
+-  name: event.type
+-- external: ecs
+-  name: event.created
+-- external: ecs
+-  name: event.action
+-- external: ecs
+-  name: user.id
+-- external: ecs
+-  name: user.full_name
+-- external: ecs
+-  name: user.email
+-- external: ecs
+-  name: source.as.number
+-- external: ecs
+-  name: source.as.organization.name
+-- external: ecs
+-  name: source.geo.city_name
+-- external: ecs
+-  name: source.geo.continent_name
+-- external: ecs
+-  name: source.geo.country_iso_code
+-- external: ecs
+-  name: source.geo.country_name
+-- external: ecs
+-  name: source.geo.location
+-- external: ecs
+-  name: source.geo.region_iso_code
+-- external: ecs
+-  name: source.geo.region_name
+-- external: ecs
+-  name: source.ip
++[]
+`[1:]
+
+	diff, err := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
+		A: difflib.SplitLines(string(before)),
+		B: difflib.SplitLines(f.String()),
+	})
+	require.NoError(t, err)
+	if diff != expectedChange {
+		t.Errorf("unexpected changes found in %s\n%s", filepath.Base(fieldsFile.Path()), diff)
+	}
+}
+
+var updateConstraintsTests = []struct {
+	name        string
+	current     string
+	update      string
+	want        string
+	wantChanged bool
+}{
+	{
+		name:        "zero",
+		current:     "0",
+		update:      "0",
+		want:        "0",
+		wantChanged: false,
+	},
+	{
+		name:        "normal_updated",
+		current:     "^8.11.0",
+		update:      "^8.12.0",
+		want:        "^8.12.0",
+		wantChanged: true,
+	},
+	{
+		name:        "normal_not_updated",
+		current:     "^8.11.0",
+		update:      "^8.10.0",
+		want:        "^8.11.0",
+		wantChanged: false,
+	},
+	{
+		name:        "multi_one_updated",
+		current:     "^7.17.0 || ^8.11.0",
+		update:      "^7.17.0 || ^8.12.0",
+		want:        "^7.17.0 || ^8.12.0",
+		wantChanged: true,
+	},
+	{
+		name:        "multi_both_updated",
+		current:     "^7.17.0 || ^8.11.0",
+		update:      "^7.17.1 || ^8.12.0",
+		want:        "^7.17.1 || ^8.12.0",
+		wantChanged: true,
+	},
+	{
+		name:        "multi_not_updated",
+		current:     "^7.17.0 || ^8.11.0",
+		update:      "^7.17.0 || ^8.10.0",
+		want:        "^7.17.0 || ^8.11.0",
+		wantChanged: false,
+	},
+	{
+		name:        "multi_drop_updated",
+		current:     "^7.17.0 || ^8.11.0",
+		update:      "^8.12.0",
+		want:        "^8.12.0",
+		wantChanged: true,
+	},
+}
+
+func TestUpdateConstraints(t *testing.T) {
+	for _, test := range updateConstraintsTests {
+		t.Run(test.name, func(t *testing.T) {
+			c, err := semmver.NewConstraint(test.current)
+			if err != nil {
+				t.Fatalf("failed to parse current constraint: %v", err)
+			}
+			u, err := semmver.NewConstraint(test.update)
+			if err != nil {
+				t.Fatalf("failed to parse update constraint: %v", err)
+			}
+			got, changed, err := updateConstraints(c, u)
+			if err != nil {
+				t.Fatalf("unexpected error from updateConstraints(%s, %s): %v", test.current, test.update, err)
+			}
+			if got.String() != test.want {
+				t.Errorf("unexpected constraint from updateConstraints(%s, %s): got=%s want=%s", test.current, test.update, got, test.want)
+			}
+			if changed != test.wantChanged {
+				t.Errorf("unexpected constraint from updateConstraints(%s, %s): got=%t want=%t", test.current, test.update, changed, test.wantChanged)
+			}
+		})
 	}
 }
