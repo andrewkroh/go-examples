@@ -543,7 +543,7 @@ func changelogMessage(r *EditResult) string {
 			sb.WriteString(" reference ECS where possible")
 		}
 		if fieldsYMLDropECS {
-			sb.WriteString(" remove ECS fields where possible")
+			sb.WriteString(" remove ECS fields made redundant by the ecs@mappings component template")
 		}
 		if (fieldsYMLUseECS || fieldsYMLDropECS) && fieldsYMLCleanAttributes {
 			sb.WriteString(" and")
@@ -619,11 +619,11 @@ func summarize(r *EditResult) string {
 	}
 	if r.FieldsYMLChanged {
 		sb.WriteString("Modified the field definitions to")
-		if fieldsYMLDropECS {
-			sb.WriteString(" remove ECS fields where possible")
-		}
-		if fieldsYMLUseECS {
+		if fieldsYMLUseECS && !fieldsYMLDropECS {
 			sb.WriteString(" reference ECS where possible")
+		}
+		if fieldsYMLDropECS {
+			sb.WriteString(" remove ECS fields made redundant by the ecs@mappings component template")
 		}
 		if (fieldsYMLUseECS || fieldsYMLDropECS) && fieldsYMLCleanAttributes {
 			sb.WriteString(" and")
