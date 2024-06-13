@@ -864,6 +864,9 @@ func Edit(pkg *fleetpkg.Integration, c EditConfig) (*EditResult, error) {
 		result: &EditResult{},
 	}
 
+	if pkg.Input != nil {
+		pkg.DataStreams["_input_root"] = pkg.Input
+	}
 	err := errors.Join(
 		e.modifyBuildManifest(),
 		e.modifyManifest(),
@@ -873,6 +876,9 @@ func Edit(pkg *fleetpkg.Integration, c EditConfig) (*EditResult, error) {
 	)
 	if err != nil {
 		return nil, err
+	}
+	if pkg.Input != nil {
+		pkg.DataStreams = nil
 	}
 
 	e.result.Changed = e.result.BuildManifest.ECSReferenceChanged ||
