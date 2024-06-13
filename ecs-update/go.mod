@@ -5,7 +5,7 @@ go 1.22
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/andrewkroh/go-ecs v0.0.0-20230916014552-bb661ed278a6
-	github.com/andrewkroh/go-fleetpkg v0.0.10
+	github.com/andrewkroh/go-fleetpkg v0.0.11
 	github.com/cheggaaa/pb v1.0.29
 	github.com/coreos/go-semver v0.3.1
 	github.com/goccy/go-yaml v1.11.3
