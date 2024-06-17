@@ -1119,7 +1119,7 @@ func (e *packageEditor) modifySampleEvent(s *fleetpkg.SampleEvent, r *SampleEven
 	r.ECSVersionOld = oldECSVersion
 	r.ECSVersionNew = e.config.SampleEvent.ECSVersion
 
-	return os.WriteFile(s.Path(), buf.Bytes(), 0o644)
+	return os.WriteFile(s.Path(), bytes.TrimRight(buf.Bytes(), "\n"), 0o644)
 }
 
 func (e *packageEditor) modifyIngestPipelines() error {
