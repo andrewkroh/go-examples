@@ -2,8 +2,8 @@ github.com/Masterminds/semver/v3 v3.2.1 h1:RN9w6+7QoMeJVGyfmbcgs28Br8cvmnucEXnY0
 github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYrf8m9wsX0PNOMQ=
 github.com/andrewkroh/go-ecs v0.0.0-20230916014552-bb661ed278a6 h1:UXS7ZhcyFa1q3/P9pmIbEFjFLYOyu7UwbrUnZvudLeo=
 github.com/andrewkroh/go-ecs v0.0.0-20230916014552-bb661ed278a6/go.mod h1:mDhN1WOZsbKaV+wECV+ioF0Lgg4KxMTplkPHTqsj2gQ=
-github.com/andrewkroh/go-fleetpkg v0.0.10 h1:Cxxv954rF0C3wfzZ66N/ThTQq59WCIC4fKueU1E+/Ec=
-github.com/andrewkroh/go-fleetpkg v0.0.10/go.mod h1:JQilDTlODAFyMsV9xym87XVO3sBSLByraJ4eBOTWwG8=
+github.com/andrewkroh/go-fleetpkg v0.0.11 h1:612DdK4kpIjGHpnKkkM03TADshQhanvzdFdVGrgPRco=
+github.com/andrewkroh/go-fleetpkg v0.0.11/go.mod h1:MITAIQejOn9H4LH0t19sh1qGAlzXYnUXY4MHK3Vfg5g=
 github.com/cheggaaa/pb v1.0.29 h1:FckUN5ngEk2LpvuG0fw1GEFx6LtyY2pWI/Z2QgCnEYo=
 github.com/cheggaaa/pb v1.0.29/go.mod h1:W40334L7FMC5JKWldsTWbdGjLo0RxUKK73K+TuPxX30=
 github.com/coreos/go-semver v0.3.1 h1:yi21YpKnrx1gt5R+la8n5WgS0kCrsPp33dmEyHReZr4=
