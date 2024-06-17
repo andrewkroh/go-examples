@@ -2114,6 +2114,8 @@ func couldBeECS(query fleetpkg.Field, ecs *ecs.Field) bool {
 	return (query.External == "ecs" || query.Type == ecs.DataType) &&
 		// Constant keywords must remain.
 		(query.Type != "constant_keyword" || query.Value == "") &&
+		// Extensions must remain.
+		query.AdditionalAttributes["expected_values"] == nil &&
 		// Attributes for TSDS must remain.
 		query.MetricType == "" &&
 		query.Dimension == nil &&
