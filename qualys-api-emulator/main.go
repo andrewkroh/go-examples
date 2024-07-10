@@ -13,6 +13,7 @@
 package main
 
 import (
+	"bytes"
 	"cmp"
 	_ "embed"
 	"encoding/csv"
@@ -22,6 +23,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"os"
 	"slices"
 	"strconv"
@@ -125,6 +127,11 @@ func (*exportActivityHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 		userRole        bool
 		outputFormat    string
 		truncationLimit int
+
+		// idMax is an undocumented parameter observed in responses requiring pagination.
+		// This emulator treats id_max as a Unix timestamp in seconds that takes
+		// precedence over the 'since' parameter and is inclusive.
+		idMax *time.Time
 	)
 
 	if h := req.Header.Get("X-Requested-With"); h == "" {
@@ -174,6 +181,14 @@ func (*exportActivityHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 				http.Error(w, "invalid query param "+query, http.StatusBadRequest)
 				return
 			}
+		case "id_max":
+			sec, err := strconv.ParseInt(val, 10, 64)
+			if err != nil {
+				http.Error(w, "invalid query param "+query, http.StatusBadRequest)
+				return
+			}
+			t := time.Unix(sec, 0)
+			idMax = &t
 		default:
 			http.Error(w, "invalid query param "+query, http.StatusBadRequest)
 			return
@@ -194,20 +209,43 @@ func (*exportActivityHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	events, err := generateSampleData(since, until, truncationLimit)
+	start := since
+	if idMax != nil {
+		start = *idMax
+	}
+	events, nextPage, err := generateSampleData(start, until, truncationLimit)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Printf("Generated %d events covering from %v to %v", len(events), since, until)
+	end := until
+	if len(events) > 0 {
+		end = events[len(events)-1].Date
+	}
+	log.Printf("Generated %d events covering from %v to %v (truncated=%v).",
+		len(events), start, end, !nextPage.IsZero())
 
 	// Example response in docs shows data in descending order.
 	slices.SortFunc(events, func(a, b event) int {
 		return cmp.Compare(b.Date.UnixNano(), a.Date.UnixNano())
 	})
 
-	if err := writeCSV(w, events); err != nil {
-		log.Printf("ERROR: %v", err)
+	buf := bytes.NewBuffer(nil)
+	buf.WriteString("----BEGIN_RESPONSE_BODY_CSV\n")
+	_ = writeCSV(buf, events)
+	buf.WriteString("----END_RESPONSE_BODY_CSV\n")
+
+	if !nextPage.IsZero() {
+		buf.WriteString("----BEGIN_RESPONSE_FOOTER_CSV\n")
+		buf.WriteString("WARNING\n")
+		buf.WriteString(`"CODE","TEXT","URL"` + "\n")
+		fmt.Fprintf(w, `"1980","%d record limit exceeded. Use URL to get next batch of results.","%s"`+"\n", truncationLimit, paginationURL(req, nextPage))
+		buf.WriteString("----END_RESPONSE_FOOTER_CSV\n")
+	}
+
+	if _, err := w.Write(buf.Bytes()); err != nil {
+		log.Println("ERROR writing response:", err)
+		return
 	}
 }
 
@@ -231,6 +269,19 @@ func writeCSV(w io.Writer, events []event) error {
 	}
 
 	return nil
+}
+
+func paginationURL(req *http.Request, idMax time.Time) string {
+	u := url.URL{
+		Scheme:   "http",
+		Host:     req.Host,
+		Path:     req.URL.Path,
+		RawQuery: req.URL.RawQuery,
+	}
+	q := u.Query()
+	q.Set("id_max", strconv.FormatInt(idMax.Unix(), 10))
+	u.RawQuery = q.Encode()
+	return u.String()
 }
 
 var (
@@ -289,22 +340,24 @@ func newRandomEvent(ts time.Time) event {
 	}
 }
 
-func generateSampleData(from, to time.Time, limit int) (events []event, err error) {
+func generateSampleData(from, to time.Time, limit int) (events []event, next time.Time, err error) {
 	if !from.Before(to) {
-		return nil, fmt.Errorf("'from' must be earlier than 'to'")
+		return nil, time.Time{}, fmt.Errorf("'from' must be earlier than 'to'")
 	}
 
 	t := from
+	events = append(events, newRandomEvent(t))
 	for {
 		t = t.Add(newDataInterval)
 		if !t.Before(to) {
 			break
 		}
 		if limit > 0 && len(events) >= limit {
+			next = t
 			break
 		}
 		events = append(events, newRandomEvent(t))
 	}
 
-	return events, nil
+	return events, next, nil
 }
