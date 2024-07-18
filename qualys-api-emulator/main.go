@@ -239,7 +239,7 @@ func (*exportActivityHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 		buf.WriteString("----BEGIN_RESPONSE_FOOTER_CSV\n")
 		buf.WriteString("WARNING\n")
 		buf.WriteString(`"CODE","TEXT","URL"` + "\n")
-		fmt.Fprintf(w, `"1980","%d record limit exceeded. Use URL to get next batch of results.","%s"`+"\n", truncationLimit, paginationURL(req, nextPage))
+		fmt.Fprintf(buf, `"1980","%d record limit exceeded. Use URL to get next batch of results.","%s"`+"\n", truncationLimit, paginationURL(req, nextPage))
 		buf.WriteString("----END_RESPONSE_FOOTER_CSV\n")
 	}
 
