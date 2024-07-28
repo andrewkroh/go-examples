@@ -114,7 +114,8 @@ TestGoldenFiles/key-value-color
 [0m[1;34m.bar.list[1][0m = [33m"four"
 [0m
 -- testdata/object.json --
-[1;34m.foo.list[0][0m = [33m"one"
+[1;34m.foo.bar\.baz.x[0m = [33m"y"
+[0m[1;34m.foo.list[0][0m = [33m"one"
 [0m[1;34m.foo.list[1][0m = [33m"two"
 [0m
 -- testdata/objects.ndjson --

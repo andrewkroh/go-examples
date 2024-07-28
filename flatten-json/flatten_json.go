@@ -107,7 +107,7 @@ func flatten(root string, v any, p *pairs) {
 
 		for _, k := range keys {
 			v = t[k]
-			flatten(join(root, k), v, p)
+			flatten(join(root, escapeDots(k)), v, p)
 		}
 	case []interface{}:
 		for i, v := range t {
@@ -127,6 +127,10 @@ func join(a, b string) string {
 		return a + b
 	}
 	return a + "." + b
+}
+
+func escapeDots(s string) string {
+	return strings.ReplaceAll(s, ".", `\.`)
 }
 
 type formatter interface {

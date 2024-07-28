@@ -111,6 +111,7 @@ TestGoldenFiles/key-value
 .bar.list[0] = "three"
 .bar.list[1] = "four"
 -- testdata/object.json --
+.foo.bar\.baz.x = "y"
 .foo.list[0] = "one"
 .foo.list[1] = "two"
 -- testdata/objects.ndjson --

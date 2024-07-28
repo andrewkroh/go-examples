@@ -119,6 +119,7 @@ TestGoldenFiles/json
 }
 -- testdata/object.json --
 {
+  ".foo.bar\\.baz.x": "y",
   ".foo.list[0]": "one",
   ".foo.list[1]": "two"
 }
