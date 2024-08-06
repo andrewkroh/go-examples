@@ -31,6 +31,8 @@ import (
 
 const labelColor = "FFFFFF"
 
+const inactiveLabelColor = "D3D3D3"
+
 var integrationsRepoPath string
 
 func init() {
@@ -132,6 +134,12 @@ func run() error {
 	slices.SortFunc(noAssociation, compareLabel)
 	for _, label := range noAssociation {
 		fmt.Println(label.Name, "|", label.Description)
+
+		if !strings.EqualFold(label.Color, inactiveLabelColor) {
+			ghCommands = append(ghCommands, fmt.Sprintf(
+				"gh label edit --repo=elastic/integrations %q --color %q",
+				label.Name, inactiveLabelColor))
+		}
 	}
 
 	fmt.Println("----COMMANDS TO CREATE/EDIT----")
