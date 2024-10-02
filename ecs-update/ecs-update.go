@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"maps"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -31,7 +32,6 @@ import (
 	"github.com/goccy/go-yaml/printer"
 	"github.com/goccy/go-yaml/token"
 	"github.com/mitchellh/go-wordwrap"
-	"golang.org/x/exp/maps"
 
 	"github.com/andrewkroh/go-ecs"
 	"github.com/andrewkroh/go-fleetpkg"
@@ -601,7 +601,7 @@ func summarize(r *EditResult) string {
 		if len(oldVersions) > 0 {
 			fmt.Fprintf(&sb, "The set ecs.version processor in pipelines was changed %v. "+
 				"Previously the pipeline was setting version %v. ",
-				newVersion, strings.Join(maps.Keys(oldVersions), ", "))
+				newVersion, strings.Join(slices.Sorted(maps.Keys(oldVersions)), ", "))
 		}
 
 		var onFailureChanges int
@@ -645,7 +645,7 @@ func summarize(r *EditResult) string {
 		if len(oldVersions) > 0 {
 			fmt.Fprintf(&sb, "The ecs.version in sample_event.json files was changed to %v. "+
 				"Previously sample_event.json files contained %v. ",
-				newVersion, strings.Join(maps.Keys(oldVersions), ", "))
+				newVersion, strings.Join(slices.Sorted(maps.Keys(oldVersions)), ", "))
 		}
 	}
 
