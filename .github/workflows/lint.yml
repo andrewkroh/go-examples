@@ -36,5 +36,5 @@ jobs:
       - name: Run golangci-lint
         run: >
           go run .github/each-module.go -cmd
-          'golangci-lint run --new-from-rev="HEAD~1" --out-format=line-number,github-actions --path-prefix=$PATH_PREFIX ./...'
+          'golangci-lint run --new-from-rev="HEAD~1" --out-format=colored-line-number --path-prefix=$PATH_PREFIX ./...'
 
