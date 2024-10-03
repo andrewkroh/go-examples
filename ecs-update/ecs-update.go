@@ -1695,9 +1695,9 @@ func newErrorMessageProcessor(t processorType) ast.Node {
 %s:
   field: error.message
   value: >-
-    Processor '{{ _ingest.on_failure_processor_type }}'
-    {{#_ingest.on_failure_processor_tag}}with tag '{{ _ingest.on_failure_processor_tag }}'
-    {{/_ingest.on_failure_processor_tag}}failed with message '{{ _ingest.on_failure_message }}'
+    Processor '{{{ _ingest.on_failure_processor_type }}}'
+    {{{#_ingest.on_failure_processor_tag}}}with tag '{{{ _ingest.on_failure_processor_tag }}}'
+    {{{/_ingest.on_failure_processor_tag}}}failed with message '{{{ _ingest.on_failure_message }}}'
 `, t)), parser.ParseComments)
 	if err != nil {
 		panic(err)
