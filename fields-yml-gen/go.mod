@@ -1,9 +1,9 @@
 module github.com/andrewkroh/go-examples/fields-yml-gen
 
-go 1.22
+go 1.23
 
 require (
-	github.com/andrewkroh/go-ecs v0.0.0-20240213025458-42459d0ef898
+	github.com/andrewkroh/go-ecs v0.0.0-20241212150051-c57449f8496d
 	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v3 v3.0.1
 )

@@ -1,7 +1,7 @@
 github.com/Masterminds/semver/v3 v3.2.1 h1:RN9w6+7QoMeJVGyfmbcgs28Br8cvmnucEXnY0rYXWg0=
 github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYrf8m9wsX0PNOMQ=
-github.com/andrewkroh/go-ecs v0.0.0-20240909223204-f46d5349dd78 h1:okOgj87+erHmgyZk0nCpkuoFv09RuXkfLk3R3Rq5CZ0=
-github.com/andrewkroh/go-ecs v0.0.0-20240909223204-f46d5349dd78/go.mod h1:yAqyNuh4x3wu7M65qiX67MHjFIkgoiMXCKiokv33S2E=
+github.com/andrewkroh/go-ecs v0.0.0-20241212150051-c57449f8496d h1:ISFO7GVv0tOgPoIKIieX0f+B3tiNni97mEMSBsnj4L4=
+github.com/andrewkroh/go-ecs v0.0.0-20241212150051-c57449f8496d/go.mod h1:yAqyNuh4x3wu7M65qiX67MHjFIkgoiMXCKiokv33S2E=
 github.com/andrewkroh/go-fleetpkg v0.0.13 h1:qfXXCcKvV/w9yL3NKex8MIgC+U1OholAcq3n/st2d+U=
 github.com/andrewkroh/go-fleetpkg v0.0.13/go.mod h1:oJsZtFyWWZplxQrPYK/gVoNzJvJpbJAy3phC6QGwsto=
 github.com/cheggaaa/pb v1.0.29 h1:FckUN5ngEk2LpvuG0fw1GEFx6LtyY2pWI/Z2QgCnEYo=
