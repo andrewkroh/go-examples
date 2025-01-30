@@ -4,15 +4,15 @@ go 1.23
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
-	github.com/andrewkroh/go-ecs v0.0.0-20241212150051-c57449f8496d
-	github.com/andrewkroh/go-fleetpkg v0.0.13
+	github.com/andrewkroh/go-ecs v0.0.0-20250130160059-3ffc1f717515
+	github.com/andrewkroh/go-fleetpkg v0.0.15
 	github.com/cheggaaa/pb v1.0.29
 	github.com/coreos/go-semver v0.3.1
 	github.com/goccy/go-yaml v1.12.0
 	github.com/mitchellh/go-wordwrap v1.0.1
 	github.com/otiai10/copy v1.14.0
 	github.com/pmezard/go-difflib v1.0.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 )
 
 require (

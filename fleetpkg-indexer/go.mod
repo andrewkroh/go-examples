@@ -3,8 +3,8 @@ module github.com/andrewkroh/go-examples/fleetpkg-indexer
 go 1.23
 
 require (
-	github.com/andrewkroh/go-ecs v0.0.0-20241212150051-c57449f8496d
-	github.com/andrewkroh/go-fleetpkg v0.0.13
+	github.com/andrewkroh/go-ecs v0.0.0-20250130160059-3ffc1f717515
+	github.com/andrewkroh/go-fleetpkg v0.0.15
 	github.com/elastic/go-elasticsearch/v8 v8.16.0
 	golang.org/x/exp v0.0.0-20241210194714-1829a127f884
 )
