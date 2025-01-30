@@ -1422,13 +1422,6 @@ func yamlAddStringToMap(f *ast.File, yamlPath, key, value string, t token.Type) 
 	// Get the original map.
 	var orig *ast.MappingNode
 	switch v := n.(type) {
-	// For maps with a single key. Relates https://github.com/goccy/go-yaml/issues/310.
-	case *ast.MappingValueNode:
-		orig = ast.Mapping(
-			token.New(":", ":", n.GetToken().Position),
-			false,
-			v)
-	// For maps with a more than one key.
 	case *ast.MappingNode:
 		orig = v
 	default:
@@ -1577,10 +1570,6 @@ func fixDottedMapKeys(f *ast.File, mapPath string) (bool, error) {
 
 	var changed bool
 	switch v := node.(type) {
-	// For maps with a single key. Relates https://github.com/goccy/go-yaml/issues/310.
-	case *ast.MappingValueNode:
-		return fixDottedMapNode(v)
-	// For maps with a more than one key.
 	case *ast.MappingNode:
 		for _, n := range v.Values {
 			itemChanged, err := fixDottedMapNode(n)
@@ -1611,11 +1600,11 @@ func fixDottedMapNode(original *ast.MappingValueNode) (bool, error) {
 	}
 
 	node := newNode(before + ":\n  " + after + ": PLACEHOLDER")
-	newMapValueNode := node.(*ast.MappingValueNode)
+	newMapValueNode := node.(*ast.MappingNode).Values[0]
 
 	// Replace the placeholder with the original value.
 	// This will allow complex YAML structures to be represented correctly.
-	newMapValueNode.Value.(*ast.MappingValueNode).Value = original.Value
+	newMapValueNode.Value.(*ast.MappingNode).Values[0].Value = original.Value
 	newMapValueNode.AddColumn(original.Start.Position.IndentNum)
 
 	original.Key = newMapValueNode.Key
@@ -2180,11 +2169,12 @@ func (v *sweeper) Visit(n ast.Node) ast.Visitor {
 }
 
 func canRemove(n ast.Node) bool {
-	m, ok := n.(*ast.MappingValueNode)
-	if !ok {
+	m, ok := n.(*ast.MappingNode)
+	if !ok || len(m.Values) != 1 {
 		return false
 	}
-	return m.Key.GetToken().Value == "remove" && m.Value.GetToken().Value == "true"
+	v := m.Values[0]
+	return v.Key.GetToken().Value == "remove" && v.Value.GetToken().Value == "true"
 }
 
 // up returns the n-parent of child if it exists in the AST, or nil otherwise.

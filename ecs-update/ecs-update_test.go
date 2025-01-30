@@ -621,10 +621,6 @@ func TestAllElasticIntegrations(t *testing.T) {
 
 	for _, pkgDir := range allPackages {
 		t.Run(filepath.Base(pkgDir), func(t *testing.T) {
-			if strings.HasSuffix(t.Name(), "/cloud_asset_inventory") {
-				t.Skip("Test is panicking. See https://github.com/andrewkroh/go-examples/issues/41")
-			}
-
 			pkg, err := fleetpkg.Read(pkgDir)
 			if err != nil {
 				t.Fatal(err)
@@ -640,13 +636,6 @@ func TestAllElasticIntegrations(t *testing.T) {
 
 			_, err = Edit(pkg, cfg)
 			if err != nil {
-				// Handle known issues.
-				if pkg.Manifest.Name == "salesforce" {
-					if strings.Contains(err.Error(), "failed modifying ingest pipeline at data_stream/logout_rest/elasticsearch/ingest_pipeline/default.yml") {
-						t.Skip("goccy fails at modifying the salesforce pipeline")
-					}
-				}
-
 				t.Fatal(pkgDir, err)
 			}
 		})
