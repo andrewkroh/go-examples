@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
-	github.com/andrewkroh/go-ecs v0.0.0-20241212150051-c57449f8496d
+	github.com/andrewkroh/go-ecs v0.0.0-20250130160059-3ffc1f717515
 	github.com/andrewkroh/go-fleetpkg v0.0.15
 	github.com/cheggaaa/pb v1.0.29
 	github.com/coreos/go-semver v0.3.1
