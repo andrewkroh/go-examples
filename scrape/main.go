@@ -81,10 +81,10 @@ func main() {
 					switch text {
 					case "yes", "yes*", "yes *":
 						p.Required = true
-					case "no":
+					case "no", "encouraged":
 						p.Required = false
 					default:
-						panic("unknown value " + text + " for " + processorTitle)
+						panic("unknown value '" + text + "' for processor '" + processorTitle + "'")
 					}
 				case 2:
 					if text != "-" {
