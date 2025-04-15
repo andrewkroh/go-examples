@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/fleet-variables
 
-go 1.23
+go 1.24.2
 
 require github.com/andrewkroh/go-fleetpkg v0.0.15
 

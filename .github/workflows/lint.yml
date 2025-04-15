@@ -21,13 +21,9 @@ jobs:
         with:
           fetch-depth: '0'
 
-      - name: Read .go-version file
-        id: goversion
-        run: echo "version=$(cat .go-version)" >> $GITHUB_OUTPUT
-
       - uses: actions/setup-go@v5
         with:
-          go-version: "${{ steps.goversion.outputs.version }}"
+          go-version: stable
           cache-dependency-path: "*/*.sum"
 
       - name: Install golangci-lint

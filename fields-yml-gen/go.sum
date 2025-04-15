@@ -1,5 +1,5 @@
-github.com/andrewkroh/go-ecs v0.0.0-20250130160059-3ffc1f717515 h1:kdk3FMq9RYIZkXe07O7VlifqI+iwnUtMFuUA5OWR1/g=
-github.com/andrewkroh/go-ecs v0.0.0-20250130160059-3ffc1f717515/go.mod h1:yAqyNuh4x3wu7M65qiX67MHjFIkgoiMXCKiokv33S2E=
+github.com/andrewkroh/go-ecs v0.0.0-20250403212425-698dfdff5a69 h1:KQCzRzyixaMbbIC/tsz/OFKV2EkpNnwnLzYfef2rIoE=
+github.com/andrewkroh/go-ecs v0.0.0-20250403212425-698dfdff5a69/go.mod h1:htqUZwd2Q7UJZwHIpxVVmDyByZSef6u6PsQBwroO568=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

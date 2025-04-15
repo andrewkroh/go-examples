@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/scrape
 
-go 1.24.0
+go 1.24.2
 
 require github.com/gocolly/colly/v2 v2.2.0
 
