@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/qualys-api-emulator
 
-go 1.22
+go 1.24.2
 
 require (
 	github.com/gorilla/handlers v1.5.2

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/antlr/antlr4/runtime/Go/antlr/v4"
+	"github.com/antlr4-go/antlr/v4"
 	"go.uber.org/multierr"
 
 	"github.com/andrewkroh/go-examples/if-expression/antlr/ifexpr/parser"
@@ -220,14 +220,14 @@ func (el *errorCollector) SyntaxError(recognizer antlr.Recognizer, offendingSymb
 	el.errs = append(el.errs, fmt.Errorf("line %d:%d %v", line, column, msg))
 }
 
-func (el *errorCollector) ReportAmbiguity(recognizer antlr.Parser, dfa *antlr.DFA, startIndex, stopIndex int, exact bool, ambigAlts *antlr.BitSet, configs antlr.ATNConfigSet) {
+func (el *errorCollector) ReportAmbiguity(recognizer antlr.Parser, dfa *antlr.DFA, startIndex, stopIndex int, exact bool, ambigAlts *antlr.BitSet, configs *antlr.ATNConfigSet) {
 	panic("implement me")
 }
 
-func (el *errorCollector) ReportAttemptingFullContext(recognizer antlr.Parser, dfa *antlr.DFA, startIndex, stopIndex int, conflictingAlts *antlr.BitSet, configs antlr.ATNConfigSet) {
+func (el *errorCollector) ReportAttemptingFullContext(recognizer antlr.Parser, dfa *antlr.DFA, startIndex, stopIndex int, conflictingAlts *antlr.BitSet, configs *antlr.ATNConfigSet) {
 	panic("implement me")
 }
 
-func (el *errorCollector) ReportContextSensitivity(recognizer antlr.Parser, dfa *antlr.DFA, startIndex, stopIndex, prediction int, configs antlr.ATNConfigSet) {
+func (el *errorCollector) ReportContextSensitivity(recognizer antlr.Parser, dfa *antlr.DFA, startIndex, stopIndex, prediction int, configs *antlr.ATNConfigSet) {
 	panic("implement me")
 }

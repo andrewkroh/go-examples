@@ -1,11 +1,11 @@
 module github.com/andrewkroh/go-examples/elastic-package-changelog
 
-go 1.22
+go 1.24.2
 
 require (
 	github.com/coreos/go-semver v0.3.1
-	github.com/spf13/cobra v1.8.0
-	github.com/spf13/pflag v1.0.5
+	github.com/spf13/cobra v1.9.1
+	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/zap v1.27.0
 	gopkg.in/yaml.v3 v3.0.1
