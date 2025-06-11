@@ -145,6 +145,15 @@ type field struct {
 	ECSDataType string `json:"@extra.ecs_data_type,omitempty"`
 }
 
+// ingestProcessor is a representation of a single processor in an ingest pipeline.
+type ingestProcessor struct {
+	commonFields
+	Pipeline  string              `json:"pipeline"`       // Pipeline file name (e.g. default.yml).
+	Type      string              `json:"processor_type"` // Process type (e.g. 'set' or 'append')
+	Path      string              `json:"processor_path"` // JSON path to the processor.
+	Processor *fleetpkg.Processor `json:"processor"`      // Flattened representation of the processor beginning with the processor type.
+}
+
 func main() {
 	flag.Parse()
 
@@ -433,7 +442,35 @@ func main() {
 				})
 			}
 
-			// TODO: Data stream pipeline
+			// Data stream ingest pipeline processors.
+			for name, pipeline := range ds.Pipelines {
+				commonFields := makeCommonFields(
+					[]string{"ingest_processor"},
+					dataStreamToPolicyTemplates[dsName],
+					[]string{dsName},
+					allDataStreamInputs,
+					sourceURL(commit, pipeline.Path()),
+				)
+				// NOTE: This does not recursively traverse into the processor's on_failure lists.
+				for i, processor := range pipeline.Processors {
+					addBulkDoc(ingestProcessor{
+						commonFields: commonFields,
+						Pipeline:     name,
+						Type:         processor.Type,
+						Processor:    processor,
+						Path:         ".processors[" + strconv.Itoa(i) + "]",
+					})
+				}
+				for i, processor := range pipeline.OnFailure {
+					addBulkDoc(ingestProcessor{
+						commonFields: commonFields,
+						Pipeline:     name,
+						Type:         processor.Type,
+						Processor:    processor,
+						Path:         ".on_failure[" + strconv.Itoa(i) + "]",
+					})
+				}
+			}
 
 			// Flatten the fields.
 			flatFields, err := fleetpkg.FlattenFields(ds.AllFields())
