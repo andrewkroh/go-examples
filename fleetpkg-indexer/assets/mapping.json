@@ -48,6 +48,9 @@
                 },
                 "type": "keyword"
             },
+            "processor": {
+                "type": "flattened"
+            },
             "sample_event": {
                 "type": "flattened"
             },
