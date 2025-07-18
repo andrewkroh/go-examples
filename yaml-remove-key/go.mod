@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/yaml-remove-key
 
-go 1.24.2
+go 1.24.5
 
 require (
 	github.com/stretchr/testify v1.10.0

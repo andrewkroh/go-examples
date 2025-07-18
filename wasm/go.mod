@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/wasm
 
-go 1.24.2
+go 1.24.5
 
 require (
 	github.com/dustin/go-humanize v1.0.1

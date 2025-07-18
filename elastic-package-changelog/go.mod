@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/elastic-package-changelog
 
-go 1.24.2
+go 1.24.5
 
 require (
 	github.com/coreos/go-semver v0.3.1

@@ -1,6 +1,6 @@
 module github.com/andrewkroh/go-examples/pr-watch
 
-go 1.24.2
+go 1.24.5
 
 require (
 	github.com/google/go-github v17.0.0+incompatible
