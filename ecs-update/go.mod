@@ -1,11 +1,11 @@
 module github.com/andrewkroh/go-examples/ecs-update
 
-go 1.24.2
+go 1.24.5
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
-	github.com/andrewkroh/go-ecs v0.0.0-20250403212425-698dfdff5a69
-	github.com/andrewkroh/go-fleetpkg v0.0.15
+	github.com/andrewkroh/go-ecs v0.0.0-20250619223214-200a8d95d5c0
+	github.com/andrewkroh/go-fleetpkg v0.0.17
 	github.com/cheggaaa/pb v1.0.29
 	github.com/coreos/go-semver v0.3.1
 	github.com/goccy/go-yaml v1.17.1

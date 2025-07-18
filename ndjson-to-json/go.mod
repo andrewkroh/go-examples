@@ -1,3 +1,3 @@
 module github.com/andrewkroh/go-examples/ndjson-to-json
 
-go 1.24.2
+go 1.24.5
