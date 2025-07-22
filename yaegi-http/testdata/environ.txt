@@ -1,0 +1,6 @@
+# Should not allow environment variable manipulation. Expect empty value or error.
+
+! yaegi-http -prog $PROGRAMS/environ.go
+stderr 'import "os" error: unable to find source related to: "os"'
+! stdout .
+

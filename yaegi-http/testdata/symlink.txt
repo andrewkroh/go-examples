@@ -1,0 +1,6 @@
+# Should not allow creation of symlinks to sensitive files.
+
+! yaegi-http -prog $PROGRAMS/symlink.go
+stderr 'import "os" error: unable to find source related to: "os"'
+! exists passwd-link
+

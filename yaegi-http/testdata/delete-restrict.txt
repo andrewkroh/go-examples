@@ -1,0 +1,6 @@
+! yaegi-http -seccomp=false -landlock=false -prog $PROGRAMS/delete.go
+stderr 'unable to find source related to: "io/ioutil"'
+exists flag.txt
+
+-- flag.txt --
+hello world!

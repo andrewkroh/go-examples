@@ -1,0 +1,9 @@
+# Should not allow creation of symlinks to sensitive files.
+
+[!linux] skip 'requires linux'
+[!arm64] skip 'requires arm64'
+
+! yaegi-http -restrict=false -seccomp=true -landlock=false -prog $PROGRAMS/symlink.go
+stderr 'symlink failed: symlink /etc/passwd passwd-link: operation not permitted'
+! exists passwd-link
+

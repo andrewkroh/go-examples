@@ -7,10 +7,10 @@ httpjson processors.
 
 ## Overview
 
-The application embeds a Go program (`testdata/job.go`) that performs HTTP
-requests and processes responses. Instead of compiling these programs, they are
-interpreted at runtime using Yaegi, allowing for dynamic execution of Go code
-without the need to compile.
+The application executes a Go program (e.g. `testdata/prorams/ipify.go`) that
+performs HTTP requests and processes responses. Instead of compiling these
+programs, they are interpreted at runtime using Yaegi, allowing for dynamic
+execution of Go code without the need to compile.
 
 ## How It Works
 
@@ -80,6 +80,9 @@ to stdout.
   limitations)
 - Type Safety: Maintains Go's type system benefits
 - Standard Library: Can use most of Go's standard library
+- **Supports stream processing**: CEL and httpjson process the full HTTP
+  response into memory before delivery events. This is a problem for large
+  responses such as the 100+MB Recorded Future CSV files.
 
 ### Disadvantages
 
@@ -95,9 +98,12 @@ Since the sandboxing capabilities may not be as strong as other solutions,
 consider additional isolation mechanisms:
 
 - Process Isolation: Run in separate processes
-- seccomp Filters: Restrict system calls
+- seccomp Filters: Restrict system calls (requires Linux)
+- Landlock LSM: Restrict file system and tcp network access (requires Linux)
 - Linux Namespaces: Isolate resources
 - Execution Timeouts: Prevent infinite loops
+
+_Seccomp and Landlock are demonstrated in the example._
 
 ## Yaegi Limitations
 

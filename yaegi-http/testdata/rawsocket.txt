@@ -1,0 +1,5 @@
+# Should not allow non-HTTP network connections. Expect error about network operation not permitted or blocked.
+
+! yaegi-http -prog $PROGRAMS/rawsocket.go
+stderr 'import "net" error: unable to find source related to: "net"'
+
