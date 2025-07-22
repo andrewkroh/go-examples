@@ -31,14 +31,16 @@ func init() {
 	flagSet.StringVar(&programFile, "prog", "", "program to run (required)")
 	flagSet.BoolVar(&restrictStdlib, "restrict", true, "restrict access to stdlib os and io/ioutil packages")
 	flagSet.BoolVar(&seccompEnabled, "seccomp", true, "apply Linux sandboxing using seccomp-bpf filtering")
-	flagSet.BoolVar(&landlockEnabled, "landlock", true, "apply Linux sandboxing using landlock-lsm")
+	flagSet.BoolVar(&landlockFSEnabled, "landlock-fs", true, "apply Linux filesystem sandboxing using landlock-lsm")
+	flagSet.BoolVar(&landlockNetEnabled, "landlock-net", true, "apply Linux network sandboxing using landlock-lsm")
 }
 
 var (
-	programFile     string
-	restrictStdlib  bool
-	seccompEnabled  bool
-	landlockEnabled bool
+	programFile        string
+	restrictStdlib     bool
+	seccompEnabled     bool
+	landlockFSEnabled  bool
+	landlockNetEnabled bool
 )
 
 var restrictStdlibOnce = sync.OnceFunc(func() {
@@ -86,7 +88,7 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-	if landlockEnabled {
+	if landlockFSEnabled || landlockNetEnabled {
 		if err := setupLandlock(); err != nil {
 			log.Fatal("Failed to sandbox with landlock-lsm", err)
 		}
@@ -198,22 +200,31 @@ func setupLandlock() error {
 		return nil
 	}
 
-	err := landlock.V4.Restrict(
-		landlock.RODirs(
-			"/etc/pki",
-			"/etc/ssl").
-			IgnoreIfMissing(),
-		landlock.ROFiles(
-			"/etc/hosts",
-			"/etc/resolv.conf",
-			"/etc/nsswitch.conf",
-			"/etc/localtime").
-			IgnoreIfMissing(),
-		landlock.ConnectTCP(53),
-		landlock.ConnectTCP(443),
-	)
-	if err != nil {
-		return fmt.Errorf("could not setup linux landlock-lsm policy: %w", err)
+	if landlockFSEnabled {
+		err := landlock.V4.RestrictPaths(
+			landlock.RODirs(
+				"/etc/pki",
+				"/etc/ssl").
+				IgnoreIfMissing(),
+			landlock.ROFiles(
+				"/etc/hosts",
+				"/etc/resolv.conf",
+				"/etc/nsswitch.conf",
+				"/etc/localtime").
+				IgnoreIfMissing(),
+		)
+		if err != nil {
+			return fmt.Errorf("could not setup linux landlock-lsm filesystem policy: %w", err)
+		}
+	}
+	if landlockNetEnabled {
+		err := landlock.V4.RestrictNet(
+			landlock.ConnectTCP(53),
+			landlock.ConnectTCP(443),
+		)
+		if err != nil {
+			return fmt.Errorf("could not setup linux landlock-lsm network policy: %w", err)
+		}
 	}
 	slog.Info("Linux Landlock-LSM policy setup complete.")
 	return nil

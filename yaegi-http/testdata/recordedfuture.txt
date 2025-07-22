@@ -2,7 +2,7 @@ serve ip.csv
 env YAEGI_HTTP_API_KEY=fake-key
 env YAEGI_HTTP_ENTITY=ip
 env YAEGI_HTTP_LIST=risklist
-yaegi-http -prog $PROGRAMS/recordedfuture.go
+yaegi-http -landlock-net=false -prog $PROGRAMS/recordedfuture.go
 cmp stdout want.txt
 
 -- ip.csv --

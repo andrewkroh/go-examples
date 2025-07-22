@@ -4,7 +4,7 @@
 [!linux] skip 'requires linux'
 [!arm64] skip 'requires arm64'
 
- yaegi-http -restrict=false -landlock=false -seccomp=true -prog $PROGRAMS/environ.go
+ yaegi-http -restrict=false -landlock-fs=false -seccomp=true -prog $PROGRAMS/environ.go
 cmp stdout want.txt
 
 -- want.txt --

@@ -3,7 +3,7 @@ env YAEGI_HTTP_API_KEY=fake-key
 env YAEGI_HTTP_ENTITY=ip
 env YAEGI_HTTP_LIST=risklist
 env YAEGI_HTTP_CURSOR=2a5ae964a0699780fc6fe2b05ac002dc
-yaegi-http -prog $PROGRAMS/recordedfuture.go
+yaegi-http -landlock-net=false -prog $PROGRAMS/recordedfuture.go
 ! stdout .
 
 -- ip.csv --

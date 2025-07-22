@@ -2,6 +2,6 @@
 
 [!linux] skip 'requires linux'
 
-! yaegi-http -restrict=false -seccomp=false -landlock=true -prog $PROGRAMS/rawsocket.go
+! yaegi-http -restrict=false -seccomp=false -landlock-fs=true -prog $PROGRAMS/rawsocket.go
 stderr 'raw socket dial failed: dial tcp 198.51.100.1:22: connect: permission denied'
 

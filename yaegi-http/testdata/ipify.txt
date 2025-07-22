@@ -1,5 +1,5 @@
 serve response.json
-yaegi-http -prog $PROGRAMS/ipify.go
+yaegi-http -landlock-net=false -prog $PROGRAMS/ipify.go
 cmp stdout response.json
 
 -- response.json --
