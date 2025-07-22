@@ -1,0 +1,5 @@
+# Should not allow binding to ports. Expect error about permission denied or address in use.
+
+! yaegi-http -prog $PROGRAMS/bind.go
+stderr 'import "net" error: unable to find source related to: "net"'
+

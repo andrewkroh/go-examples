@@ -1,0 +1,2 @@
+yaegi-http -prog $PROGRAMS/ipify.go
+stdout {"ip":".+"}

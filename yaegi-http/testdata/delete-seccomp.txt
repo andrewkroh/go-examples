@@ -1,0 +1,9 @@
+[!linux] skip 'requires linux'
+[!arm64] skip 'requires arm64'
+
+! yaegi-http -restrict=false -seccomp=true -landlock=false -prog $PROGRAMS/delete.go
+stderr 'could not remove flag file: remove flag.txt: operation not permitted'
+exists flag.txt
+
+-- flag.txt --
+hello world!

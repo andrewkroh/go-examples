@@ -1,0 +1,6 @@
+# Should not allow file creation or writing. Expect error about permission denied or operation not permitted.
+
+! yaegi-http -prog $PROGRAMS/filewrite.go
+stderr 'import "os" error: unable to find source related to: "os"'
+! exists evil.txt
+

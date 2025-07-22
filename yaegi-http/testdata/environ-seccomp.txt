@@ -1,0 +1,11 @@
+# Test if seccomp can restrict environment variable manipulation.
+# Given that env var changes happen in userspace, seccomp has no effect.
+
+[!linux] skip 'requires linux'
+[!arm64] skip 'requires arm64'
+
+ yaegi-http -restrict=false -landlock=false -seccomp=true -prog $PROGRAMS/environ.go
+cmp stdout want.txt
+
+-- want.txt --
+{"environ":"1234"}

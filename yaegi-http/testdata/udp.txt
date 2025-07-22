@@ -1,0 +1,5 @@
+# Should not allow UDP network connections. Expect error about network operation not permitted.
+
+! yaegi-http -prog $PROGRAMS/udp.go
+stderr 'import "net" error: unable to find source related to: "net"'
+

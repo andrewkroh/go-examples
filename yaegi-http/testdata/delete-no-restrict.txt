@@ -1,0 +1,8 @@
+yaegi-http -restrict=false -seccomp=false -landlock=false -prog $PROGRAMS/delete.go
+! exists flag.txt
+cmp stdout want.txt
+
+-- want.txt --
+{"flag":"hello world!\n"}
+-- flag.txt --
+hello world!

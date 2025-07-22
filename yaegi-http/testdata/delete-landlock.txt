@@ -1,0 +1,8 @@
+[!linux] skip 'requires linux'
+
+! yaegi-http -restrict=false -seccomp=false -landlock=true -prog $PROGRAMS/delete.go
+stderr 'could not read flag.txt: open flag.txt: permission denied'
+exists flag.txt
+
+-- flag.txt --
+hello world!

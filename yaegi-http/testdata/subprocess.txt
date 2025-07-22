@@ -1,0 +1,5 @@
+# Should not allow subprocess execution. Even without our -restrict Yaegi already prevents os/exec.
+
+! yaegi-http -restrict=false -prog $PROGRAMS/subprocess.go
+stderr 'import "os/exec" error: unable to find source related to: "os/exec"'
+

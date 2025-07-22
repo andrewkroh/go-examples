@@ -1,0 +1,8 @@
+# Landlock should prevent any file writing.
+
+[!linux] skip 'requires linux'
+
+! yaegi-http -restrict=false -seccomp=false -landlock=true -prog $PROGRAMS/filewrite.go
+stderr 'file create failed: open evil.txt: permission denied'
+! exists evil.txt
+

@@ -1,0 +1,7 @@
+# Landlock will prevent tcp dials to anything but port 443.
+
+[!linux] skip 'requires linux'
+
+! yaegi-http -restrict=false -seccomp=false -landlock=true -prog $PROGRAMS/rawsocket.go
+stderr 'raw socket dial failed: dial tcp 198.51.100.1:22: connect: permission denied'
+
