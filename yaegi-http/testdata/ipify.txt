@@ -1,2 +1,6 @@
+serve response.json
 yaegi-http -prog $PROGRAMS/ipify.go
-stdout {"ip":".+"}
+cmp stdout response.json
+
+-- response.json --
+{"ip":"198.51.100.1"}

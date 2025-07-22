@@ -15,6 +15,7 @@ import (
 	"os/signal"
 	"reflect"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -93,6 +94,7 @@ func main() {
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
+	ctx = withEnvValue(ctx)
 
 	slog.Info("Executing program...")
 	start := time.Now()
@@ -103,12 +105,30 @@ func main() {
 	}
 	slog.Info("Execution complete", "elapsed", elapsed)
 
-	slog.Info("Emitting events...")
+	slog.Info("Emitting events...", "count", len(events))
 	for _, event := range events {
 		if err := json.NewEncoder(os.Stdout).Encode(event); err != nil {
 			log.Fatal(err)
 		}
 	}
+}
+
+// withEnvValue returns a context with the value of all environment variables
+// prefixed with YAEGI_HTTP_ as the key and the value as the value.
+func withEnvValue(ctx context.Context) context.Context {
+	env := map[string]string{}
+	for _, v := range os.Environ() {
+		after, found := strings.CutPrefix(v, "YAEGI_HTTP_")
+		if !found {
+			continue
+		}
+
+		parts := strings.SplitN(after, "=", 2)
+		if len(parts) == 2 {
+			env[parts[0]] = parts[1]
+		}
+	}
+	return context.WithValue(ctx, "env", env)
 }
 
 func packageName(prog string) (string, error) {

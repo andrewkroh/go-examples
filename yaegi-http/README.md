@@ -7,14 +7,14 @@ httpjson processors.
 
 ## Overview
 
-The application executes a Go program (e.g. `testdata/prorams/ipify.go`) that
+The application executes a Go program (e.g. `testdata/programs/ipify.go`) that
 performs HTTP requests and processes responses. Instead of compiling these
 programs, they are interpreted at runtime using Yaegi, allowing for dynamic
 execution of Go code without the need to compile.
 
 ## How It Works
 
-1. **Program Loading**: The main application embeds a Go program using `//go:embed`
+1. **Program Loading**: The main application loads the Go script from a file
 2. **Interpretation**: Yaegi interprets the embedded Go code at runtime
 3. **Execution**: The interpreted program executes an `Execute` function that:
    - Makes HTTP requests using the provided HTTP client

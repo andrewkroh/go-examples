@@ -8,7 +8,16 @@ import (
 )
 
 func Execute(ctx context.Context, c *http.Client, callback func(event map[string]any)) error {
-	r, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.ipify.org?format=json", nil)
+	env, ok := ctx.Value("env").(map[string]string)
+	if !ok {
+		return fmt.Errorf("failed to get config")
+	}
+	url, found := env["URL"]
+	if !found {
+		return fmt.Errorf("failed to get URL")
+	}
+
+	r, err := http.NewRequestWithContext(ctx, http.MethodGet, url+"?format=json", nil)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
