@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -43,8 +44,16 @@ func ECSFieldInfo(ctx context.Context, ss *mcp.ServerSession, params *mcp.CallTo
 		}, nil
 	}
 
+	data, err := json.MarshalIndent(field, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+
 	return &mcp.CallToolResultFor[ecs.Field]{
 		StructuredContent: *field,
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: string(data)},
+		},
 	}, nil
 }
 
