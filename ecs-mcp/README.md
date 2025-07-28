@@ -28,3 +28,42 @@ Looks up a field in Elastic Common Schema (ECS) and returns its definition.
 
 A JSON object with the ECS field definition containing keys like `name`,
 `data_type`, `description`, etc.
+
+## Config
+
+> [!NOTE]
+> There is a `-no-log` option to work around an IntelliJ [bug](https://youtrack.jetbrains.com/issue/LLM-18106/MCP-proxy-launched-with-npx-mcp-remote-terminates-immediately-StandaloneCoroutine-was-cancelled).
+
+### With `go run`
+
+```
+{
+  "mcpServers": {
+    "ecs": {
+      "command": "go",
+      "args": [
+        "run",
+        "github.com/andrewkroh/go-examples/ecs-mcp@main"
+      ]
+    }
+  }
+}
+```
+
+### Local install
+
+Install the binary with
+
+`go install github.com/andrewkroh/go-examples/ecs-mcp`
+
+then determine the path using `which ecs-mcp`.
+
+```
+{
+  "mcpServers": {
+    "ecs": {
+      "command": "/Users/<USERNAME>/go/bin/ecs-mcp"
+    }
+  }
+}
+```
