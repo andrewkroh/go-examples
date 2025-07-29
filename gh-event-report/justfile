@@ -1,0 +1,16 @@
+container_registry := "akroh"
+container_name := "gh-event-reporter"
+
+# Build the docker image.
+[group: 'build']
+docker-build VERSION='latest':
+  docker build \
+    --build-arg OCI_CREATED="$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+    --build-arg OCI_REVISION="$(git rev-parse HEAD)" \
+    -t {{container_name}}:{{VERSION}} .
+
+# Build and push the docker image to the private container registry.
+[group: 'build']
+docker-push VERSION='latest': (docker-build VERSION)
+  docker tag "{{container_name}}:{{VERSION}}" "{{container_registry}}/{{container_name}}:{{VERSION}}"
+  docker push "{{container_registry}}/{{container_name}}:{{VERSION}}"
