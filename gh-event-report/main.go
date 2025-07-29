@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 	"time"
@@ -147,7 +148,7 @@ func fetchEvents(username, token string, page int) ([]Event, error) {
 
 func writeEvents(eventsByDate map[string][]Event) {
 	for date, events := range eventsByDate {
-		filename := fmt.Sprintf("%s-github_activity.md", date)
+		filename := filepath.Join(os.Getenv("OUTPUT_DIR"), fmt.Sprintf("%s-github_activity.md", date))
 		if _, err := os.Stat(filename); err == nil {
 			log.Println("File already exists, skipping:", filename)
 			continue
