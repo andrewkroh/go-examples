@@ -188,16 +188,32 @@ func writeEvents(eventsByDate map[string][]Event) {
 					"Other":         {},
 				}
 
+				// Maps to track events by their reference number
+				type EntityContent struct {
+					header string
+					items  []string
+				}
+				prContent := make(map[int]*EntityContent)    // PR number -> content
+				issueContent := make(map[int]*EntityContent) // Issue number -> content
+
 				for _, ev := range repoMap[repo] {
 					timestamp := ev.CreatedAt.Local().Format("15:04:05")
 					switch ev.Type {
 					case "PullRequestEvent":
 						if pr := ev.Payload.PullRequest; pr != nil {
-							line := fmt.Sprintf(
-								"### [#%d](%s): %s\n- **PR %s** at %s\n",
-								pr.Number, pr.HTMLURL, html.EscapeString(pr.Title), cases.Title(language.English).String(ev.Payload.Action), timestamp,
+							header := fmt.Sprintf(
+								"### [#%d](%s): %s",
+								pr.Number, pr.HTMLURL, html.EscapeString(pr.Title),
 							)
-							sections["Pull Requests"] = append(sections["Pull Requests"], line)
+							item := fmt.Sprintf("- **PR %s** at %s",
+								cases.Title(language.English).String(ev.Payload.Action), timestamp,
+							)
+
+							// Create or get the PR content entry
+							if _, exists := prContent[pr.Number]; !exists {
+								prContent[pr.Number] = &EntityContent{header: header, items: []string{}}
+							}
+							prContent[pr.Number].items = append(prContent[pr.Number].items, item)
 						}
 					case "PullRequestReviewEvent":
 						if pr := ev.Payload.PullRequest; pr != nil {
@@ -206,38 +222,73 @@ func writeEvents(eventsByDate map[string][]Event) {
 							if review != nil {
 								disposition = cases.Title(language.English).String(review.State)
 							}
-							line := fmt.Sprintf(
-								"### [#%d](%s): %s\n- **Review:** %s at %s\n",
-								pr.Number, pr.HTMLURL, html.EscapeString(pr.Title), disposition, timestamp,
+
+							header := fmt.Sprintf(
+								"### [#%d](%s): %s",
+								pr.Number, pr.HTMLURL, html.EscapeString(pr.Title),
 							)
-							sections["Pull Requests"] = append(sections["Pull Requests"], line)
+							item := fmt.Sprintf("- **Review:** %s at %s", disposition, timestamp)
+
+							// Create or get the PR content entry
+							if _, exists := prContent[pr.Number]; !exists {
+								prContent[pr.Number] = &EntityContent{header: header, items: []string{}}
+							}
+							prContent[pr.Number].items = append(prContent[pr.Number].items, item)
 						}
 					case "PullRequestReviewCommentEvent":
+						pr := ev.Payload.PullRequest
 						comment := ev.Payload.Comment
-						if comment != nil {
+						if pr != nil && comment != nil {
+							header := fmt.Sprintf(
+								"### [#%d](%s): %s",
+								pr.Number, pr.HTMLURL, html.EscapeString(pr.Title),
+							)
 							body := html.EscapeString(truncate(comment.Body, 50))
-							line := fmt.Sprintf("- **Inline Comment**: \"%s\" [view](%s) at %s\n", body, comment.HTMLURL, timestamp)
-							sections["Pull Requests"] = append(sections["Pull Requests"], line)
+							item := fmt.Sprintf("- **Inline Comment**: \"%s\" [view](%s) at %s",
+								body, comment.HTMLURL, timestamp,
+							)
+
+							// Create or get the PR content entry
+							if _, exists := prContent[pr.Number]; !exists {
+								prContent[pr.Number] = &EntityContent{header: header, items: []string{}}
+							}
+							prContent[pr.Number].items = append(prContent[pr.Number].items, item)
 						}
 					case "IssueCommentEvent":
 						issue := ev.Payload.Issue
 						comment := ev.Payload.Comment
 						if issue != nil && comment != nil {
-							body := html.EscapeString(truncate(comment.Body, 50))
-							line := fmt.Sprintf(
-								"### [#%d](%s): %s\n- **Comment**: \"%s\" [view](%s) at %s\n",
-								issue.Number, issue.HTMLURL, html.EscapeString(issue.Title), body, comment.HTMLURL, timestamp,
+							header := fmt.Sprintf(
+								"### [#%d](%s): %s",
+								issue.Number, issue.HTMLURL, html.EscapeString(issue.Title),
 							)
-							sections["Issues"] = append(sections["Issues"], line)
+							body := html.EscapeString(truncate(comment.Body, 50))
+							item := fmt.Sprintf("- **Comment**: \"%s\" [view](%s) at %s",
+								body, comment.HTMLURL, timestamp,
+							)
+
+							// Create or get the issue content entry
+							if _, exists := issueContent[issue.Number]; !exists {
+								issueContent[issue.Number] = &EntityContent{header: header, items: []string{}}
+							}
+							issueContent[issue.Number].items = append(issueContent[issue.Number].items, item)
 						}
 					case "IssuesEvent":
 						issue := ev.Payload.Issue
 						if issue != nil {
-							line := fmt.Sprintf(
-								"### [#%d](%s): %s\n- **%s Issue** at %s\n",
-								issue.Number, issue.HTMLURL, html.EscapeString(issue.Title), cases.Title(language.English).String(ev.Payload.Action), timestamp,
+							header := fmt.Sprintf(
+								"### [#%d](%s): %s",
+								issue.Number, issue.HTMLURL, html.EscapeString(issue.Title),
 							)
-							sections["Issues"] = append(sections["Issues"], line)
+							item := fmt.Sprintf("- **%s Issue** at %s",
+								cases.Title(language.English).String(ev.Payload.Action), timestamp,
+							)
+
+							// Create or get the issue content entry
+							if _, exists := issueContent[issue.Number]; !exists {
+								issueContent[issue.Number] = &EntityContent{header: header, items: []string{}}
+							}
+							issueContent[issue.Number].items = append(issueContent[issue.Number].items, item)
 						}
 					case "PushEvent":
 						for _, c := range ev.Payload.Commits {
@@ -254,7 +305,62 @@ func writeEvents(eventsByDate map[string][]Event) {
 
 				// Write sections
 				for _, section := range []string{"Pull Requests", "Issues", "Commits", "Other"} {
-					if len(sections[section]) > 0 {
+					// Skip empty sections
+					if section == "Pull Requests" {
+						if len(prContent) == 0 {
+							continue
+						}
+
+						// Write the Pull Requests section header
+						fmt.Fprintf(f, "### %s\n\n", section)
+
+						// Get all PR numbers to sort them
+						prNumbers := make([]int, 0, len(prContent))
+						for num := range prContent {
+							prNumbers = append(prNumbers, num)
+						}
+						sort.Ints(prNumbers)
+
+						// Write each PR and its associated content
+						for _, num := range prNumbers {
+							content := prContent[num]
+							// Write the PR header
+							fmt.Fprintf(f, "%s\n", content.header)
+
+							// Write all associated items
+							for _, item := range content.items {
+								fmt.Fprintf(f, "%s\n", item)
+							}
+							fmt.Fprintf(f, "\n")
+						}
+					} else if section == "Issues" {
+						if len(issueContent) == 0 {
+							continue
+						}
+
+						// Write the Issues section header
+						fmt.Fprintf(f, "### %s\n\n", section)
+
+						// Get all issue numbers to sort them
+						issueNumbers := make([]int, 0, len(issueContent))
+						for num := range issueContent {
+							issueNumbers = append(issueNumbers, num)
+						}
+						sort.Ints(issueNumbers)
+
+						// Write each issue and its associated content
+						for _, num := range issueNumbers {
+							content := issueContent[num]
+							// Write the issue header
+							fmt.Fprintf(f, "%s\n", content.header)
+							// Write all associated items
+							for _, item := range content.items {
+								fmt.Fprintf(f, "%s\n", item)
+							}
+							fmt.Fprintf(f, "\n")
+						}
+					} else if len(sections[section]) > 0 {
+						// Standard handling for other sections
 						fmt.Fprintf(f, "### %s\n\n", section)
 						for _, line := range sections[section] {
 							fmt.Fprint(f, line+"\n")
