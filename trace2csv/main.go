@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/csv"
 	"encoding/json"
 	"errors"
@@ -27,8 +29,9 @@ CSV to stdout.
 
 The tool processes trace logs containing HTTP request/response data and
 URL information, adding calculated fields like delta_sec between consecutive
-requests. Sensitive headers (Authorization, Cookie, and Set-Cookie) are
-automatically redacted in the output.
+requests. Certain sensitive headers are automatically redacted in the output
+and replaced with sha256:<first 8-bytes of base64 encoded sha256>, but in
+general you should not rely on this tool for privacy protection.
 
 Example:
   cat trace.ndjson | trace2csv > output.csv
@@ -217,23 +220,13 @@ func toMap(t *TraceLog) map[string]string {
 	// Add HTTP request headers.
 	for name, values := range t.HTTPRequestHeader {
 		key := fmt.Sprintf("http.request.header.%s", name)
-		switch name {
-		case "Authorization", "Cookie":
-			m[key] = "**redacted**"
-		default:
-			m[key] = strings.Join(values, "|")
-		}
+		m[key] = redact(name, values)
 	}
 
 	// Add HTTP response headers.
 	for name, values := range t.HTTPResponseHeader {
 		key := fmt.Sprintf("http.response.header.%s", name)
-		switch name {
-		case "Set-Cookie":
-			m[key] = "**redacted**"
-		default:
-			m[key] = strings.Join(values, "|")
-		}
+		m[key] = redact(name, values)
 	}
 
 	// Add URL query parameters.
@@ -328,4 +321,38 @@ func writeCSV(traces []*TraceLog) error {
 	}
 
 	return nil
+}
+
+func isSecret(key string) bool {
+	k := strings.ToLower(key)
+	switch k {
+	case "authorization", "cookie", "set-cookie", "proxy-authorization", "x-redlock-auth":
+		return true
+	}
+
+	search := []string{
+		"apikey", "authkey", "token",
+	}
+	k = strings.ReplaceAll(k, "-", "")
+	for _, s := range search {
+		if strings.Contains(k, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func redact(key string, values []string) string {
+	if !isSecret(key) {
+		return strings.Join(values, "|")
+	}
+
+	var redacted []string
+	for _, value := range values {
+		h := sha256.New().Sum([]byte(value))
+		sha := base64.RawStdEncoding.EncodeToString(h)
+		sha = "sha256:" + sha[:8]
+		redacted = append(redacted, sha)
+	}
+	return strings.Join(redacted, "|")
 }
