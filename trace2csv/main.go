@@ -199,9 +199,6 @@ func toMap(t *TraceLog) map[string]string {
 	if t.HTTPRequestBodyBytes != 0 {
 		m["http.request.body.bytes"] = strconv.FormatFloat(t.HTTPRequestBodyBytes, 'f', -1, 64)
 	}
-	if t.HTTPRequestBodyContent != "" {
-		m["http.request.body.content"] = t.HTTPRequestBodyContent
-	}
 	if t.HTTPResponseBodyBytes != 0 {
 		m["http.response.body.bytes"] = strconv.FormatFloat(t.HTTPResponseBodyBytes, 'f', -1, 64)
 	}
@@ -215,6 +212,19 @@ func toMap(t *TraceLog) map[string]string {
 	}
 	if t.HTTPResponseBodyTruncated {
 		m["http.response.body.truncated"] = "true"
+	}
+
+	if t.HTTPRequestBodyContent != "" {
+		m["http.request.body.content"] = t.HTTPRequestBodyContent
+		if t.HTTPRequestHeader["Content-Type"][0] == "application/x-www-form-urlencoded" {
+			p, err := url.ParseQuery(t.HTTPRequestBodyContent)
+			if err == nil {
+				for name, values := range p {
+					key := fmt.Sprintf("http.request.body.content.%s", name)
+					m[key] = redact(name, values)
+				}
+			}
+		}
 	}
 
 	// Add HTTP request headers.
