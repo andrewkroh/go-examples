@@ -205,6 +205,12 @@ func toMap(t *TraceLog) map[string]string {
 	if t.HTTPResponseBodyBytes != 0 {
 		m["http.response.body.bytes"] = strconv.FormatFloat(t.HTTPResponseBodyBytes, 'f', -1, 64)
 	}
+	if t.HTTPResponseBodyContent != "" {
+		var rawMessages []json.RawMessage
+		if err := json.Unmarshal([]byte(t.HTTPResponseBodyContent), &rawMessages); err == nil {
+			m["http.response.body.array_items"] = strconv.Itoa(len(rawMessages))
+		}
+	}
 	if t.HTTPResponseStatusCode != 0 {
 		m["http.response.status_code"] = strconv.FormatFloat(t.HTTPResponseStatusCode, 'f', -1, 64)
 	}
